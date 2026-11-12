@@ -25,7 +25,7 @@ jobs:
       - name: Record narrated videos
         run: python videos/src/record.py
         env:
-          VIDEO_APPS: ${{ inputs.apps || 'yathin' }}
+          VIDEO_APPS: ${{ inputs.apps || 'yathin quizlooop' }}
       - name: Save videos to the repo
         run: |
           cp out/*.mp4 videos/

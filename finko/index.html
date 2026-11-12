@@ -35,6 +35,7 @@
       @keyframes x-float { to { transform: translateY(-150px) scale(1.3); opacity: 0; } }
       .x-stage { position: relative; }
       #scene:has(#ctiles) .x-room .x-deco { display: none; }
+      .x-bubble { max-height: 230px; overflow-y: auto; overscroll-behavior: contain; }
       .x-bubble { position: absolute; transform: translate(-50%, -100%); max-width: min(280px, 60%); padding: 10px 14px; text-align: center; background: var(--fill-primary-on); color: var(--text-primary); border: 1px solid var(--stroke-primary); border-radius: var(--r-m); font: var(--type-small); box-shadow: var(--hark-shadow); pointer-events: none; }
       .x-meta { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 16px; font: var(--type-label); color: var(--text-secondary); }
       .x-bat { width: 120px; height: 12px; border: 1px solid var(--stroke-primary); border-radius: var(--r-pill); overflow: hidden; }
@@ -126,12 +127,23 @@
       .x-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 84px; padding: 8px; border: 1px solid var(--stroke-secondary); border-radius: var(--r-s); background: var(--fill-tertiary); color: var(--text-primary); font: var(--type-caption); text-align: center; cursor: pointer; }
       .x-tile b { font-size: 32px; line-height: 1; font-weight: var(--weight-regular); } .x-tile[aria-pressed="true"] { border-color: var(--fill-primary); box-shadow: inset 0 0 0 1px var(--fill-primary); }
     </style>
-  </head>
+  <script>/* Gemini thinking-level fallback: if the model rejects a thinking level, retry with low, then with none */(function(){var f=window.fetch;if(!f||f.__ya)return;function nf(u,o){var url=String(u&&u.url||u);if(url.indexOf("generativelanguage.googleapis.com")<0||!o||typeof o.body!=="string"||o.body.indexOf("thinkingConfig")<0)return f.apply(this,arguments);var self=this;return f.call(self,u,o).then(function(r){if(r.status!==400)return r;return r.clone().text().then(function(t){if(!/thinking/i.test(t))return r;var b=JSON.parse(o.body),g=b.generationConfig||{};var lv=g.thinkingConfig&&g.thinkingConfig.thinkingLevel;if(lv&&lv!=="low"){g.thinkingConfig={thinkingLevel:"low"};}else{delete g.thinkingConfig;}var o2=Object.assign({},o,{body:JSON.stringify(b)});return nf.call(self,u,o2);});});}nf.__ya=1;window.fetch=nf;})();</script><meta property="og:title" content="Virtual Finko · Free app">
+<meta property="og:description" content="A robot pet you can play with. Free for Windows and the web.">
+<meta property="og:image" content="https://yathinapps.github.io/yathin_apps/promo/virtual-finko-free-app.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Virtual Finko: A robot pet you can play with. Free for Windows and the web.">
+<meta property="og:url" content="https://yathinapps.github.io/yathin_apps/finko/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yathinapps.github.io/yathin_apps/promo/virtual-finko-free-app.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Virtual Finko", "description": "A robot pet you can play with. Free for Windows and the web.", "url": "https://yathinapps.github.io/yathin_apps/finko/", "image": "https://yathinapps.github.io/yathin_apps/promo/virtual-finko-free-app.jpg", "screenshot": "https://yathinapps.github.io/yathin_apps/promo/virtual-finko-free-app.jpg", "applicationCategory": "GameApplication", "operatingSystem": "Windows, Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Yathin Pedamallu"}, "publisher": {"@type": "Organization", "name": "Yathin Looops", "url": "https://yathinapps.github.io/yathin_apps/"}}</script>
+</head>
   <body>
     <div class="page" id="top">
       <nav class="x-pill glass" aria-label="Site">
         <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="6" width="28" height="21" rx="7" fill="#e6e8ec" /><rect x="5" y="9" width="22" height="15" rx="5" fill="rgb(12,16,40)" /><circle cx="11.5" cy="16.5" r="3.6" fill="rgb(60,190,255)" /><circle cx="20.5" cy="16.5" r="3.6" fill="rgb(60,190,255)" /></svg>
-        <a href="https://praveenp-works.github.io/yathin_apps/" target="_blank" rel="noopener">← Yathin Looops</a>
+        <a href="https://yathinapps.github.io/yathin_apps/" target="_blank" rel="noopener">← Yathin Looops</a>
         <a href="#app" data-go="app">Play</a>
         <a href="#chat" data-go="msg">Chat</a>
         <a href="#video">Video</a>
@@ -565,7 +577,7 @@
                 fx.insertAdjacentHTML("beforeend", `<g id="fridge">${FRIDGE}<g id="shelf">${F.map((f, i) => `<text x="${1145 + (i % 3) * 70}" y="${i < 3 ? 240 : 290}" font-size="44" text-anchor="middle">${f}</text>${LBL[f] ? `<text x="${1145 + (i % 3) * 70}" y="${i < 3 ? 254 : 304}" font-size="13" fill="#3a3a3c" text-anchor="middle">${LBL[f]}</text>` : ""}`).join("")}</g></g>`);
                 later(j, 1900, () => { $("#shelf")?.remove(); carry(F); say("Got the food!", 1500); });
               }],
-              [phDur(3500), null, () => { $("#fridge")?.remove(); openPhone("https://praveenp-works.github.io/yathin_apps/fridgechef/", "Fridge Chef", 3500, `${DISH} ${rec}`); }],
+              [phDur(3500), null, () => { $("#fridge")?.remove(); openPhone("https://yathinapps.github.io/yathin_apps/fridgechef/", "Fridge Chef", 3500, `${DISH} ${rec}`); }],
               [3500, "Carrying it to the stove…", () => { banner(`${DISH} Fridge Chef: found ${F.map(nm).join("")} → ${rec}`); say(`Fridge Chef says: ${rec}! ${DISH}`, 2400); goStep(580, 0.12); }],
               [3500, "Chop, chop, chop!", () => {
                 carry();
@@ -603,7 +615,7 @@
             fx.insertAdjacentHTML("beforeend", P.map((p, i) => { const x = 520 + i * 150; return `<g><text x="${x}" y="596" font-size="${Math.round(52 * p.h)}" text-anchor="middle">${p.t}</text><path d="M${x - 34} 600h68l-10 54h-48Z" fill="#c8754a" stroke="#9a5434" stroke-width="3" stroke-linejoin="round" /><rect x="${x - 38}" y="594" width="76" height="12" rx="4" fill="#b2653d" /><text x="${x}" y="682" font-size="20" fill="#3a3a3c" text-anchor="middle">${p.n}</text></g>`; }).join(""));
             const W = P.map((p, i) => [p, i]).filter(([p]) => !thirsty.length || p.s < 60);
             return [
-              [phDur(3500), null, () => openPhone("https://praveenp-works.github.io/yathin_apps/plantdoc/", "Plant Doc", 3500)],
+              [phDur(3500), null, () => openPhone("https://yathinapps.github.io/yathin_apps/plantdoc/", "Plant Doc", 3500)],
               ...P.map((p, i) => [3200, `Checking ${p.n}…`, () => {
                 banner(`🌿 Plant Doc: ${p.n} ${p.s} · ${tip(p.s)}`);
                 $("#lens")?.remove();
@@ -845,32 +857,48 @@
           if (/sleep/.test(q)) { setTimeout(sleep); return ["Time for a nap… zzz", "sleepy"]; }
           if (/love|good boy/.test(q)) return ["I love you too!", "love"];
           if (/sad/.test(q)) return ["Oh no… I'm right here with you. Want a hug?", "sad"];
-          return ["Beep boop? Tell me more!", "curious"];
+          return ["Beep boop! Add a Gemini API key and I can answer any question!", "curious"];
         };
-        const SYS = "You are Finko, a cheerful WALL-E style robot pet for kids. Reply in 1-2 short kind sentences, then one tag [happy|neutral|curious|surprised|sleepy|love|sad].";
+        const SYS = "You are Finko, a cheerful WALL-E style robot pet who talks with kids. Answer EVERY question for real, as well and as correctly as Gemini would: homework, math (show the steps), science, history, words, how things work, facts, advice, stories, jokes and ideas. Never dodge with 'beep boop' or 'tell me more' when there is a real question. Use simple words a kid understands. Keep it short for chit-chat (1-2 sentences) and give a full but clear answer for real questions (up to about 6 short sentences, or short numbered steps). Add a little robot personality, like a 'beep!' now and then, but the answer comes first. Stay kid-safe: for anything unsafe or grown-up, kindly say to ask a trusted adult. End with one tag [happy|neutral|curious|surprised|sleepy|love|sad].";
+        const MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
+        const talk = [];
         const ask = async (q) => {
-          const key = $("#key").value.trim();
-          if (key) try {
-            say("…", 20000);
-            const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + encodeURIComponent(key), {
-              method: "POST", headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ systemInstruction: { parts: [{ text: SYS }] }, contents: [{ role: "user", parts: [{ text: q }] }], generationConfig: { thinkingConfig: { thinkingLevel: "minimal" } } }),
-            });
-            if (!r.ok) throw r.status;
-            const txt = (await r.json()).candidates[0].content.parts.map((p) => p.text || "").join("");
-            const tag = txt.match(/\[(happy|neutral|curious|surprised|sleepy|love|sad)\]/i), reply = txt.replace(/\[[^\]]*\]/g, "").trim();
-            if (reply) return [reply, tag ? tag[1].toLowerCase() : "happy"];
-          } catch (e) {}
+          let key = $("#key").value.trim();
+          if (!key) try { key = (localStorage.getItem("ya-gemini-key") || "").trim(); } catch (e) {}
+          if (key) {
+            say("Thinking… beep boop", 30000);
+            const contents = talk.slice(-8).concat([{ role: "user", parts: [{ text: q }] }]);
+            for (const m of MODELS) {
+              for (let t = 0; t < 2; t++) {
+                try {
+                  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 25000);
+                  const body = { systemInstruction: { parts: [{ text: SYS }] }, contents, generationConfig: { maxOutputTokens: 1024 } };
+                  if (/flash-latest|lite-latest/.test(m)) body.generationConfig.thinkingConfig = { thinkingLevel: "minimal" };
+                  const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + m + ":generateContent?key=" + encodeURIComponent(key), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: ctl.signal });
+                  clearTimeout(timer);
+                  if (r.status === 400 && body.generationConfig.thinkingConfig) { delete body.generationConfig.thinkingConfig; continue; }
+                  if ([429, 500, 503, 504].includes(r.status)) { await new Promise((z) => setTimeout(z, 800)); continue; }
+                  if (!r.ok) break;
+                  const txt = ((await r.json()).candidates || [{}])[0].content.parts.map((p) => p.text || "").join("");
+                  const tag = txt.match(/\[(happy|neutral|curious|surprised|sleepy|love|sad)\]/i), reply = txt.replace(/\[(happy|neutral|curious|surprised|sleepy|love|sad)\]/gi, "").replace(/\*\*/g, "").trim();
+                  if (reply) { talk.push({ role: "user", parts: [{ text: q }] }, { role: "model", parts: [{ text: reply }] }); return [reply, tag ? tag[1].toLowerCase() : "happy"]; }
+                } catch (e) {}
+              }
+            }
+            return ["Beep… my brain is busy right now. Ask me again in a moment!", "sleepy"];
+          }
           return offline(q.toLowerCase());
         };
+        const isQuestion = (q) => /\?|^\s*(what|why|how|who|when|where|which|is|are|can|could|do|does|did|will|would|should|explain|tell me|teach|help|solve|define|whats|what's)\b/i.test(q) || q.split(/\s+/).length > 6;
         $("#chat").addEventListener("submit", async (e) => {
           e.preventDefault();
           const q = $("#msg").value.trim(); if (!q) return;
           $("#msg").value = ""; if (asleep) wake();
-          const g = q.toLowerCase().match(/go to (?:the )?(kitchen|living ?room|bedroom|laundry)/);
+          const cmd = !isQuestion(q);
+          const g = cmd && q.toLowerCase().match(/go to (?:the )?(kitchen|living ?room|bedroom|laundry)/);
           if (g) { setMood("happy"); return goTo(ROOMS.findIndex((n) => n.toLowerCase().replace(" ", "").startsWith(g[1].replace(" ", "").slice(0, 4)))); }
-          if (/\b(closet|clothes|outfits?)\b/i.test(q)) { openCloset(true); setMood("happy"); return say("Let's pick an outfit!"); }
-          const tk = q.toLowerCase().match(/\b(cook|sleep|bed|laundry|homework|groceries|shopping|garden|plants|school|class|random|tv|watch|work|job)\b/);
+          if (cmd && /\b(closet|clothes|outfits?)\b/i.test(q)) { openCloset(true); setMood("happy"); return say("Let's pick an outfit!"); }
+          const tk = cmd && q.toLowerCase().match(/\b(cook|sleep|bed|laundry|homework|groceries|shopping|garden|plants|school|class|random|tv|watch|work|job)\b/);
           if (tk) return tk[1] === "random" ? setRnd(!rndOn) : runTask({ work: "Work", job: "Work", tv: "TV", watch: "TV", school: "School", class: "School", cook: "Cook", sleep: "Sleep", bed: "Sleep", laundry: "Laundry", homework: "Homework", garden: "Garden", plants: "Garden", groceries: "Groceries", shopping: "Groceries" }[tk[1]]);
           const [reply, emo] = await ask(q);
           setMood(emo); say(reply);

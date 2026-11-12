@@ -757,6 +757,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
     <meta name="twitter:description" content="Magic Cursor is a free Windows 11 app. Press Ctrl+Shift+Space in any app, circle anything on your screen, and ask AI (Google Gemini) about it. Voice, image making and follow-up chat included." />
     <meta name="twitter:image" content="https://praveenp-works.github.io/magic_cursor/logo.png" />
     <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Magic Cursor", "alternateName": "Magic Cursor for Windows 11", "operatingSystem": "Windows 11", "applicationCategory": "UtilitiesApplication", "description": "Magic Cursor is a free Windows 11 app. Press Ctrl+Shift+Space in any app, circle anything on your screen, and ask AI (Google Gemini) about it. Voice, image making and follow-up chat included.", "url": "https://praveenp-works.github.io/magic_cursor/", "image": "https://praveenp-works.github.io/magic_cursor/logo.png", "downloadUrl": "https://github.com/praveenp-works/magic_cursor/releases/latest/download/MagicCursor.exe", "softwareVersion": "77", "datePublished": "2026-10-25", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Yathin Pedamallu"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Magic Cursor", "description": "Circle anything on your screen and ask AI. Free for Windows 11 and Android.", "url": "https://yathinapps.github.io/yathin_apps/magiccursor/", "image": "https://yathinapps.github.io/yathin_apps/promo/magic-cursor-free-app.jpg", "screenshot": "https://yathinapps.github.io/yathin_apps/promo/magic-cursor-free-app.jpg", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Windows 11, Android", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Yathin Pedamallu"}, "publisher": {"@type": "Organization", "name": "Yathin Looops", "url": "https://yathinapps.github.io/yathin_apps/"}}</script>
 </head>
   <body>
     <div class="page" id="top">
@@ -779,7 +780,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
             <p class="fineprint">Free. Windows 11. Uses your own free Gemini key.</p>
             <p class="fineprint">Latest version: v77 · Updated October 27, 2026</p>
             <p class="fineprint"><strong>Android user? An Android version might come soon.</strong></p>
-            <p class="fineprint"><strong>Phone or iPad user? <a href="phone/">Click here</a> · Android app: <a href="https://github.com/praveenp-works/yathin_apps/releases/download/magiccursor-android/MagicCursor.apk">download .apk</a></strong></p>
+            <p class="fineprint"><strong>Phone or iPad user? <a href="phone/">Click here</a> · Android app: <a href="MagicCursor.apk" download="MagicCursor.apk" type="application/vnd.android.package-archive">download .apk</a></strong></p>
           </aside>
         </section>
 
@@ -980,7 +981,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
     var sections = [].slice.call(doc.querySelectorAll("section[data-nav]"));
     var header = doc.querySelector("header.nav[data-auto]");
     if (header) {
-      header.innerHTML = '<nav class="seg" aria-label="Sections"><a href="https://praveenp-works.github.io/yathin_apps/">&larr; Yathin Looops</a>' +
+      header.innerHTML = '<nav class="seg" aria-label="Sections"><a href="https://yathinapps.github.io/yathin_apps/">&larr; Yathin Looops</a>' +
         each(sections, function (s) { return '<a href="#' + esc(s.id) + '">' + esc(s.getAttribute("data-nav")) + "</a>"; }) + '<span aria-hidden="true" style="display:inline-block;align-self:center;width:1px;height:22px;background:#8a8a8a;margin:0 6px;flex:none"></span><a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=praveenmarketing26@gmail.com&amp;su=Magic%20Cursor%20feedback" target="_blank" rel="noopener">Give feedback</a><a href="MagicCursor-Chrome.zip" download="MagicCursor-Chrome.zip">Chrome extension</a>' + "</nav>" +
         '<button class="theme-btn" id="theme-btn" type="button" aria-label="Switch to dark theme"></button>';
     }

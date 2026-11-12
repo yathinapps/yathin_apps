@@ -135,7 +135,7 @@ const SCRIPTS = {
   voice:"en-US-JennyNeural", rate:"+0%",
   icon:"/yathinapps_hero.jpg", icons:["/magiccursor/logo.png","/classview/classview_icon.png","/plantdoc/plantdoc_icon.png","/fridgechef/fridgechef_icon.png"],
   title:"Yathin Apps", tag:"Free apps. One place.",
-  chips:["100% free","Windows & web","Made by Yathin"], foot:"praveenp-works.github.io/yathin_apps",
+  chips:["100% free","Windows & web","Made by Yathin"], foot:"yathinapps.github.io/yathin_apps",
   scenes:[
    {hook:["Multitasking","power in","your HANDS!?"], strike:false, say:"Multitasking power, in your hands?"},
    {tb:["/magiccursor/logo.png","Magic Cursor"], say:"Magic Cursor explains anything on your screen.", pill:"Magic Cursor: AI for anything on screen", html:`
@@ -168,7 +168,7 @@ const SCRIPTS = {
  "finko-vertical": { vertical:true, bg:"linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 42%,#ffffff 58%,#ffffff 100%),linear-gradient(90deg,#e11d48 0%,#ea580c 20%,#ca8a04 38%,#16a34a 56%,#0284c7 76%,#7c3aed 100%)", btn:"linear-gradient(90deg,#38bdf8,#facc15)",
   voice:"en-US-AvaNeural", rate:"+10%",
   icon:"/finko/finko_icon.png", title:"Virtual Finko", tag:"A robot pet you can play with",
-  chips:["100% free","Plays in your browser","Made by Yathin"], foot:"praveenp-works.github.io/yathin_apps/finko",
+  chips:["100% free","Plays in your browser","Made by Yathin"], foot:"yathinapps.github.io/yathin_apps/finko",
   scenes:[
    {hook:["A robot pet","that goes to","SCHOOL?!"], strike:false, say:"A robot pet that goes to school?"},
    {tb:["/finko/finko_icon.png","Virtual Finko"], say:"Meet Virtual Finko. He talks, he jokes, and he never stops chatting.", pill:"Meet Finko: a robot pet who talks", html:`
@@ -203,9 +203,9 @@ const SCRIPTS = {
 
  yathin: { bg:"linear-gradient(135deg,#0f766e 0%,#15803d 30%,#ca8a04 65%,#e07a1f 100%)", btn:"linear-gradient(90deg,#14b8a6,#22c55e,#f59e0b)",
   voice:"en-US-JennyNeural", rate:"-4%",
-  icon:"/looops_logo.png", icons:["/magiccursor/logo.png","/classview/classview_icon.png","/plantdoc/plantdoc_icon.png","/fridgechef/fridgechef_icon.png","/whattowear/whattowear_icon_sq.png","/screenread/screenread_icon_sq.png","/finko/finko_icon.png"],
+  icon:"/looops_logo.png", icons:["/magiccursor/logo.png","/classview/classview_icon.png","/plantdoc/plantdoc_icon.png","/fridgechef/fridgechef_icon.png","/whattowear/whattowear_icon_sq.png","/screenread/screenread_icon_sq.png","/finko/finko_icon.png","/brickbuilder/brickbuilder_icon.png","/pettranslator/pettranslator_icon.png","/snapkit/snapkit_icon.png","/quizlooop_icon.png"],
   title:"Yathin Looops", tag:"Free apps. One place.",
-  chips:["100% free","Windows & web","Made by Yathin"], foot:"praveenp-works.github.io/yathin_apps",
+  chips:["100% free","Windows & web","Made by Yathin"], foot:"yathinapps.github.io/yathin_apps",
   scenes:[
    {hook:["Simple apps.","One place."], strike:false, say:"Simple, free apps. All in one place."},
    {tb:["/magiccursor/logo.png","Magic Cursor"], say:"Magic Cursor. Draw a box around anything, and Gemini explains it, right beside your window.", pill:"Magic Cursor: ask AI about anything on screen", html:`
@@ -248,12 +248,69 @@ const SCRIPTS = {
      <div style="flex:1"><div class="h" style="margin-top:0">Finko's day</div>
      <div><span class="chip hide">🪐 Planet class</span><span class="chip hide">🍕 Pizza shift +$30</span><span class="chip hide">🧑‍🍳 Veggie dinner</span><span class="chip hide">👕 Dress-up closet</span><span class="chip hide">💬 Talks back</span></div></div></div>`,
     run: async () => { const f=q("#fk"); f.animate([{transform:"rotate(-6deg)"},{transform:"rotate(6deg)"}],{duration:500,iterations:12,direction:"alternate"}); await sleep(400); await popAll(".chip",380); }},
-   {tb:["/yathinapps_hero.jpg","Yathin Looops"], say:"Now, one place, one day. In the morning, What to Wear picks the outfit. In class, the teacher keeps everyone on track. At home, Magic Cursor helps with homework, and Screen Read copies notes from a screenshot. The plant by the window gets a check up. And dinner comes from what's already in the fridge. Then it's play time with Finko.", pill:"One home, one day", html:`
-     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;height:100%">
-     ${[["/whattowear/whattowear_icon_sq.png","7:30 AM · Front door","What to Wear","Jacket + umbrella ☔","#60a5fa"],["/classview/classview_icon.png","9:00 AM · Class","ClassView","All 24 students on task ✓","#2dd4bf"],["/magiccursor/logo.png","4:00 PM · Homework","Magic Cursor","Q3 solved: x = 4 ✨","#a78bfa"],["/screenread/screenread_icon_sq.png","5:00 PM · Study","Screen Read","Test notes copied 📋","#facc15"],["/plantdoc/plantdoc_icon.png","6:00 PM · Windowsill","Plant Doc","Sunny the pothos: 86 / 100 🌿","#4ade80"],["/fridgechef/fridgechef_icon.png","7:00 PM · Kitchen","Fridge Chef","Tonight: Veggie Fried Rice 🍚","#fb923c"],["/finko/finko_icon.png","8:00 PM · Play time","Virtual Finko","Pizza shift done: +$30 🍕","#38bdf8"]].map(c=>`<div class="card hide m" style="display:flex;gap:20px;align-items:center;box-shadow:inset 0 0 0 2px ${c[4]}55">
-       <img src="${c[0]}" style="width:76px;height:76px;border-radius:18px;object-fit:cover"><div><div class="muted" style="font-size:19px">${c[1]}</div><div style="font-size:30px;font-weight:700">${c[2]}</div><div style="font-size:22px;color:${c[4]};font-weight:600;margin-top:6px">${c[3]}</div></div></div>`).join("")}</div>`,
-    run: async () => { await sleep(1400); const g=Math.max(1500,(window.__need-2500)/7); for (const e of wb().querySelectorAll(".m")){ e.classList.add("popin"); await sleep(g);} }},
+   {tb:["/brickbuilder/brickbuilder_icon.png","Brick Builder"], say:"Brick Builder turns your pile of bricks into something to build, one brick at a time.", pill:"Brick Builder: ideas from your own bricks", html:`
+     <div style="display:flex;gap:40px;align-items:flex-end;height:100%"><div style="flex:1;display:flex;flex-direction:column-reverse;align-items:center;gap:4px;padding-bottom:20px">
+     ${[[360,"#ef4444"],[300,"#3b82f6"],[240,"#facc15"],[160,"#22c55e"],[80,"#a855f7"]].map(b=>`<div class="hide k" style="width:${b[0]}px;height:62px;border-radius:10px;background:${b[1]};box-shadow:inset 0 -8px 0 rgba(0,0,0,.18)"></div>`).join("")}</div>
+     <div style="flex:1;align-self:center"><div class="h" style="margin-top:0">Rocket · Step by step</div><div><span class="chip hide">🧱 Uses your bricks</span><span class="chip hide">📷 Count with a photo</span><span class="chip hide">🚗 Wheels & slopes</span></div></div></div>`,
+    run: async () => { await sleep(300); await popAll(".k",420); await popAll(".chip",350); }},
+   {tb:["/pettranslator/pettranslator_icon.png","Pet Translator"], say:"Pet Translator reads your dog or cat's body language from one photo.", pill:"Pet Translator: what is my pet saying?", html:`
+     <div style="display:flex;gap:40px;align-items:center;height:100%"><div style="flex:1;text-align:center;font-size:180px">🐶</div>
+     <div style="flex:1"><div class="h" style="margin-top:0">Mood: Excited 🎾</div><div><span class="chip hide">👂 Ears up: curious</span><span class="chip hide">🐕 Tail wag: happy</span><span class="chip hide">💬 "Throw the ball!"</span></div></div></div>`,
+    run: async () => { await sleep(400); await popAll(".chip",420); }},
+   {tb:["/snapkit/snapkit_icon.png","Snap Kit"], say:"And Snap Kit packs eight little tools in one app: count coins, map your room, turn a doodle into a story, and get a reminder to drink water.", pill:"Snap Kit: eight snap-a-photo tools in one", html:`
+     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px">
+     ${[["🪙","Coin Counter"],["📐","Map My Room"],["🖍️","Doodle to Story"],["⚖️","Game Referee"],["🚗","Dash Light"],["✂️","Sticker Maker"],["🎁","Gift Finder"],["💧","Water Reminder"]].map(t=>`<div class="card hide sk" style="text-align:center;padding:26px 10px;box-shadow:inset 0 0 0 2px #10b98155"><div style="font-size:72px">${t[0]}</div><div style="font-size:26px;font-weight:700;margin-top:8px">${t[1]}</div></div>`).join("")}</div>`,
+    run: async () => { await sleep(300); await popAll(".sk",260); }},
+   {tb:["/quizlooop_icon.png","QuizLooop"], say:"And QuizLooop turns any topic into a live quiz game. Friends join with a code, and race, fight a boss, or defend their tower by answering questions.", pill:"QuizLooop: a live quiz game from any topic", html:`
+     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><div class="h" style="margin:0">🏎️ Racing · Solar System quiz</div><span class="chip" style="margin:0;background:#ffd23f;color:#111">Code 4827316</span></div>
+     <div style="border-radius:18px;overflow:hidden;background:#2e7d32;padding:10px 14px">${[["Ava","🏎️",0.92],["Liam","🚙",0.7],["Sofia","🚓",0.55],["Noah","🚕",0.38]].map((r,i)=>`<div style="position:relative;height:74px;background:#424242;border-bottom:3px dashed #fff"><span style="position:absolute;left:12px;top:4px;font-size:18px;font-weight:700;opacity:.85">${r[0]}</span><span class="car" data-x="${r[2]}" style="position:absolute;bottom:4px;left:10px;font-size:46px;transform:scaleX(-1);transition:left 2.2s cubic-bezier(.2,.8,.3,1)">${r[1]}</span><span style="position:absolute;right:10px;top:16px;font-size:38px">🏁</span></div>`).join("")}</div>`,
+    run: async () => { await sleep(300); for (const c of wb().querySelectorAll(".car")) c.style.left = "calc(" + (c.dataset.x*86) + "% + 10px)"; await sleep(2400); }},
+   {tb:["/yathinapps_hero.jpg","Yathin Looops"], say:"Now, one place, one day. In the morning, What to Wear picks the outfit. In class, the teacher keeps everyone on track. At home, Magic Cursor helps with homework, and Screen Read copies notes from a screenshot. The plant by the window gets a check up. And dinner comes from what's already in the fridge. Then it's play time with Finko, a rocket from Brick Builder, the dog says thanks through Pet Translator, and Snap Kit says, time for water.", pill:"One home, one day", html:`
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;height:100%">
+     ${[["/whattowear/whattowear_icon_sq.png","7:30 AM · Front door","What to Wear","Jacket + umbrella ☔","#60a5fa"],["/classview/classview_icon.png","9:00 AM · Class","ClassView","All 24 students on task ✓","#2dd4bf"],["/magiccursor/logo.png","4:00 PM · Homework","Magic Cursor","Q3 solved: x = 4 ✨","#a78bfa"],["/screenread/screenread_icon_sq.png","5:00 PM · Study","Screen Read","Test notes copied 📋","#facc15"],["/plantdoc/plantdoc_icon.png","6:00 PM · Windowsill","Plant Doc","Sunny the pothos: 86 / 100 🌿","#4ade80"],["/fridgechef/fridgechef_icon.png","7:00 PM · Kitchen","Fridge Chef","Tonight: Veggie Fried Rice 🍚","#fb923c"],["/finko/finko_icon.png","8:00 PM · Play time","Virtual Finko","Pizza shift done: +$30 🍕","#38bdf8"],["/brickbuilder/brickbuilder_icon.png","8:30 PM · Living room","Brick Builder","Rocket built: 42 bricks 🚀","#f87171"],["/pettranslator/pettranslator_icon.png","9:00 PM · Backyard","Pet Translator","Max is happy: tail wag 🐶","#ff4f8b"],["/snapkit/snapkit_icon.png","9:30 PM · Bedtime","Snap Kit","Water goal: 8 / 8 glasses 💧","#10b981"]].map(c=>`<div class="card hide m" style="display:flex;gap:14px;align-items:center;padding:7px 16px;box-shadow:inset 0 0 0 2px ${c[4]}55">
+       <img src="${c[0]}" style="width:50px;height:50px;border-radius:18px;object-fit:cover"><div><div class="muted" style="font-size:19px">${c[1]}</div><div style="font-size:25px;font-weight:700">${c[2]}</div><div style="font-size:20px;color:${c[4]};font-weight:600;margin-top:2px">${c[3]}</div></div></div>`).join("")}</div>`,
+    run: async () => { await sleep(1400); const g=Math.max(1500,(window.__need-2500)/10); for (const e of wb().querySelectorAll(".m")){ e.classList.add("popin"); await sleep(g);} }},
    {end:true, say:"Yathin Loops. Free apps, all in one place."}
+  ]},
+ quizlooop: { bg:"linear-gradient(135deg,#46178f 0%,#7b3fe4 45%,#e21b3c 80%,#ffa602 100%)", btn:"linear-gradient(90deg,#7b3fe4,#e21b3c)",
+  voice:"en-US-JennyNeural", rate:"+0%",
+  icon:"/quizlooop_icon.png", title:"QuizLooop", tag:"Any topic. A live quiz game.",
+  chips:["100% free","11 game modes","Solo or with friends"], foot:"yathinapps.github.io/yathin_apps/quizlooop",
+  scenes:[
+   {hook:["Any topic.","Any class.","Game on."], strike:false, say:"Any topic. Any class. Game on."},
+   {say:"Type a topic, and Gemini writes the whole quiz for you.", pill:"Gemini writes the quiz", html:`
+     <div class="h">Make a game</div><div class="card" style="font-size:34px;font-weight:600;padding:26px 30px"><span id="tp"></span><span style="opacity:.6">|</span></div>
+     <div style="margin:26px 0"><span class="btn" id="mk">Make my game ✨</span></div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">${["Which planet is the biggest?","What is the closest star to Earth?","How many moons does Mars have?","Which planet has rings you can see?"].map(x=>`<div class="card hide qq" style="font-size:24px">❓ ${x}</div>`).join("")}</div>`,
+    run: async () => { const t="The solar system"; for (let i=1;i<=t.length;i++){ q("#tp").textContent=t.slice(0,i); await sleep(55);} await cursorTo("#mk",700); await click("#mk"); hideCursor(); await sleep(300); await popAll(".qq",300); }},
+   {say:"Friends join with a seven digit code, and pick from eleven game modes.", pill:"Join with a code · 11 modes", html:`
+     <div style="display:flex;gap:30px"><div class="card" style="width:360px;text-align:center"><div class="muted" style="font-size:22px">Game code</div><div style="font-size:72px;font-weight:800;letter-spacing:4px;color:#ffd23f">4827316</div>
+     <div style="margin-top:10px">${["Ava","Liam","Sofia","Noah","Mia","Zoe"].map(n=>`<span class="chip hide pl" style="font-size:20px">${n}</span>`).join("")}</div></div>
+     <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">${[["⚡","Classic"],["❤️","Survival"],["🤝","Team Battle"],["⏱️","Lightning"],["🎲","Wager"],["💰","Gold Rush"],["🏰","Tower Climb"],["🏎️","Racing"],["🎣","Fishing"],["🐉","Boss Battle"],["🏹","Tower Defense"]].map(m=>`<div class="card hide md" style="padding:14px 16px;font-size:22px;font-weight:700">${m[0]} ${m[1]}</div>`).join("")}</div></div>`,
+    run: async () => { await sleep(200); popAll(".pl",250); await popAll(".md",120); await sleep(400); }},
+   {say:"In Racing, every right answer drives your car closer to the finish line.", pill:"Racing: answer to drive", html:`
+     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><div class="h" style="margin:0">🏎️ Racing · Solar System quiz</div><span class="chip" style="margin:0;background:#ffd23f;color:#111">Code 4827316</span></div>
+     <div style="border-radius:18px;overflow:hidden;background:#2e7d32;padding:10px 14px">${[["Ava","🏎️",0.92],["Liam","🚙",0.7],["Sofia","🚓",0.55],["Noah","🚕",0.38]].map((r,i)=>`<div style="position:relative;height:74px;background:#424242;border-bottom:3px dashed #fff"><span style="position:absolute;left:12px;top:4px;font-size:18px;font-weight:700;opacity:.85">${r[0]}</span><span class="car" data-x="${r[2]}" style="position:absolute;bottom:4px;left:10px;font-size:46px;transform:scaleX(-1);transition:left 2.2s cubic-bezier(.2,.8,.3,1)">${r[1]}</span><span style="position:absolute;right:10px;top:16px;font-size:38px">🏁</span></div>`).join("")}</div>`,
+    run: async () => { await sleep(300); for (const c of wb().querySelectorAll(".car")) c.style.left = "calc(" + (c.dataset.x*86) + "% + 10px)"; await sleep(2400); }},
+   {say:"In Boss Battle, the whole class teams up to take down a giant dragon.", pill:"Boss Battle: team up", html:`
+     <div style="text-align:center;padding-top:10px"><div id="dr" style="font-size:200px;line-height:1">🐉</div>
+     <div style="font-size:30px;font-weight:700;margin:10px 0" id="hpT">Boss HP 540 / 540</div>
+     <div style="height:30px;background:#000;border-radius:99px;overflow:hidden;width:80%;margin:0 auto"><i id="hp" style="display:block;height:100%;width:100%;background:linear-gradient(90deg,#76ff03,#ffeb3b);transition:width .5s"></i></div>
+     <div id="hits" style="margin-top:20px;font-size:30px;font-weight:800;color:#ffd23f;min-height:40px"></div></div>`,
+    run: async () => { let hp=540; for (const [n,d] of [["Ava",24],["Liam",12],["Mia",48],["Noah",18],["Zoe",30]]){ hp-=d; q("#dr").animate([{transform:"translateX(-14px) rotate(-5deg)",filter:"brightness(2)"},{transform:"none"}],{duration:350}); q("#hp").style.width=(100*hp/540)+"%"; q("#hpT").textContent="Boss HP "+hp+" / 540"; q("#hits").textContent="💥 "+n+" hit for "+d+(d>40?" · CRITICAL!":""); await sleep(650);} }},
+   {say:"In Tower Defense, answers earn coins to buy defenders, from archers to dragons.", pill:"Tower Defense: answer, build, defend", html:`
+     <div style="display:flex;gap:26px"><div style="flex:1;height:520px;border-radius:18px;background:#2e7d32;position:relative;overflow:hidden">
+      <div style="position:absolute;left:0;right:0;top:120px;height:60px;background:#c8a165"></div><div style="position:absolute;left:60%;top:120px;width:60px;height:260px;background:#c8a165"></div><div style="position:absolute;left:60%;right:0;top:320px;height:60px;background:#c8a165"></div>
+      <span style="position:absolute;right:16px;top:322px;font-size:50px">🏰</span>
+      ${[[18,40,"🏹"],[38,210,"💣"],[48,40,"❄️"],[75,220,"🧙"],[30,400,"🐉"]].map(t=>`<span class="hide tw" style="position:absolute;left:${t[0]}%;top:${t[1]}px;font-size:50px">${t[2]}</span>`).join("")}
+      <span class="en" style="position:absolute;left:-40px;top:130px;font-size:36px;transition:left 3s linear">👾</span></div>
+     <div class="card" style="width:330px"><div style="font-size:26px;font-weight:800">🛒 Defender Shop</div>${[["🏹","Archer",40],["💣","Cannon",90],["❄️","Frost",70],["🥷","Ninja",120],["🧙","Wizard",160],["🐉","Dragon",300]].map(d=>`<div style="display:flex;justify-content:space-between;font-size:24px;margin-top:14px"><span>${d[0]} ${d[1]}</span><b style="color:#ffd23f">🪙 ${d[2]}</b></div>`).join("")}</div></div>`,
+    run: async () => { await sleep(200); popAll(".tw",380); await sleep(300); q(".en").style.left="55%"; await sleep(1900); }},
+   {say:"Play with friends, or play solo, with music Gemini makes for your game.", pill:"Solo play · AI music", html:`
+     <div style="display:flex;gap:30px;justify-content:center;align-items:center;height:100%"><div class="card hide s1" style="width:420px;text-align:center;padding:40px"><div style="font-size:90px">🎮</div><div style="font-size:34px;font-weight:800">Play solo</div><div class="muted" style="font-size:22px">No second device needed</div></div>
+     <div class="card hide s1" style="width:420px;text-align:center;padding:40px"><div style="font-size:90px">🎵</div><div style="font-size:34px;font-weight:800">AI music</div><div class="muted" style="font-size:22px">Describe a vibe, Gemini makes it</div></div></div>`,
+    run: async () => { await sleep(300); await popAll(".s1",500); }},
+   {end:true, say:"QuizLooop. Free on Yathin Looops."}
   ]},
  whattowear: { bg:"linear-gradient(135deg,#48b1fb 0%,#6667b5 50%,#f02c38 100%)", btn:"linear-gradient(90deg,#3b9cf0,#7c6fd0,#f02c38)",
   icon:"/whattowear/whattowear_icon_sq.png", title:"What to Wear", tag:"Check the weather, get your outfit.",

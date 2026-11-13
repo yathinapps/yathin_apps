@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Snap Kit",
   "short_name": "Snap Kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "8 free tools: coin counter, room planner, doodle stories, game referee, dash lights, stickers, gift ideas and water reminders. By Yathin Looops.",
   "action": {
     "default_title": "Open Snap Kit",

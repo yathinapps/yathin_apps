@@ -6,4 +6,4 @@ Free apps by **Yathin Pedamallu**, powered by Google Gemini.
 - **ClassView** (Chromebook classroom monitor demo): `classview/`
 - **Fridge Chef** (fridge photo to recipes): `fridgechef/`
 
-Live at https://yathinapps.github.io/yathin_apps/
+Live at https://yathinlooops.pages.dev/

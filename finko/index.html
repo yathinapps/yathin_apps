@@ -129,21 +129,21 @@
     </style>
   <script>/* Gemini thinking-level fallback: if the model rejects a thinking level, retry with low, then with none */(function(){var f=window.fetch;if(!f||f.__ya)return;function nf(u,o){var url=String(u&&u.url||u);if(url.indexOf("generativelanguage.googleapis.com")<0||!o||typeof o.body!=="string"||o.body.indexOf("thinkingConfig")<0)return f.apply(this,arguments);var self=this;return f.call(self,u,o).then(function(r){if(r.status!==400)return r;return r.clone().text().then(function(t){if(!/thinking/i.test(t))return r;var b=JSON.parse(o.body),g=b.generationConfig||{};var lv=g.thinkingConfig&&g.thinkingConfig.thinkingLevel;if(lv&&lv!=="low"){g.thinkingConfig={thinkingLevel:"low"};}else{delete g.thinkingConfig;}var o2=Object.assign({},o,{body:JSON.stringify(b)});return nf.call(self,u,o2);});});}nf.__ya=1;window.fetch=nf;})();</script><meta property="og:title" content="Virtual Finko · Free app">
 <meta property="og:description" content="A robot pet you can play with. Free for Windows and the web.">
-<meta property="og:image" content="https://yathinapps.github.io/yathin_apps/promo/virtual-finko-free-app.jpg">
+<meta property="og:image" content="https://yathinlooops.pages.dev/promo/virtual-finko-free-app.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Virtual Finko: A robot pet you can play with. Free for Windows and the web.">
-<meta property="og:url" content="https://yathinapps.github.io/yathin_apps/finko/">
+<meta property="og:url" content="https://yathinlooops.pages.dev/finko/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://yathinapps.github.io/yathin_apps/promo/virtual-finko-free-app.jpg">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Virtual Finko", "description": "A robot pet you can play with. Free for Windows and the web.", "url": "https://yathinapps.github.io/yathin_apps/finko/", "image": "https://yathinapps.github.io/yathin_apps/promo/virtual-finko-free-app.jpg", "screenshot": "https://yathinapps.github.io/yathin_apps/promo/virtual-finko-free-app.jpg", "applicationCategory": "GameApplication", "operatingSystem": "Windows, Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Yathin Pedamallu"}, "publisher": {"@type": "Organization", "name": "Yathin Looops", "url": "https://yathinapps.github.io/yathin_apps/"}}</script>
+<meta name="twitter:image" content="https://yathinlooops.pages.dev/promo/virtual-finko-free-app.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Virtual Finko", "description": "A robot pet you can play with. Free for Windows and the web.", "url": "https://yathinlooops.pages.dev/finko/", "image": "https://yathinlooops.pages.dev/promo/virtual-finko-free-app.jpg", "screenshot": "https://yathinlooops.pages.dev/promo/virtual-finko-free-app.jpg", "applicationCategory": "GameApplication", "operatingSystem": "Windows, Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Yathin Pedamallu"}, "publisher": {"@type": "Organization", "name": "Yathin Looops", "url": "https://yathinlooops.pages.dev/"}}</script>
 </head>
   <body>
     <div class="page" id="top">
       <nav class="x-pill glass" aria-label="Site">
         <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="6" width="28" height="21" rx="7" fill="#e6e8ec" /><rect x="5" y="9" width="22" height="15" rx="5" fill="rgb(12,16,40)" /><circle cx="11.5" cy="16.5" r="3.6" fill="rgb(60,190,255)" /><circle cx="20.5" cy="16.5" r="3.6" fill="rgb(60,190,255)" /></svg>
-        <a href="https://yathinapps.github.io/yathin_apps/" target="_blank" rel="noopener">← Yathin Looops</a>
+        <a href="https://yathinlooops.pages.dev/" target="_blank" rel="noopener">← Yathin Looops</a>
         <a href="#app" data-go="app">Play</a>
         <a href="#chat" data-go="msg">Chat</a>
         <a href="#video">Video</a>
@@ -577,7 +577,7 @@
                 fx.insertAdjacentHTML("beforeend", `<g id="fridge">${FRIDGE}<g id="shelf">${F.map((f, i) => `<text x="${1145 + (i % 3) * 70}" y="${i < 3 ? 240 : 290}" font-size="44" text-anchor="middle">${f}</text>${LBL[f] ? `<text x="${1145 + (i % 3) * 70}" y="${i < 3 ? 254 : 304}" font-size="13" fill="#3a3a3c" text-anchor="middle">${LBL[f]}</text>` : ""}`).join("")}</g></g>`);
                 later(j, 1900, () => { $("#shelf")?.remove(); carry(F); say("Got the food!", 1500); });
               }],
-              [phDur(3500), null, () => { $("#fridge")?.remove(); openPhone("https://yathinapps.github.io/yathin_apps/fridgechef/", "Fridge Chef", 3500, `${DISH} ${rec}`); }],
+              [phDur(3500), null, () => { $("#fridge")?.remove(); openPhone("https://yathinlooops.pages.dev/fridgechef/", "Fridge Chef", 3500, `${DISH} ${rec}`); }],
               [3500, "Carrying it to the stove…", () => { banner(`${DISH} Fridge Chef: found ${F.map(nm).join("")} → ${rec}`); say(`Fridge Chef says: ${rec}! ${DISH}`, 2400); goStep(580, 0.12); }],
               [3500, "Chop, chop, chop!", () => {
                 carry();
@@ -615,7 +615,7 @@
             fx.insertAdjacentHTML("beforeend", P.map((p, i) => { const x = 520 + i * 150; return `<g><text x="${x}" y="596" font-size="${Math.round(52 * p.h)}" text-anchor="middle">${p.t}</text><path d="M${x - 34} 600h68l-10 54h-48Z" fill="#c8754a" stroke="#9a5434" stroke-width="3" stroke-linejoin="round" /><rect x="${x - 38}" y="594" width="76" height="12" rx="4" fill="#b2653d" /><text x="${x}" y="682" font-size="20" fill="#3a3a3c" text-anchor="middle">${p.n}</text></g>`; }).join(""));
             const W = P.map((p, i) => [p, i]).filter(([p]) => !thirsty.length || p.s < 60);
             return [
-              [phDur(3500), null, () => openPhone("https://yathinapps.github.io/yathin_apps/plantdoc/", "Plant Doc", 3500)],
+              [phDur(3500), null, () => openPhone("https://yathinlooops.pages.dev/plantdoc/", "Plant Doc", 3500)],
               ...P.map((p, i) => [3200, `Checking ${p.n}…`, () => {
                 banner(`🌿 Plant Doc: ${p.n} ${p.s} · ${tip(p.s)}`);
                 $("#lens")?.remove();

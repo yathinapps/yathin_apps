@@ -520,7 +520,7 @@ function openRoom(tries){
 }
 
 function enterLobby(){
-  var base=/^https?:$/.test(location.protocol)&&location.origin!=="null"?location.origin+location.pathname:"https://yathinapps.github.io/yathin_apps/quizlooop/";var link=base+"?code="+H.code;
+  var base=/^https?:$/.test(location.protocol)&&location.origin!=="null"?location.origin+location.pathname:"https://yathinlooops.pages.dev/quizlooop/";var link=base+"?code="+H.code;
   $("lCode").textContent=H.code;$("lLink").value=link;$("lTitle").textContent=H.title;
   var m=MODES[H.mode];
   $("lInfo").textContent=m.e+" "+m.name+" · "+H.qs.length+" questions"+(m.paced==="self"?" · "+fmtTime(H.gameSecs)+" game":" · "+H.qTime+"s each")+(H.music?" · 🎵 "+H.music.name:"");

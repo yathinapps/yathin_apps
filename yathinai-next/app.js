@@ -145,6 +145,14 @@ const PLANS = () => `<section class="plans" id="plans"><h2>Choose Your Plan</h2>
   <button class="btn" disabled style="opacity:.6;width:100%;margin-top:10px">Coming Soon</button></div></div></section>`;
 const EX = { chat: ["Tell me a fun fact about space", "What's new in AI this week?", "Help me plan a study schedule"], code: ["Make a to-do app with local storage", "Python fizzbuzz with tests", "Make a snake game"], "3d": ["A small rocket", "A phone stand", "A castle with 4 towers"], physics: ["Simulate Mars gravity", "Build a solar system", "A ball falls from 20 m. How long to land?"], learn: ["How do volcanoes work?", "Explain photosynthesis", "What caused World War I?"], games: ["Make a quiz about the planets", "A matching game for French animal words"], shop: ["Best wireless earbuds under $100", "Laptop for a student under $700", "Kid-friendly tablet under $200"] };
 const PH = { chat: "Message Yathin AI", code: "Describe an app, game or Python script", "3d": "Describe something to build in 3D", physics: "Ask a physics question or say “Simulate Mars gravity”", learn: "What do you want to learn?", games: "Make a game about…", shop: "What are you shopping for? Add a budget", home: "Message Yathin AI" };
+
+/* info pill (What it does / Plans) */
+document.querySelectorAll(".pill [data-info]").forEach(b => b.onclick = () => {
+  const d = document.createElement("div"); d.id = "infoBox";
+  d.innerHTML = `<div><button class="x" aria-label="Close">✕</button>${b.dataset.info === "plans" ? PLANS() : HERO()}</div>`;
+  d.onclick = e => { if (e.target === d || e.target.classList.contains("x")) d.remove() };
+  document.body.appendChild(d);
+});
 let CL = null;
 function render() {
   const M = $("#main"); sim = null; ide = null; M.innerHTML = "";

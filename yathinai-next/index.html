@@ -28,14 +28,17 @@ header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px
 .brand img{width:34px;height:34px}
 nav.tabs{flex:1;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0}
 nav.tabs::-webkit-scrollbar{display:none}
-nav.tabs button{border:0;background:none;border-radius:999px;padding:0 14px;font-weight:600;color:var(--mut);white-space:nowrap}
+nav.tabs button{flex:0 0 auto;border:0;background:none;border-radius:999px;padding:0 14px;font-weight:600;color:var(--mut);white-space:nowrap}
 nav.tabs button.on{background:var(--grad);color:#fff}
-.pill{flex:0 1 auto;min-width:0;margin:0 auto;display:flex;align-items:center;gap:2px;background:#2c2c2e;border-radius:999px;padding:5px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
-.pill .back{color:#fff;font-weight:600;white-space:nowrap;padding:0 14px;text-decoration:none;display:flex;align-items:center;min-height:44px;border-radius:999px}
-.pill .back:hover{background:rgba(255,255,255,.1)}
-.pill nav.tabs button{color:#e5e5ea;flex:0 0 auto}
-.pill nav.tabs button.on{color:#fff}
-@media (max-width:860px){.pill .back{padding:0 10px;font-size:0}.pill .back::before{content:"←";font-size:18px}}
+header{flex-wrap:wrap}.pillrow{order:-1;width:100%;display:flex;justify-content:center;padding-top:4px}
+.pill{flex:0 0 auto;display:flex;align-items:center;gap:2px;background:#2c2c2e;border-radius:999px;padding:5px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.pill .back,.pill .pl{color:#fff;font:600 15px inherit;font-family:inherit;white-space:nowrap;padding:0 14px;text-decoration:none;display:flex;align-items:center;min-height:40px;border-radius:999px;border:0;background:none;cursor:pointer}
+.pill .pl{color:#d1d1d6}
+.pill .back:hover,.pill .pl:hover{background:rgba(255,255,255,.12);color:#fff}
+#infoBox{position:fixed;inset:0;z-index:70;background:rgba(20,10,40,.45);display:grid;place-items:center;padding:16px}
+#infoBox>div{background:#fff;border-radius:22px;max-width:900px;width:100%;max-height:88vh;overflow:auto;padding:10px 22px 22px;position:relative}
+#infoBox .x{position:sticky;top:0;float:right;border:0;background:#f3f4f6;border-radius:999px;width:40px;height:40px;font-size:18px;cursor:pointer}
+@media (max-width:860px){.pill .back{font-size:0;padding:0 10px}.pill .back::before{content:"←";font-size:18px}.pill .pl{padding:0 10px;font-size:14px}}
 nav.tabs button.lock{opacity:.6}
 nav.tabs button.lock::after{content:" 🔒";font-size:12px}
 .me{border:0;width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;font-weight:700;flex:none}
@@ -162,7 +165,8 @@ footer{text-align:center;color:var(--mut);font-size:13px;margin:30px 0}
 <body>
 <header>
  <button class="brand" id="brand" aria-label="Yathin AI home"><img id="hdrLogo" src="yathinai_logo.svg" alt=""><span>Yathin AI</span></button>
- <div class="pill"><a class="back" href="../" title="Back to Yathin Looops">← Yathin Looops</a><nav class="tabs" id="tabs" aria-label="Modes"></nav></div>
+ <div class="pillrow"><div class="pill"><a class="back" href="../" title="Back to Yathin Looops">← Yathin Looops</a><button class="pl" data-info="about">What it does</button><button class="pl" data-info="plans">Plans</button><a class="pl" href="privacy.html">Privacy</a></div></div>
+ <nav class="tabs" id="tabs" aria-label="Modes"></nav>
  <button class="me" id="meBtn" aria-label="Account">?</button>
 </header>
 <button id="guestBar" class="hidden" type="button"><span>Log in to unlock Code, 3D, Learn, Physics, Games and more, plus custom Home panels.</span></button>
@@ -182,6 +186,6 @@ footer{text-align:center;color:var(--mut);font-size:13px;margin:30px 0}
 <div id="modalRoot"></div>
 <script src="fixes.js?v=2"></script>
 <script src="build3d.js?v=2"></script>
-<script type="module" src="app.js?v=5"></script>
+<script type="module" src="app.js?v=7"></script>
 </body>
 </html>

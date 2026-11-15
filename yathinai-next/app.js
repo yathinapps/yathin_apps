@@ -140,7 +140,7 @@ const PLANS = () => `<section class="plans" id="plans"><h2>Choose Your Plan</h2>
   <p style="margin:10px 0 4px">Everything in Free, with a <b style="color:#d99a00;font-weight:800">better</b>, more <b style="color:#d99a00;font-weight:800">advanced</b> AI.</p>
   <div class="prices" style="display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 2px">
    <div><b style="color:#d99a00;font-weight:800;font-size:26px">$15.99</b> <span>per month</span><br><s style="color:#9ca3af">$35.99</s></div>
-   <div><b style="color:#d99a00;font-weight:800;font-size:26px">$55.99</b> <span>per year</span><br><s style="color:#9ca3af">$300.99</s></div></div><ul>
+   <div><b style="color:#d99a00;font-weight:800;font-size:26px">$75.99</b> <span>per year</span><br><s style="color:#9ca3af">$300.99</s></div></div><ul>
   <li>Instant guest access plus one-click login to unlock 3D, Physics, Code, and Chat with <b style="color:#d99a00;font-weight:800">better</b> custom Home panels</li>
   <li><b style="color:#d99a00;font-weight:800">Advanced</b> online AI mode on by default with offline browser fallback</li>
   <li>Access to <b style="color:#d99a00;font-weight:800">better</b> Chat, Code, 3D, Physics, Learn, and Games once signed in</li>

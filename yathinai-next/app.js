@@ -137,6 +137,10 @@ const PLANS = () => `<section class="plans" id="plans"><h2>Choose Your Plan</h2>
   <li>Built-in Kids Mode for Learning with parent PIN protection</li>
   <li>Generous daily use: 20 h of Chat and 14 h of Code · <span class="reset">Limits reset 12 hours after you run out</span></li></ul></div>
  <div class="plan plus"><img src="yathinai_plus_logo.svg" alt=""><h3>Yathin AI+</h3><span class="tag">Coming Soon</span><ul>
+  <li>Instant guest access plus one-click login to unlock 3D, Physics, Code, and Chat with custom Home panels</li>
+  <li>Smart online AI mode on by default with offline browser fallback</li>
+  <li>Access to Chat, Code, 3D, Physics, Learn, and Games once signed in</li>
+  <li>Built-in Kids Mode for Learning with parent PIN protection</li>
   <li>5x Larger AI Brain</li>
   <li>Huge Monthly Limits: <b style="color:#d99a00;font-weight:800">140</b> hours of Chat and <b style="color:#d99a00;font-weight:800">130</b> hours of Code every month with no daily caps · <span class="reset">Limits reset 2 days after you run out</span></li>
   <li>Prompt-to-Scene 3D &amp; Physics Builder</li>

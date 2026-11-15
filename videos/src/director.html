@@ -490,6 +490,29 @@ const SCRIPTS = {
    {end:true, say:"ClassView. Free on Yathin Apps."}
   ]}
 };
+{const Y=SCRIPTS.yathinai.scenes;
+SCRIPTS["yathinai-viral"]={...SCRIPTS.yathinai, tag:"Built by Yathin Pedamallu", chips:["100% free","No API key","Runs in your browser"], foot:"Yathin Looops  ·  yathinlooops.pages.dev/yathinai",
+ scenes:[
+  {hook:["Free AI.","No key.","No catch?!"], strike:false, say:"A free AI. No key. No credit card. So what's the catch?"},
+  {say:"If you're stuck on homework at ten at night, just ask.", pill:"Stuck at 10 PM? Just ask.", html:`
+     <div class="h">💬 10:04 PM</div>
+     <div class="card hide ya" style="margin-left:auto;width:66%;font-size:30px;background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff">Explain photosynthesis like I'm 10 🌱</div>
+     <div class="card hide ya" style="width:80%;font-size:28px;margin-top:22px;line-height:1.5">Plants are tiny chefs. They take sunlight, water, and air, and cook up their own sugar for energy. The leftover? Fresh oxygen for us. ☀️💧</div>`,
+   run: async () => { await sleep(300); await popAll(".ya",1000); await sleep(800); }},
+  {...Y[2], say:"Want a game? It writes the code, and runs it."},
+  {...Y[3], say:"Want a castle? It builds a 3D model you can print."},
+  {say:"And it runs right in your browser. Your chats stay on your device.", pill:"Runs in your browser. Chats stay yours.", html:`
+     <div style="text-align:center;padding-top:60px">${["✅ No API key","✅ No credit card","🔒 Chats stay on your device"].map(c=>`<div class="chip hide" style="font-size:36px;display:inline-block;margin:16px">${c}</div>`).join("")}</div>`,
+   run: async () => { await sleep(300); await popAll(".chip",600); await sleep(800); }},
+  {tb:["/looops_logo.png","Yathin Looops"], say:"The catch? There isn't one. It was built by Yathin Pedamallu, for Yathin Loops, where every app is free.", pill:"Built by Yathin Pedamallu", html:`
+     <div style="text-align:center;padding-top:30px"><img class="hide cr" src="/looops_logo.png" style="width:190px;height:190px;object-fit:contain;border-radius:40px;background:#fff;padding:10px">
+     <div class="hide cr" style="font-size:66px;font-weight:800;margin-top:20px">Yathin Looops</div>
+     <div class="hide cr muted" style="font-size:30px;margin-top:6px">Free apps, all in one place</div>
+     <div class="chip hide cr" style="font-size:34px;display:inline-block;margin-top:30px">👋 Built by Yathin Pedamallu</div></div>`,
+   run: async () => { await sleep(200); await popAll(".cr",700); await sleep(900); }},
+  {end:true, say:"Yathin AI, by Yathin Pedamallu. Try it free on Yathin Loops."}
+ ]};
+SCRIPTS["yathinai-viral-vertical"]={...SCRIPTS["yathinai-viral"], vertical:true, vk:true, bg:"linear-gradient(180deg,#ec4899 0%,#a855f7 50%,#3b82f6 100%)"};}
 for (const [k, g] of [["yathinai","linear-gradient(180deg,#ec4899 0%,#a855f7 50%,#3b82f6 100%)"],["whattowear","linear-gradient(180deg,#48b1fb 0%,#6667b5 50%,#f02c38 100%)"],["screenread","linear-gradient(180deg,#f2c500 0%,#6fa8a0 50%,#0278fe 100%)"]]) SCRIPTS[k + "-vertical"] = {...SCRIPTS[k], vertical:true, vk:true, bg:g};
 const app = new URLSearchParams(location.search).get("app");
 const S = SCRIPTS[app];

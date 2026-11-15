@@ -68,6 +68,10 @@ def run(app):
     n = len(clips); T = total / 1000.0
     music = (f"aevalsrc='0.5*sin(2*PI*130.81*t)+0.35*sin(2*PI*196*t)+0.3*sin(2*PI*246.94*t)+0.25*sin(2*PI*329.63*t)':s=44100:d={T:.2f},"
              f"tremolo=f=0.25:d=0.5,lowpass=f=900,volume=0.05,afade=t=in:d=1.5,afade=t=out:st={max(0,T-2):.2f}:d=2[m]")
+    if sc.get("music"):
+        inputs += ["-stream_loop", "-1", "-i", f"videos/src/music/{sc['music']}"]
+        music = (f"[{n}:a]aresample=44100,atrim=0:{T:.2f},volume={sc.get('musicVol', 0.22)},"
+                 f"afade=t=in:d=0.4,afade=t=out:st={max(0,T-2):.2f}:d=2[m]")
     filt.append(music)
     mix = "".join(f"[a{i}]" for i in range(n)) + f"[m]amix=inputs={n+1}:normalize=0:duration=longest,loudnorm=I=-16:TP=-1.5:LRA=11[aout]"
     filt.append(mix)

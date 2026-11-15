@@ -50,7 +50,14 @@ def run(app):
         lines = sc["lines"]
         clips = []
         rap = sc.get("rap")
-        if rap:  # rap track replaces narration: one bar per line on a fixed grid
+        if sc.get("instrumental"):  # no narration: scenes sit on the beat grid, music carries it
+            BAR = 240.0 / sc.get("bpm", 118); bl = sc.get("sceneBars", [2] * len(sc["scenes"]))
+            durs = []
+            for i, s0 in enumerate(sc["scenes"]):
+                L = bl[i] * BAR
+                if s0.get("hook"): L -= 1.35
+                durs.append(max(1.0, L - 0.5))
+        elif rap:  # rap track replaces narration: one bar per line on a fixed grid
             BAR = 240.0 / sc.get("bpm", 100); rv = rap.get("voice", "en-US-AndrewNeural"); rr = rap.get("rate", "+18%")
             rl, starts, k = [], [], rap.get("lead", 1)
             for sl in rap["scenes"]:
@@ -91,8 +98,8 @@ def run(app):
     ch = sc.get("chant")
     if ch:  # hype ad-libs: a shout on each scene change, a chant over the end card
         cv = ch.get("voice", "en-US-AndrewNeural"); shouts = ch.get("shouts", ["Hey!"]); k = n
-        cues = [(marks[i] / 1000.0 - 0.3, shouts[(i - 1) % len(shouts)], ch.get("gain", 0.55)) for i in range(1, len(marks))]
-        if ch.get("outro"): cues.append((marks[-1] / 1000.0 + durs[-1] + 0.45, ch["outro"], 1.0))
+        cues = [(marks[i] / 1000.0 - 0.3, shouts[(i - 1) % len(shouts)], ch.get("gain", 0.55)) for i in range(1, len(marks))] if shouts else []
+        if ch.get("outro"): cues.append((marks[-1] / 1000.0 + (0.9 if ch.get("outroAtStart") else durs[-1] + 0.45), ch["outro"], 1.0))
         for j, (at, txt, g) in enumerate(cues):
             if at < 0 or at > T - 0.4: continue
             pth = f"{work}/c{j}.mp3"; say(txt, pth, cv, ch.get("rate", "+20%"))

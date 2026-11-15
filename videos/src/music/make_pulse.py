@@ -33,15 +33,16 @@ def pad(ms,d):
     t=t_(d); s=sum(saw(m2f(m),t) for m in ms)/len(ms)
     return s*np.minimum(1,t*8)*np.minimum(1,(d-t)*8)*0.3
 def lead(m,d):
-    t=t_(d); s=saw(m2f(m),t,(0.995,1.005))+0.5*np.sign(np.sin(2*np.pi*m2f(m+12)*t))
-    return s*np.exp(-t*7)*0.07
+    t=t_(d); f=m2f(m); s=saw(f,t,(0.99,1.0,1.01))+0.6*np.sin(2*np.pi*2*f*t)+0.3*np.sin(2*np.pi*3*f*t)
+    return s*np.minimum(1,t*300)*np.exp(-t*5)*0.16
 # sidechain envelope: duck on every beat
 for k in range(int(bars*4)):
     i=int(k*beat*SR); L=int(beat*SR); tt=np.arange(L)/SR
     side[i:i+L]=np.minimum(side[i:i+L],1-0.85*np.exp(-tt*9)) if i+L<=N else side[i:i+L]
 # C minor: Cm  Ab  Eb  Bb
 chords=[[60,63,67],[56,60,63],[55,58,63],[58,62,65]]; roots=[36,32,39,34]
-hook=[72,72,75,72,70,67,70,72, 72,72,75,77,75,72,70,67]
+# earworm: 'da-da-DA, da-DA' call, then answer, 2 bars (None = rest)
+hook=[67,67,72,None,70,72,None,None, 67,67,75,None,74,72,None,None, 67,67,72,None,70,72,None,75, 74,None,72,None,70,None,72,None]
 DROP=8  # bars 0-7 build, 8+ full drop
 for bar in range(bars):
     b0=bar*4*beat; c=bar%4; build=bar<DROP; full=not build
@@ -56,8 +57,11 @@ for bar in range(bars):
         if full or bar>=4:  # offbeat rolling bass
             add(bass(roots[c],beat*0.42),tq+beat/2,duck=True)
             if full: add(bass(roots[c]+12,beat*0.2),tq+0.75*beat,g=0.5,duck=True)
-    if full and bar%2==0:
-        for k,m in enumerate(hook): add(lead(m,beat/2),b0+k*beat/2,pan=0.15)
+    if (full or bar>=4) and bar%4==0:  # 4-bar earworm; quieter + echoed in the build
+        for k,m in enumerate(hook):
+            if m is None: continue
+            g=1.0 if full else 0.5; tt=b0+k*beat/2
+            add(lead(m,beat*0.6),tt,pan=0.1,g=g); add(lead(m,beat*0.6),tt+0.75*beat,pan=-0.35,g=g*0.3)
     if bar in (DROP-2,DROP-1):  # snare roll + white noise riser into the drop
         n=16 if bar==DROP-1 else 8
         for k in range(n): add(clap(),b0+k*4*beat/n,g=0.4+0.6*k/n)

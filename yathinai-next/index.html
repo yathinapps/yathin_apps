@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Yathin AI — Instant, All-in-One AI for Chat, Code, 3D, Physics, Learning &amp; Games</title>
+<meta name="description" content="Yathin AI: instant, all-in-one AI for chat, code, 3D, physics, learning and games. No setup, no API keys. Part of Yathin Looops, created by Yathin Pedamallu.">
+<link rel="icon" type="image/svg+xml" href="yathinai_logo.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="yathinai_logo-192.png">
+<link rel="apple-touch-icon" href="yathinai_logo-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<style>
+:root{--v:#7c3aed;--v2:#a78bfa;--c:#06b6d4;--c2:#67e8f9;--ink:#1e1b2e;--mut:#6b6880;--card:rgba(255,255,255,.78);--line:rgba(124,58,237,.14);--grad:linear-gradient(135deg,#8b5cf6,#22d3ee)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:16px/1.5 Geist,system-ui,-apple-system,sans-serif;color:var(--ink);background:radial-gradient(circle at 12% 8%,#ede9fe 0,transparent 40%),radial-gradient(circle at 92% 12%,#cffafe 0,transparent 42%),radial-gradient(circle at 50% 100%,#f5f3ff 0,transparent 55%),#faf9ff;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+button,.tap{min-height:44px;min-width:44px}
+input,textarea,select{font:inherit;color:inherit}
+a{color:var(--v)}
+.hidden{display:none!important}
+/* header */
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(250,249,255,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:18px;white-space:nowrap;border:0;background:none;padding:0 4px}
+.brand img{width:34px;height:34px}
+nav.tabs{flex:1;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{border:0;background:none;border-radius:999px;padding:0 14px;font-weight:600;color:var(--mut);white-space:nowrap}
+nav.tabs button.on{background:var(--grad);color:#fff}
+nav.tabs button.lock{opacity:.6}
+nav.tabs button.lock::after{content:" 🔒";font-size:12px}
+.me{border:0;width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;font-weight:700;flex:none}
+.acct{position:fixed;right:12px;top:58px;width:min(320px,calc(100vw - 24px));max-height:calc(100vh - 72px);max-height:calc(100dvh - 72px);overflow-y:auto;overscroll-behavior:contain;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 50px rgba(60,30,120,.18);padding:14px;z-index:30}
+.acct h4{margin:2px 0 2px}.acct .sub{color:var(--mut);font-size:13px;margin-bottom:8px;overflow-wrap:anywhere}
+.acct button.row{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:#f6f4ff;border-radius:14px;padding:0 14px;margin-top:6px;text-align:left;font-weight:500}
+.sw{width:42px;height:24px;border-radius:999px;background:#d4d0e4;position:relative;flex:none}.sw::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}.sw.on{background:var(--v)}.sw.on::after{left:21px}
+/* guest banner */
+#guestBar{display:block;width:100%;border:0;background:linear-gradient(90deg,#ede9fe,#cffafe);color:#4c1d95;font-weight:600;padding:10px 16px;text-align:center}
+#guestBar span{text-decoration:underline}
+#kidBar{background:#fef3c7;color:#92400e;text-align:center;font-weight:600;font-size:14px;padding:6px}
+/* layout */
+main{max-width:1200px;margin:0 auto;padding:0 14px 120px;min-width:0}
+.view{min-width:0}
+.hero{text-align:center;padding:34px 8px 10px}
+.hero img{width:84px;height:84px}
+.hero h1{font-size:clamp(26px,4.4vw,44px);line-height:1.15;margin:10px auto 8px;max-width:900px;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .by{color:var(--mut);font-size:14px;margin:0 0 14px}
+.hero p.lead{max-width:760px;margin:0 auto;color:#3f3b52;font-size:16.5px}
+.ex{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 6px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:0 16px;font-weight:500}
+/* chat */
+.chatlist{display:flex;flex-direction:column;gap:14px;padding:16px 2px;overflow-x:hidden;min-width:0;max-width:100%}
+.msg{max-width:min(86%,100%);min-width:0;padding:12px 18px;border-radius:22px;line-height:1.55;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+.msg.u{align-self:flex-end;background:var(--grad);color:#fff;white-space:pre-wrap}
+.msg.a{align-self:flex-start;background:#fff;border:1px solid var(--line)}
+.msg *{max-width:100%;min-width:0}
+.msg pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;overflow:auto;max-height:340px;background:#1e1b2e;color:#f4f2ff;border-radius:14px;padding:12px;font:13px/1.45 'Geist Mono',monospace}
+.msg code{font-family:'Geist Mono',monospace;font-size:.92em;background:rgba(124,58,237,.08);border-radius:6px;padding:1px 5px}
+.msg pre code{background:none;padding:0}
+.msg table{border-collapse:collapse;display:block;overflow-x:auto;margin:8px 0;font-size:14px}
+.msg th,.msg td{border:1px solid #e4e0f5;padding:6px 9px;text-align:left;vertical-align:top}
+.msg th{background:#f5f3ff}
+.msg h3,.msg h4{margin:10px 0 4px}
+.msg ul,.msg ol{padding-left:20px;margin:6px 0}
+.lsum{font-weight:600}.lfull{margin-top:8px;max-height:240px;overflow:auto;font-size:14px;opacity:.95}
+.ltog{margin-top:8px;border:0;border-radius:999px;padding:0 14px;min-height:44px;background:rgba(255,255,255,.25);font-weight:600;font-size:13px}
+.msg.a .ltog{background:#f1edff}
+.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.btn{border:0;border-radius:999px;padding:0 16px;background:var(--grad);color:#fff;font-weight:600}
+.btn.ghost{background:#f1edff;color:#4c1d95}
+.st{align-self:flex-start;color:var(--mut);font-size:14px;padding:6px 12px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.st::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--v);margin-right:8px;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.att{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px 12px;margin:6px 0;font-size:14px}
+.att img{width:56px;height:56px;object-fit:cover;border-radius:10px}
+/* composer */
+.composer{position:fixed;left:0;right:0;bottom:0;z-index:15;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(250,249,255,.95) 30%)}
+.comp{max-width:900px;margin:0 auto;display:flex;align-items:flex-end;gap:8px;background:#fff;border:1px solid var(--line);border-radius:26px;padding:6px;box-shadow:0 10px 30px rgba(80,40,160,.10)}
+.comp textarea{flex:1;border:0;outline:0;resize:none;padding:11px 8px;max-height:160px;min-height:44px;background:none;min-width:0}
+.comp .ic{border:0;background:#f4f1ff;border-radius:50%;width:44px;height:44px;font-size:18px;flex:none}
+.comp .send{border:0;background:var(--grad);color:#fff;border-radius:50%;width:44px;height:44px;font-size:18px;flex:none}
+#attachRow{max-width:900px;margin:0 auto 6px}
+/* panels / cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.pnl h4{margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.pnl .x{border:0;background:none;font-size:20px;color:var(--mut)}
+.pnl .big{font-size:30px;font-weight:700}
+.pnl iframe{width:100%;height:190px;border:0;border-radius:12px;background:#fff}
+.pnl input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;margin-top:6px}
+.addp button{margin:4px 4px 0 0;border:1px solid var(--line);background:#fff;border-radius:999px;padding:0 12px}
+.lockline{color:#6d28d9;font-weight:600;font-size:14px;border:0;background:#f1edff;border-radius:12px;padding:0 12px;margin-top:8px;width:100%}
+/* code workspace */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px;align-items:start}
+.ide{position:sticky;top:70px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ide .bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ftree{display:flex;flex-wrap:wrap;gap:6px}
+.ftree button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:0 10px;font:13px 'Geist Mono',monospace}
+.ftree button.on{background:#ede9fe;border-color:var(--v2)}
+.ide pre.src{margin:0;max-height:260px;overflow:auto;background:#1e1b2e;color:#f4f2ff;border-radius:14px;padding:12px;font:12.5px/1.45 'Geist Mono',monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.ide iframe{width:100%;height:340px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.cons{background:#0f0d1a;color:#d6d3f0;border-radius:14px;padding:10px;font:12.5px/1.4 'Geist Mono',monospace;max-height:180px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.cons .e{color:#fda4af}.cons .ok{color:#86efac}.cons .w{color:#fde68a}
+.agent{font-size:13px;color:#4c1d95;background:#f1edff;border-radius:999px;padding:6px 12px;font-weight:600}
+.diff{font:12px/1.4 'Geist Mono',monospace;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;max-height:200px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.diff .add{background:#dcfce7;color:#14532d;display:block}.diff .del{background:#fee2e2;color:#7f1d1d;display:block}
+.tests{display:flex;flex-wrap:wrap;gap:6px}.tests span{font-size:13px;border-radius:999px;padding:4px 10px;background:#dcfce7;color:#14532d}.tests span.f{background:#fee2e2;color:#7f1d1d}
+/* 3d / physics */
+.stage{width:100%;height:440px;border-radius:20px;overflow:hidden;background:linear-gradient(#f5f3ff,#ecfeff);border:1px solid var(--line);position:relative}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:10px}
+.sliders label{display:block;font-size:14px;font-weight:600}.sliders label input{display:block}
+.sliders input[type=range]{width:100%;min-height:44px;accent-color:var(--v)}
+/* games */
+.qz .opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 14px;margin:6px 0}
+.qz .opt.right{background:#dcfce7;border-color:#22c55e}.qz .opt.wrong{background:#fee2e2;border-color:#ef4444}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.match button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:8px 10px;min-height:52px}
+.match button.sel{border-color:var(--v);background:#ede9fe}.match button.done{background:#dcfce7;border-color:#22c55e;opacity:.7}
+/* plans */
+.plans{margin:40px auto 10px;max-width:960px}
+.plans h2{text-align:center;font-size:30px;margin:0 0 16px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.plan{background:#fff;border:1px solid var(--line);border-radius:26px;padding:22px;position:relative}
+.plan img{width:64px;height:64px}
+.plan h3{margin:6px 0 2px;font-size:22px}
+.plan .tag{display:inline-block;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px;background:#ede9fe;color:#5b21b6}
+.plan.plus{border:2px solid #e9c46a;background:linear-gradient(160deg,#fff,#fffbeb)}
+.plan.plus .tag{background:#fef3c7;color:#92400e}
+.plan ul{padding-left:20px;margin:12px 0 0}.plan li{margin:6px 0}
+.plan .reset{color:#6d28d9;font-size:14px;font-weight:600}
+.plan.plus .reset{color:#a16207}
+/* lock card */
+.lockc{max-width:520px;margin:20px auto;text-align:center;background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px}
+.lockc .cd{font-size:26px;font-weight:700;margin:8px 0}
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(30,20,60,.35);display:grid;place-items:center;padding:14px}
+.box{width:min(440px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:26px;padding:22px;box-shadow:0 30px 70px rgba(60,30,120,.25)}
+.box h3{margin:0 0 4px;display:flex;align-items:center;gap:8px}.box h3 img{width:30px;height:30px}
+.box label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
+.box input[type=email],.box input[type=password],.box input[type=text],.box input[type=date],.box input[inputmode]{width:100%;min-height:46px;border:1px solid #ddd6fe;border-radius:14px;padding:0 14px;background:#faf9ff}
+.box .err{color:#be123c;font-size:14px;min-height:18px;margin-top:8px}
+.box .note{color:var(--mut);font-size:14px}
+.box .row2{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.box .row2>*{flex:1}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #ddd;background:#fff;border-radius:14px;position:relative;overflow:hidden;width:100%;margin-top:10px;font-weight:600}
+.box code{background:#f1edff;border-radius:6px;padding:2px 6px;font-family:'Geist Mono',monospace;font-size:13px;overflow-wrap:anywhere}
+footer{text-align:center;color:var(--mut);font-size:13px;margin:30px 0}
+@media (max-width:860px){.split{grid-template-columns:minmax(0,1fr)}.ide{position:static}.brand span{display:none}.stage{height:360px}}
+@media (max-width:520px){header{padding:6px 8px;gap:6px}.hero{padding-top:20px}.msg{max-width:94%}.plans h2{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+ <button class="brand" id="brand" aria-label="Yathin AI home"><img id="hdrLogo" src="yathinai_logo.svg" alt=""><span>Yathin AI</span></button>
+ <nav class="tabs" id="tabs" aria-label="Modes"></nav>
+ <button class="me" id="meBtn" aria-label="Account">?</button>
+</header>
+<button id="guestBar" class="hidden" type="button"><span>Log in to unlock Code, 3D, Learn, Physics, Games and more, plus custom Home panels.</span></button>
+<div id="kidBar" class="hidden">🧒 Kids Mode for Learning is on</div>
+<div class="acct hidden" id="acct" role="dialog" aria-label="Account menu"></div>
+<main id="main"></main>
+<div class="composer" id="composer">
+ <div id="attachRow"></div>
+ <div class="comp">
+  <button class="ic" id="upBtn" title="Upload an image or PDF" aria-label="Upload an image or PDF">📷</button>
+  <input type="file" id="upFile" accept="image/*,application/pdf" class="hidden">
+  <textarea id="q" rows="1" placeholder="Message Yathin AI" aria-label="Message"></textarea>
+  <button class="ic hidden" id="stopBtn" title="Stop" aria-label="Stop">■</button>
+  <button class="send" id="sendBtn" aria-label="Send">↑</button>
+ </div>
+</div>
+<div id="modalRoot"></div>
+<script src="fixes.js?v=2"></script>
+<script src="build3d.js?v=2"></script>
+<script type="module" src="app.js?v=1"></script>
+</body>
+</html>

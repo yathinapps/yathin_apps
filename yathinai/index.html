@@ -97,7 +97,7 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 .foot{position:fixed;left:20px;bottom:18px;max-width:240px;z-index:3;font-size:13px;color:rgba(30,40,60,.8);padding:10px 14px;border-radius:14px}
 /* ---- preview ---- */
 #view{position:fixed;top:90px;right:20px;bottom:100px;width:min(520px,44vw);z-index:6;border-radius:26px;padding:12px;display:none;flex-direction:column;background:rgba(255,255,255,.85)}
-#view.on{display:flex}
+#view.on{display:flex}#view.full{top:0;left:0;right:0;bottom:0;width:auto;border-radius:0;z-index:9999;background:#fff}
 #site,#three{flex:1;width:100%;border:0;border-radius:18px;background:#fff}
 #three{background:linear-gradient(#f6f7ff,#e6eaff)}
 #view .bar2{display:flex;gap:8px;margin-top:10px}
@@ -316,7 +316,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
 <footer class="foot glass">Yathin AI · Part of Yathin Looops · Created by Yathin Pedamallu</footer>
 
 <div id="view" class="glass"><iframe id="site" sandbox="allow-scripts"></iframe><div id="three"></div>
-  <div class="bar2"><button id="greyBtn" style="display:none">🖨️ Print look</button><button id="dl">Download</button><button id="closeV">Close</button></div></div>
+  <div class="bar2"><button id="greyBtn" style="display:none">🖨️ Print look</button><button id="dl">Download</button><button id="fsV" type="button">⛶ Full screen</button><button id="closeV">Close</button></div></div>
 
 <script>function pinKey(){const u=localStorage.getItem("yai-user")||"guest";return JSON.parse(localStorage.getItem("yai-pinfor")||"{}")[u]||""}function setPin(h){const u=localStorage.getItem("yai-user")||"guest",m=JSON.parse(localStorage.getItem("yai-pinfor")||"{}");m[u]=h;localStorage.setItem("yai-pinfor",JSON.stringify(m))}
 function syncPlus(){try{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-plusfor")||"{}");if(localStorage.getItem("yai-plus")==="1"&&u&&!(u in m)&&!localStorage.getItem("yai-plusmig")){m[u]=1;localStorage.setItem("yai-plusfor",JSON.stringify(m))}localStorage.setItem("yai-plusmig","1");const off=JSON.parse(localStorage.getItem("yai-plusoff")||"{}");if(u&&m[u]&&!off[u])localStorage.setItem("yai-plus","1");else localStorage.removeItem("yai-plus")}catch(e){}}
@@ -489,7 +489,10 @@ function after(box,out,open){
 const KIT=`<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Poppins,system-ui,sans-serif;line-height:1.6;color:#1e1b2e}img{max-width:100%;border-radius:16px}h1,h2,h3{line-height:1.15}section,.section{padding:72px 6vw}.hero{padding:110px 6vw;text-align:center;background:linear-gradient(135deg,#6366f1,#ec4899,#f59e0b);color:#fff}.hero h1{font-size:clamp(36px,6vw,64px);margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}.card{background:#fff;border-radius:20px;padding:24px;box-shadow:0 10px 30px rgba(40,20,90,.1);transition:transform .25s,box-shadow .25s}.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(40,20,90,.18)}.btn,button{display:inline-block;border:0;border-radius:999px;padding:12px 26px;font:600 15px Poppins,sans-serif;cursor:pointer;background:#1e1b2e;color:#fff;text-decoration:none;transition:transform .2s}.btn:hover,button:hover{transform:scale(1.05)}input,textarea,select{font:inherit;padding:10px 14px;border-radius:12px;border:1px solid #ddd}</style>`;
 function kit(h){if(h.includes("Made with Yathin AI"))return h;return /<head[^>]*>/i.test(h)?h.replace(/<head[^>]*>/i,m=>m+KIT):KIT+h}
 function showSite(html){html=kit(html);$("#view").classList.add("on");$("#three").style.display="none";$("#greyBtn").style.display="none";$("#site").style.display="block";$("#site").srcdoc=html;lastFile={name:"yathin-ai-site.html",blob:new Blob([html],{type:"text/html"})};$("#dl").textContent="Download website"}
-$("#closeV").onclick=()=>$("#view").classList.remove("on");
+$("#closeV").onclick=()=>{fsOff();$("#view").classList.remove("on")};
+function fsOff(){const v=$("#view");v.classList.remove("full");$("#fsV").textContent="⛶ Full screen";if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}
+$("#fsV").onclick=()=>{const v=$("#view");if(v.classList.contains("full")){fsOff();return}v.classList.add("full");$("#fsV").textContent="Exit full screen";if(v.requestFullscreen)v.requestFullscreen().catch(()=>{})};
+document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement&&$("#view").classList.contains("full"))fsOff()});
 $("#dl").onclick=()=>{if(!lastFile)return;const a=document.createElement("a");a.href=URL.createObjectURL(lastFile.blob);a.download=lastFile.name;a.click()};
 window.__show3D=j=>show3D(j);
 async function show3D(j){

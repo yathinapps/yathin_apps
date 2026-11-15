@@ -10,6 +10,8 @@ const getJ = (k, d) => { try { const v = JSON.parse(L.getItem(k)); return v == n
 const setJ = (k, v) => { try { L.setItem(k, JSON.stringify(v)) } catch (e) { toast("Storage is full. Clear some old chats.") } };
 const user = () => { const u = L.getItem("yai-user"); return u && u !== "guest" ? u : null };
 const guest = () => !user();
+const sessTok = () => { const s = getJ("yai2-sess", null); return s && s.u === user() && s.x > Date.now() ? s.t : undefined }; // worker-signed proof of a Google sign-in
+async function linkGoogle(cred, email) { try { const r = await fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "auth", credential: cred }) }); const j = await r.json(); if (j.ok && j.session) setJ("yai2-sess", { u: (j.email || email), t: j.session, x: Date.now() + (j.days || 30) * 864e5 - 36e5 }) } catch (e) { } }
 const K = k => `yai2-${k}-${user() || "guest"}`;
 const isKid = () => !!user() && getJ("yai-agefor", {})[user()] === 1;
 const plan = () => "free"; // Yathin AI+ is coming soon: there is no way to unlock it yet
@@ -86,7 +88,7 @@ async function ask(mode, msgs, signal, extra) {
   const until = lockedUntil(); if (until && !offlineOnly()) throw new LimitErr(until);
   if (L.getItem("yai2-ollama") === "1") return ollama(sys, msgs);
   if (offlineOnly()) return local(sys, msgs, pill);
-  const body = { v: 2, mode, signedIn: !guest(), messages: [...(sys ? [{ role: "system", content: sys }] : []), ...msgs.slice(-12).map(m => ({ role: m.role, content: m.content }))], summary: memText() };
+  const body = { v: 2, mode, signedIn: !guest(), auth: sessTok(), messages: [...(sys ? [{ role: "system", content: sys }] : []), ...msgs.slice(-12).map(m => ({ role: m.role, content: m.content }))], summary: memText() };
   if (extra.image) body.image = extra.image;
   let r;
   try { r = await fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(body), signal }) }
@@ -170,7 +172,7 @@ function bubble(cls, t, m) {
   else d.innerHTML = md(t);
   CL.append(d); d.scrollIntoView({ block: "end", behavior: "smooth" }); return d;
 }
-async function summarizeAI(t) { if (offlineOnly() || lockedUntil()) return ""; try { const r = await fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "sum", signedIn: !guest(), messages: [{ role: "user", content: t.slice(0, 4000) }] }) }); if (!r.ok) return ""; const x = await r.text(); const m = x.match(/^data: (.*)$/m); return JSON.parse(m[1]).choices[0].delta.content } catch (e) { return "" } }
+async function summarizeAI(t) { if (offlineOnly() || lockedUntil()) return ""; try { const r = await fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "sum", signedIn: !guest(), auth: sessTok(), messages: [{ role: "user", content: t.slice(0, 4000) }] }) }); if (!r.ok) return ""; const x = await r.text(); const m = x.match(/^data: (.*)$/m); return JSON.parse(m[1]).choices[0].delta.content } catch (e) { return "" } }
 let stEl = null;
 function pill(t) { if (!CL) return; if (t == null) { stEl && stEl.remove(); stEl = null; return } if (!stEl) { stEl = el("div", { class: "st", role: "status" }); CL.append(stEl) } stEl.textContent = t; stEl.scrollIntoView({ block: "end" }) }
 function setBusy(on, fn) { busy = on; stopFn = on ? fn : null; $("#stopBtn").classList.toggle("hidden", !on); $("#sendBtn").disabled = on; if (!on) pill(null) }
@@ -291,7 +293,7 @@ $("#upBtn").onclick = () => { if (guest()) { openLogin("Log in to upload images 
 $("#upFile").onchange = async e => { const f = e.target.files[0]; e.target.value = ""; if (!f) return;
   if (f.type === "application/pdf" || /\.pdf$/i.test(f.name)) {
     att = { type: "pdf", name: f.name, text: "", loading: true }; drawAtt();
-    try { const pdfjs = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs"); pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs";
+    try { const PJ = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/" + (Promise.withResolvers ? "build" : "legacy/build"); /* legacy build for older Safari / iPad */ const pdfjs = await import(PJ + "/pdf.min.mjs"); pdfjs.GlobalWorkerOptions.workerSrc = PJ + "/pdf.worker.min.mjs";
       const doc = await pdfjs.getDocument({ data: await f.arrayBuffer() }).promise; let t = ""; const n = Math.min(doc.numPages, 40);
       for (let i = 1; i <= n; i++) { const p = await doc.getPage(i); const c = await p.getTextContent(); t += c.items.map(x => x.str).join(" ") + "\n\n"; if (t.length > 40000) break }
       att = { type: "pdf", name: f.name, text: t.trim(), pages: doc.numPages }; if (!att.text) { att = null; toast("That PDF has no readable text (it may be scanned).") } }
@@ -354,7 +356,7 @@ function closeModal() { $("#modalRoot").innerHTML = "" }
 const GCID = "148201480683-9894qd6i7mjoqmrujbvq50k0pekqtafs.apps.googleusercontent.com";
 const GSI_ORIGINS = ["https://praveenp-works.github.io", "https://yathinlooops.pages.dev"]; // add https://yathinlooops.pages.dev here after adding it to the OAuth client's Authorized JavaScript origins
 let gsiP = null; function gsi() { if (!GSI_ORIGINS.includes(location.origin)) return Promise.reject(new Error("origin"));  if (!gsiP) gsiP = loadScript("https://accounts.google.com/gsi/client").then(() => { window.google.accounts.id.initialize({ client_id: GCID, callback: gDone, ux_mode: "popup" }) }).catch(e => { gsiP = null; throw e }); return gsiP }
-function gDone(r) { try { const b = r.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"); const j = JSON.parse(decodeURIComponent(escape(atob(b)))); if (!j.email) throw 0; const e = j.email.toLowerCase(); window.YFix.markGoogle(e); L.setItem("yai-name", j.given_name || j.name || e.split("@")[0]); afterLogin(e) } catch (x) { const er = $("#lErr"); if (er) er.textContent = "Google sign-in didn't work. Use email instead." } }
+function gDone(r) { try { const b = r.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"); const j = JSON.parse(decodeURIComponent(escape(atob(b)))); if (!j.email) throw 0; const e = j.email.toLowerCase(); window.YFix.markGoogle(e); linkGoogle(r.credential, e); L.setItem("yai-name", j.given_name || j.name || e.split("@")[0]); afterLogin(e) } catch (x) { const er = $("#lErr"); if (er) er.textContent = "Google sign-in didn't work. Use email instead." } }
 function openLogin(why) {
   if (user()) return;
   const b = modal(`<h3><img src="yathinai_logo.svg" alt="">Yathin AI</h3><p class="note">${esc(why || "Log in to unlock Code, 3D, Learn, Physics, Games and more, plus custom Home panels.")}</p>

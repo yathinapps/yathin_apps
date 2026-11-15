@@ -2,7 +2,7 @@
 (function(){
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const BAD=/\b(sex\w*|porn\w*|nude|naked|kill\w*|murder\w*|suicide|self-harm|drugs?|weed|vape|vaping|alcohol|beer|wine|vodka|cigarette\w*|guns?|shoot\w*|bombs?|gambl\w*|casino|dating|boyfriend|girlfriend|kiss\w*|blood\w*|gore|weapon\w*|terror\w*|damn|hell|crap|stupid|idiot|hate)\b/i;
+const BAD=/\b(sex\w*|porn\w*|nude|naked|kill\w*|murder\w*|suicide|self-harm|drugs?|weed|vape|vaping|alcohol|beer|wine|vodka|cigarette\w*|guns?|shoot(?:ing|er|ers|out)|bombs?|gambl\w*|casino|dating|boyfriend|girlfriend|kiss\w*|blood\w*|gore|weapon\w*|terror\w*|damn|hell|crap|stupid|idiot|hate)\b/i;
 const safe=t=>!BAD.test(String(t||""));
 const SAFE_MSG="Let's learn something else! Pick another topic. 💛";
 let stars=+localStorage.getItem("yai-kz-stars")||0;

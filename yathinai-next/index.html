@@ -30,6 +30,12 @@ nav.tabs{flex:1;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-wi
 nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{border:0;background:none;border-radius:999px;padding:0 14px;font-weight:600;color:var(--mut);white-space:nowrap}
 nav.tabs button.on{background:var(--grad);color:#fff}
+.pill{flex:0 1 auto;min-width:0;margin:0 auto;display:flex;align-items:center;gap:2px;background:#2c2c2e;border-radius:999px;padding:5px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.pill .back{color:#fff;font-weight:600;white-space:nowrap;padding:0 14px;text-decoration:none;display:flex;align-items:center;min-height:44px;border-radius:999px}
+.pill .back:hover{background:rgba(255,255,255,.1)}
+.pill nav.tabs button{color:#e5e5ea;flex:0 0 auto}
+.pill nav.tabs button.on{color:#fff}
+@media (max-width:860px){.pill .back{padding:0 10px;font-size:0}.pill .back::before{content:"←";font-size:18px}}
 nav.tabs button.lock{opacity:.6}
 nav.tabs button.lock::after{content:" 🔒";font-size:12px}
 .me{border:0;width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;font-weight:700;flex:none}
@@ -156,7 +162,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;margin:30px 0}
 <body>
 <header>
  <button class="brand" id="brand" aria-label="Yathin AI home"><img id="hdrLogo" src="yathinai_logo.svg" alt=""><span>Yathin AI</span></button>
- <nav class="tabs" id="tabs" aria-label="Modes"></nav>
+ <div class="pill"><a class="back" href="../" title="Back to Yathin Looops">← Yathin Looops</a><nav class="tabs" id="tabs" aria-label="Modes"></nav></div>
  <button class="me" id="meBtn" aria-label="Account">?</button>
 </header>
 <button id="guestBar" class="hidden" type="button"><span>Log in to unlock Code, 3D, Learn, Physics, Games and more, plus custom Home panels.</span></button>

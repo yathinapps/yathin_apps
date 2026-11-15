@@ -56,7 +56,7 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 .modes button{border:0;background:none;padding:10px 20px;border-radius:999px;font:500 16px Geist,sans-serif;color:#555;cursor:pointer;white-space:nowrap}
 .modes button.on{background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff}
 .me-btn{position:fixed;top:18px;right:18px;z-index:6;width:54px;height:54px;border-radius:50%;border:3px solid rgba(255,255,255,.8);background:linear-gradient(135deg,#7c3aed,#c026d3);color:#fff;font:700 20px Geist,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(80,40,160,.3)}
-#prof{position:fixed;top:82px;right:18px;z-index:7;width:320px;border-radius:24px;padding:18px;display:none;background:rgba(255,255,255,.82)}
+#prof{position:fixed;top:82px;right:18px;z-index:7;width:min(320px,calc(100vw - 24px));box-sizing:border-box;max-height:calc(100vh - 96px);max-height:calc(100dvh - 96px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:24px;padding:18px;display:none;background:rgba(255,255,255,.82)}@media(max-width:480px){#prof{right:12px;left:12px;width:auto;top:72px;max-height:calc(100dvh - 84px)}}#prof *{max-width:100%;box-sizing:border-box}#themes{flex-wrap:wrap}
 #prof.on{display:block}
 #prof h3{margin:0 0 2px;font-size:18px}#prof .sm{color:#6e6e73;font-size:13px}
 #prof input[type=text]{width:100%;border:1px solid #ddd;border-radius:12px;padding:9px 11px;font:14px Geist,sans-serif;margin-top:6px;background:#fff}

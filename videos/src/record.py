@@ -49,9 +49,26 @@ def run(app):
         sc = pg.evaluate("S")
         lines = sc["lines"]
         clips = []
-        for i, t in enumerate(lines):
+        rap = sc.get("rap")
+        if rap:  # rap track replaces narration: one bar per line on a fixed grid
+            BAR = 240.0 / sc.get("bpm", 100); rv = rap.get("voice", "en-US-AndrewNeural"); rr = rap.get("rate", "+18%")
+            rl, starts, k = [], [], rap.get("lead", 1)
+            for sl in rap["scenes"]:
+                starts.append(k * BAR)
+                for ln in sl: rl.append((k * BAR, ln)); k += 1
+            for j, (at, ln) in enumerate(rl):
+                pth = f"{work}/r{j}.mp3"; say(ln, pth, rv, rr); dd = dur(pth); f = max(1.0, dd / (BAR - 0.12))
+                clips.append((pth, at, f))
+            ends = starts[1:] + [k * BAR + 1.0]
+            durs = []
+            for i, s0 in enumerate(sc["scenes"]):
+                L = ends[i] - (0 if i == 0 else starts[i])
+                if s0.get("hook"): L -= 1.35
+                durs.append(max(1.0, L - 0.5))
+        else:
+          for i, t in enumerate(lines):
             path = f"{work}/n{i}.mp3"; say(t, path, sc.get("voice", VOICE), sc.get("rate", "+10%")); clips.append(path)
-        durs = [dur(c) for c in clips]
+          durs = [dur(c) for c in clips]
         pg.wait_for_timeout(500)
         t_go = time.time()
         pg.evaluate(f"start({json.dumps(durs)})")
@@ -62,7 +79,12 @@ def run(app):
     off = t_go - t_page
     # narration track: each clip delayed to its scene start (+250 ms)
     inputs, filt = [], []
-    for i, (c, m) in enumerate(zip(clips, marks)):
+    if sc.get("rap"):
+        for i, (c, at, f) in enumerate(clips):
+            inputs += ["-i", c]; d = int(at * 1000)
+            filt.append(f"[{i}:a]aresample=44100,atempo={f:.3f},acompressor=threshold=0.1:ratio=4,aecho=0.8:0.5:90:0.18,adelay={d}|{d},volume=1.5[a{i}]")
+    else:
+      for i, (c, m) in enumerate(zip(clips, marks)):
         inputs += ["-i", c]; d = int(m) + 250
         filt.append(f"[{i}:a]aresample=44100,adelay={d}|{d},volume=1.6[a{i}]")
     n = len(clips); T = total / 1000.0

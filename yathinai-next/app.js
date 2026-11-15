@@ -136,11 +136,11 @@ const PLANS = () => `<section class="plans" id="plans"><h2>Choose Your Plan</h2>
   <li>Access to Chat, Code, 3D, Physics, Learn, and Games once signed in</li>
   <li>Built-in Kids Mode for Learning with parent PIN protection</li>
   <li>Generous daily use: 20 h of Chat and 14 h of Code · <span class="reset">Limits reset 12 hours after you run out</span></li></ul></div>
- <div class="plan plus"><img src="yathinai_plus_logo.svg" alt=""><h3>Yathin AI+</h3><span class="tag">Coming Soon</span>
+ <div class="plan plus"><img src="yathinai_plus_logo.svg" alt=""><div style="position:absolute;top:22px;right:22px;display:flex;flex-direction:column;align-items:flex-end;gap:8px"><span style="background:#fef3c7;color:#92400e;font-weight:800;font-size:14px;border-radius:999px;padding:4px 12px;border:1px solid #e9c46a">Save 56% off per month</span><span style="background:#fef3c7;color:#92400e;font-weight:800;font-size:14px;border-radius:999px;padding:4px 12px;border:1px solid #e9c46a">Save 80% off per year</span></div><h3>Yathin AI+</h3><span class="tag">Coming Soon</span>
   <p style="margin:10px 0 4px">Everything in Free, with a <b style="color:#d99a00;font-weight:800">better</b>, more <b style="color:#d99a00;font-weight:800">advanced</b> AI.</p>
   <div class="prices" style="display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 2px">
-   <div><b style="color:#d99a00;font-weight:800;font-size:26px">$15.99</b> <span>per month</span><br><s style="color:#9ca3af">$35.99</s><br><span style="display:inline-block;margin-top:4px;background:#fef3c7;color:#92400e;font-weight:800;font-size:13px;border-radius:999px;padding:2px 10px">Save 56% off</span></div>
-   <div><b style="color:#d99a00;font-weight:800;font-size:26px">$75.99</b> <span>per year</span><br><s style="color:#9ca3af">$375.99</s><br><span style="display:inline-block;margin-top:4px;background:#fef3c7;color:#92400e;font-weight:800;font-size:13px;border-radius:999px;padding:2px 10px">Save 80% off</span></div></div><ul>
+   <div><b style="color:#d99a00;font-weight:800;font-size:26px">$15.99</b> <span>per month</span><br><s style="color:#9ca3af">$35.99</s></div>
+   <div><b style="color:#d99a00;font-weight:800;font-size:26px">$75.99</b> <span>per year</span><br><s style="color:#9ca3af">$375.99</s></div></div><ul>
   <li>Instant guest access plus one-click login to unlock 3D, Physics, Code, and Chat with <b style="color:#d99a00;font-weight:800">better</b> custom Home panels</li>
   <li><b style="color:#d99a00;font-weight:800">Advanced</b> online AI mode on by default with offline browser fallback</li>
   <li>Access to <b style="color:#d99a00;font-weight:800">better</b> Chat, Code, 3D, Physics, Learn, and Games once signed in</li>

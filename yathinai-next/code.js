@@ -90,8 +90,9 @@ export function runWeb(files, frame, store, onStore, ms) {
       if (++n > 1500) { r.errors.push("The app sent too many messages (possible infinite loop); stopped watching it."); return fin() }
       if (d.t === "store") { lastStore = d.a; clearTimeout(stT); stT = setTimeout(() => { onStore && onStore(lastStore) }, 400); return }
       if (r.logs.length > 200 && d.t !== "error" && d.t !== "pass" && d.t !== "fail" && d.t !== "done") return;
-      if (d.t === "error") r.errors.push(d.a); else if (d.t === "pass") r.pass.push(d.a); else if (d.t === "fail") r.fail.push(d.a);
-      else if (d.t === "done") { clearTimeout(doneT); doneT = setTimeout(fin, 600) } else r.logs.push({ k: d.t, a: d.a });
+      if ((d.t === "pass" || d.t === "fail") && (r.gotDone || r.pass.concat(r.fail).some(x => x === d.a || x.startsWith(d.a + ":")))) return;
+      if (d.t === "error") { if (!r.errors.includes(d.a)) r.errors.push(d.a) } else if (d.t === "pass") r.pass.push(d.a); else if (d.t === "fail") r.fail.push(d.a);
+      else if (d.t === "done") { if (r.gotDone) return; r.gotDone = true; clearTimeout(doneT); doneT = setTimeout(fin, 600) } else r.logs.push({ k: d.t, a: d.a });
       if (d.t === "warn" || d.t === "error" && false) { } };
     window.addEventListener("message", on);
     frame.setAttribute("sandbox", "allow-scripts allow-modals allow-forms allow-popups");

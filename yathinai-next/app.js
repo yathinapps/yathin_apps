@@ -1,6 +1,6 @@
 /* Yathin AI next — main app (preview build) */
 import { $, $$, esc, el, md, stripThink, getJson, fmtLeft, sha, loadScript } from "./util.js";
-import { mountIDE } from "./code.js?v=3";
+import { mountIDE } from "./code.js?v=4";
 import { show3D, simulate } from "./scene.js?v=3";
 import { MODEL3D, ARCH } from "./prompts3d.js";
 
@@ -352,7 +352,7 @@ const ideCtx = {
 function modal(html) { const root = $("#modalRoot"); root.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="box">${html}</div></div>`; const m = $(".modal", root); m.onclick = e => { if (e.target === m) closeModal() }; return $(".box", root) }
 function closeModal() { $("#modalRoot").innerHTML = "" }
 const GCID = "148201480683-9894qd6i7mjoqmrujbvq50k0pekqtafs.apps.googleusercontent.com";
-const GSI_ORIGINS = ["https://praveenp-works.github.io"]; // add https://yathinlooops.pages.dev here after adding it to the OAuth client's Authorized JavaScript origins
+const GSI_ORIGINS = ["https://praveenp-works.github.io", "https://yathinlooops.pages.dev"]; // add https://yathinlooops.pages.dev here after adding it to the OAuth client's Authorized JavaScript origins
 let gsiP = null; function gsi() { if (!GSI_ORIGINS.includes(location.origin)) return Promise.reject(new Error("origin"));  if (!gsiP) gsiP = loadScript("https://accounts.google.com/gsi/client").then(() => { window.google.accounts.id.initialize({ client_id: GCID, callback: gDone, ux_mode: "popup" }) }).catch(e => { gsiP = null; throw e }); return gsiP }
 function gDone(r) { try { const b = r.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"); const j = JSON.parse(decodeURIComponent(escape(atob(b)))); if (!j.email) throw 0; const e = j.email.toLowerCase(); window.YFix.markGoogle(e); L.setItem("yai-name", j.given_name || j.name || e.split("@")[0]); afterLogin(e) } catch (x) { const er = $("#lErr"); if (er) er.textContent = "Google sign-in didn't work. Use email instead." } }
 function openLogin(why) {
@@ -371,6 +371,7 @@ function openLogin(why) {
   const goF = async () => { const e = $("#lEmail").value.trim().toLowerCase(), pw = $("#lPass").value, er = $("#lErr"), F = window.YFix;
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) { er.textContent = "Enter a real email."; return }
     const st = F.state(e);
+    if (st === "google") { er.textContent = "This account signs in with Google. Use the Google button above."; return }
     if (st === "pbkdf2" || st === "legacy") { if (!pw) { er.textContent = "Enter your password."; return } er.textContent = "Checking…"; if (!(await F.check(e, pw))) { er.textContent = "Wrong password"; return } }
     else { const want = st === "new" ? "create" : "set";
       if (lMode !== want) { lMode = want; $("#lP2w").classList.remove("hidden"); $("#lGo").textContent = want === "create" ? "Create account" : "Set password"; er.textContent = want === "create" ? "New here? Choose a password (8+ characters) and type it again to create your account on this device." : "This account doesn't have a password yet. Set one now (8+ characters)."; $("#lPass2").focus(); return }

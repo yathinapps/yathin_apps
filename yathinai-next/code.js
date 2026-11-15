@@ -84,17 +84,19 @@ window.__runTests=async function(){for(var i=0;i<T.length;i++){try{await T[i][1]
 export function runWeb(files, frame, store, onStore, ms) {
   return new Promise(res => {
     const id = "r" + Math.random().toString(36).slice(2), r = { logs: [], errors: [], pass: [], fail: [] };
-    let doneT = null;
-    const fin = () => { window.removeEventListener("message", on); clearTimeout(doneT); res(r) };
-    const on = e => { const d = e.data; if (!d || d.__yai !== id) return;
-      if (d.t === "store") { onStore && onStore(d.a); return }
+    let doneT = null, hardT = null, n = 0, ended = false, stT = null, lastStore = null;
+    const fin = () => { if (ended) return; ended = true; window.removeEventListener("message", on); clearTimeout(doneT); clearTimeout(hardT); if (lastStore && onStore) onStore(lastStore); res(r) };
+    const on = e => { const d = e.data; if (!d || d.__yai !== id || ended) return;
+      if (++n > 1500) { r.errors.push("The app sent too many messages (possible infinite loop); stopped watching it."); return fin() }
+      if (d.t === "store") { lastStore = d.a; clearTimeout(stT); stT = setTimeout(() => { onStore && onStore(lastStore) }, 400); return }
+      if (r.logs.length > 200 && d.t !== "error" && d.t !== "pass" && d.t !== "fail" && d.t !== "done") return;
       if (d.t === "error") r.errors.push(d.a); else if (d.t === "pass") r.pass.push(d.a); else if (d.t === "fail") r.fail.push(d.a);
       else if (d.t === "done") { clearTimeout(doneT); doneT = setTimeout(fin, 600) } else r.logs.push({ k: d.t, a: d.a });
       if (d.t === "warn" || d.t === "error" && false) { } };
     window.addEventListener("message", on);
     frame.setAttribute("sandbox", "allow-scripts allow-modals allow-forms allow-popups");
     frame.srcdoc = buildDoc(files, id, store);
-    doneT = setTimeout(fin, ms || 6000);
+    doneT = setTimeout(fin, ms || 6000); hardT = setTimeout(() => { if (!ended) { r.errors.push("The app didn't finish loading within 15 seconds (it may be stuck in a loop or waiting on a dialog)."); fin() } }, 15000);
   });
 }
 let pyP = null;

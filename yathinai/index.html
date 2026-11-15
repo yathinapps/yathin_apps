@@ -615,7 +615,7 @@ if(localStorage.getItem("yai-intro")&&localStorage.getItem("yai-introalways")!==
 
 
 /* ---- AI+ intro: "Yath" then i's grow sideways, "in AI" (logo colors), + 0.2 s later (once per visit) ---- */
-(function(){if(localStorage.getItem("yai-plus")!=="1"||!localStorage.getItem("yai-user")||sessionStorage.getItem("yai-plusintro"))return;sessionStorage.setItem("yai-plusintro","1");
+(function(){if(localStorage.getItem("yai-plus")!=="1"||!localStorage.getItem("yai-user")||(sessionStorage.getItem("yai-plusintro")&&localStorage.getItem("yai-introalways")!=="1"))return;sessionStorage.setItem("yai-plusintro","1");
  const go=()=>{const d=document.createElement("div");d.id="plusIntro";d.innerHTML='<div class="pitr">Yath<span class="piii"></span><span class="pitl">in <b class="pia">AI</b><b class="pip">+</b></span></div>';document.body.append(d);
  const tr=d.querySelector(".pitr"),ii=d.querySelector(".piii"),tail=d.querySelector(".pitl"),pl=d.querySelector(".pip"),W=innerWidth;
  const place=()=>{const w=tr.offsetWidth,x=w<W*.7?(W-w)/2:W*.85-w;tr.style.transform=`translate(${x}px,-50%)`};
@@ -625,7 +625,7 @@ if(localStorage.getItem("yai-intro")&&localStorage.getItem("yai-introalways")!==
   setTimeout(()=>{d.classList.add("out");setTimeout(()=>d.remove(),600)},200+1400)}},500)};
  Promise.race([document.fonts.load('700 100px Fredoka'),new Promise(r=>setTimeout(r,1200))]).then(go,go)})();
 /* ---- intro (first visit only, plays once) ---- */
-(function(){if(localStorage.getItem("yai-intro")&&localStorage.getItem("yai-introalways")!=="1")return;const I=document.getElementById("intro");I.style.display="grid";
+(function(){if(localStorage.getItem("yai-intro")&&localStorage.getItem("yai-introalways")!=="1")return;if(localStorage.getItem("yai-plus")==="1"&&localStorage.getItem("yai-user")&&localStorage.getItem("yai-user")!=="guest")return;const I=document.getElementById("intro");I.style.display="grid";
  let done=false;const T=[];const fin=()=>{if(done)return;done=true;T.forEach(clearTimeout);I.classList.add("out");localStorage.setItem("yai-intro","1");setTimeout(()=>I.remove(),700);openLogin()};
  I.style.cursor="pointer";I.title="Tap to skip";I.addEventListener("click",fin);{const h=document.createElement("div");h.textContent="Tap Yathin AI to skip";h.style.cssText="position:absolute;top:18px;right:22px;font-size:13px;color:#9ca3af";I.append(h)}
  const setTimeout=(f,ms)=>{const id=window.setTimeout(f,ms);T.push(id);return id};

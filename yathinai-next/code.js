@@ -162,13 +162,14 @@ export function mountIDE(root, ctx) {
     P.files = res.files; if (!sel || !P.files[sel]) sel = Object.keys(P.files).find(n => /index\.html|main\.py/.test(n)) || Object.keys(P.files)[0]; save(); drawTree();
     return { parsed, res, diff: res.changed.length ? diffHtml(before, P.files, res.changed) : "" } }
   async function fixLoop(r0, bubble, auto) {
-    let r = r0, rounds = 0; const startN = problems(r0).length;
+    let r = r0, rounds = 0, hint = ""; const startN = problems(r0).length;
     while (problems(r).length && rounds < (auto ? MAX_FIX : 1) && !stop && !r.infra) {
       rounds++; st(`Fixing errors (round ${rounds} of ${auto ? MAX_FIX : 1})…`);
-      let out; try { out = await ctx.ask("fix", [{ role: "user", content: `The project has these problems when run:\n${problems(r).join("\n").slice(0, 3000)}\n\nCurrent files:\n${filesCtx()}\n\nFix them.` }], ctrl.signal) } catch (e) { if (stop) break; ctx.note(bubble, "Couldn't reach the fixer: " + (e.message || e)); break }
+      let out; try { out = await ctx.ask("fix", [{ role: "user", content: `The project has these problems when run:\n${problems(r).join("\n").slice(0, 3000)}\n${hint}\nCurrent files:\n${filesCtx()}\n\nFix them.` }], ctrl.signal) } catch (e) { if (stop) break; ctx.note(bubble, "Couldn't reach the fixer: " + (e.message || e)); break }
       if (stop) break;
       const a = await applyOut(out); if (a.diff) ctx.note(bubble, "", a.diff, `Fix round ${rounds}: changed ${a.res.changed.join(", ")}`);
-      if (!a.res.changed.length) break;
+      if (!a.res.changed.length) { hint = a.res.failed.length ? `\nYour last EDIT did not apply (${a.res.failed.join("; ")}). This time return each changed file in full with 'FILE: <name>'.\n` : "\nYour last answer changed nothing. Return each changed file in full with 'FILE: <name>'.\n"; continue }
+      hint = "";
       r = await run();
     }
     const fixed = Math.max(0, startN - problems(r).length);

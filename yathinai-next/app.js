@@ -1,7 +1,7 @@
 /* Yathin AI next — main app (preview build) */
 import { $, $$, esc, el, md, stripThink, getJson, fmtLeft, sha, loadScript } from "./util.js";
-import { mountIDE } from "./code.js";
-import { show3D, simulate } from "./scene.js";
+import { mountIDE } from "./code.js?v=3";
+import { show3D, simulate } from "./scene.js?v=3";
 import { MODEL3D, ARCH } from "./prompts3d.js";
 
 const BRAIN = "https://yathin-ai.yathinlooops.workers.dev";
@@ -352,19 +352,20 @@ const ideCtx = {
 function modal(html) { const root = $("#modalRoot"); root.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="box">${html}</div></div>`; const m = $(".modal", root); m.onclick = e => { if (e.target === m) closeModal() }; return $(".box", root) }
 function closeModal() { $("#modalRoot").innerHTML = "" }
 const GCID = "148201480683-9894qd6i7mjoqmrujbvq50k0pekqtafs.apps.googleusercontent.com";
-let gsiP = null; function gsi() { if (!gsiP) gsiP = loadScript("https://accounts.google.com/gsi/client").then(() => { window.google.accounts.id.initialize({ client_id: GCID, callback: gDone, ux_mode: "popup" }) }).catch(e => { gsiP = null; throw e }); return gsiP }
+const GSI_ORIGINS = ["https://praveenp-works.github.io"]; // add https://yathinlooops.pages.dev here after adding it to the OAuth client's Authorized JavaScript origins
+let gsiP = null; function gsi() { if (!GSI_ORIGINS.includes(location.origin)) return Promise.reject(new Error("origin"));  if (!gsiP) gsiP = loadScript("https://accounts.google.com/gsi/client").then(() => { window.google.accounts.id.initialize({ client_id: GCID, callback: gDone, ux_mode: "popup" }) }).catch(e => { gsiP = null; throw e }); return gsiP }
 function gDone(r) { try { const b = r.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"); const j = JSON.parse(decodeURIComponent(escape(atob(b)))); if (!j.email) throw 0; const e = j.email.toLowerCase(); window.YFix.markGoogle(e); L.setItem("yai-name", j.given_name || j.name || e.split("@")[0]); afterLogin(e) } catch (x) { const er = $("#lErr"); if (er) er.textContent = "Google sign-in didn't work. Use email instead." } }
 function openLogin(why) {
   if (user()) return;
   const b = modal(`<h3><img src="yathinai_logo.svg" alt="">Yathin AI</h3><p class="note">${esc(why || "Log in to unlock Code, 3D, Learn, Physics, Games and more, plus custom Home panels.")}</p>
    <div id="gsiBox" style="min-height:44px;margin-top:10px;display:flex;justify-content:center"></div>
-   <div style="text-align:center;color:#6b6880;font-size:13px;margin:8px 0">or use email (saved on this device only)</div>
+   <div id="orLine" style="text-align:center;color:#6b6880;font-size:13px;margin:8px 0">or use email (saved on this device only)</div>
    <label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="email" placeholder="you@example.com">
    <label for="lPass">Password</label><input id="lPass" type="password" autocomplete="current-password">
    <div id="lP2w" class="hidden"><label for="lPass2">Confirm password</label><input id="lPass2" type="password" autocomplete="new-password"></div>
    <div class="err" id="lErr" role="alert"></div>
    <div class="row2"><button class="btn ghost" id="lCancel">Continue as guest</button><button class="btn" id="lGo">Log in</button></div>`);
-  gsi().then(() => { const box = $("#gsiBox"); if (box) window.google.accounts.id.renderButton(box, { type: "standard", size: "large", shape: "pill", text: "continue_with", width: 280 }) }).catch(() => { const box = $("#gsiBox"); if (box) box.textContent = "" });
+  gsi().then(() => { const box = $("#gsiBox"); if (box) window.google.accounts.id.renderButton(box, { type: "standard", size: "large", shape: "pill", text: "continue_with", width: 280 }) }).catch(() => { const box = $("#gsiBox"); if (box) box.remove(); const o = $("#orLine"); if (o) o.textContent = "Sign in with email (saved on this device only)" });
   let lMode = ""; $("#lEmail").oninput = () => { lMode = ""; $("#lP2w").classList.add("hidden"); $("#lGo").textContent = "Log in" };
   $("#lCancel").onclick = closeModal;
   const goF = async () => { const e = $("#lEmail").value.trim().toLowerCase(), pw = $("#lPass").value, er = $("#lErr"), F = window.YFix;

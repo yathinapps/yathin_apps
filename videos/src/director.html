@@ -494,16 +494,25 @@ const SCRIPTS = {
 SCRIPTS["yathinai-viral"]={...SCRIPTS.yathinai, tag:"Built by Yathin Pedamallu", chips:["100% free","No API key","Runs in your browser"], foot:"Yathin Looops  ·  yathinlooops.pages.dev/yathinai",
  scenes:[
   {hook:["Free AI.","No key.","No catch?!"], strike:false, say:"A free AI. No key. No credit card. So what's the catch?"},
-  {say:"If you're stuck on homework at ten at night, just ask.", pill:"Stuck at 10 PM? Just ask.", html:`
-     <div class="h">💬 10:04 PM</div>
-     <div class="card hide ya" style="margin-left:auto;width:66%;font-size:30px;background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff">Explain photosynthesis like I'm 10 🌱</div>
-     <div class="card hide ya" style="width:80%;font-size:28px;margin-top:22px;line-height:1.5">Plants are tiny chefs. They take sunlight, water, and air, and cook up their own sugar for energy. The leftover? Fresh oxygen for us. ☀️💧</div>`,
-   run: async () => { await sleep(300); await popAll(".ya",1000); await sleep(800); }},
+  {say:"Watch. Ask for a website, and it builds one in seconds.", pill:"A website in seconds", html:`
+     <div style="display:flex;gap:30px;height:100%"><div style="width:40%;display:flex;flex-direction:column;gap:18px">
+      <div class="card hide ws" style="font-size:26px;background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff">Make a website for my lemonade stand 🍋</div>
+      <div class="card ws hide" style="flex:1;font-family:monospace;font-size:17px;line-height:1.6;color:#c4b5fd;overflow:hidden">${["&lt;header&gt;Sunny Lemonade&lt;/header&gt;","&lt;h1&gt;Fresh. Cold. $1.&lt;/h1&gt;","&lt;button&gt;Order a cup&lt;/button&gt;",".hero{background:#fde047}","&lt;section id=\"menu\"&gt;"].map(l=>`<div class="ln hide">${l}</div>`).join("")}</div></div>
+      <div class="card hide" id="site" style="flex:1;padding:0;overflow:hidden;background:#fff;color:#1f2937">
+       <div style="background:#facc15;padding:14px 22px;font-weight:800;font-size:24px">🍋 Sunny Lemonade</div>
+       <div style="padding:36px 26px;text-align:center"><div style="font-size:52px;font-weight:800;line-height:1.1">Fresh. Cold. $1.</div><div style="font-size:22px;color:#6b7280;margin:14px 0 24px">Squeezed this morning on Maple St.</div><span style="background:#f97316;color:#fff;border-radius:999px;padding:14px 30px;font-size:24px;font-weight:700">Order a cup</span>
+       <div style="display:flex;gap:14px;justify-content:center;margin-top:30px;font-size:44px">🍋 🧊 🍓</div></div></div></div>`,
+   run: async () => { await sleep(200); await popAll(".ws",300); await popAll(".ln",220); q("#site").classList.add("popin"); await sleep(1300); }},
   {...Y[2], say:"Want a game? It writes the code, and runs it."},
   {...Y[3], say:"Want a castle? It builds a 3D model you can print."},
   {say:"And it runs right in your browser. Your chats stay on your device.", pill:"Runs in your browser. Chats stay yours.", html:`
      <div style="text-align:center;padding-top:60px">${["✅ No API key","✅ No credit card","🔒 Chats stay on your device"].map(c=>`<div class="chip hide" style="font-size:36px;display:inline-block;margin:16px">${c}</div>`).join("")}</div>`,
    run: async () => { await sleep(300); await popAll(".chip",600); await sleep(800); }},
+  {tb:["/yathinai/yathinai_icon_gold.png","Yathin AI+"], say:"Want an even better experience? Yathin AI+ is coming, with a smarter brain and bigger limits.", pill:"Yathin AI+: coming soon", html:`
+     <div style="text-align:center;padding-top:30px"><img class="hide pl" src="/yathinai/yathinai_icon_gold.png" style="width:170px;height:170px;border-radius:40px">
+     <div class="hide pl" style="font-size:68px;font-weight:800;margin-top:16px;background:linear-gradient(90deg,#fde68a,#f59e0b);-webkit-background-clip:text;color:transparent">Yathin AI+</div>
+     <div>${["🧠 About 5× smarter brain","⏱️ Bigger limits","🏰 Master-builder 3D"].map(c=>`<div class="chip hide pl" style="font-size:30px;display:inline-block;margin:12px">${c}</div>`).join("")}</div></div>`,
+   run: async () => { await sleep(200); await popAll(".pl",550); await sleep(800); }},
   {tb:["/looops_logo.png","Yathin Looops"], say:"The catch? There isn't one. It was built by Yathin Pedamallu, for Yathin Loops, where every app is free.", pill:"Built by Yathin Pedamallu", html:`
      <div style="text-align:center;padding-top:30px"><img class="hide cr" src="/looops_logo.png" style="width:190px;height:190px;object-fit:contain;border-radius:40px;background:#fff;padding:10px">
      <div class="hide cr" style="font-size:66px;font-weight:800;margin-top:20px">Yathin Looops</div>

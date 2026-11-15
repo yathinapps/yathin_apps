@@ -9,7 +9,7 @@
 <title>Yathin AI · Free AI that runs in your browser</title>
 <link rel="canonical" href="https://yathinlooops.pages.dev/yathinai/">
 <meta name="description" content="Yathin AI: a free, independent AI that runs right in your browser. No API key, no server. Chat, write code and websites, make 3D print models, and solve physics. Part of Yathin Looops.">
-<link rel="icon" href="yathinai_icon.png"><link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="yathinai_icon.png?v=2"><link rel="apple-touch-icon" href="icon-180.png">
 <meta property="og:title" content="Yathin AI · Free, no API key"><meta property="og:description" content="An independent AI that runs in your browser."><meta property="og:image" content="https://yathinlooops.pages.dev/promo/yathin-ai-free-app.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono&display=swap" rel="stylesheet">
@@ -231,7 +231,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <div class="s" id="s3"><div><img src="yathinai_icon_intro.png" alt=""><p>Getting Yathin AI ready</p><div class="load"><i id="ld"></i></div><div class="pct" id="pct">0%</div></div></div>
 </div>
 <div id="login"><div class="box" id="ageBox" style="display:none">
-  <div class="hd"><img src="yathinai_icon.png" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon.png?v=2" alt="">Yathin AI</div>
   <div class="agq">How old are you?</div>
   <div class="sm" style="color:#555;font-size:14px">Enter your birthday (or just your age). Under 13 gets Kids mode, made safe and simple.</div>
   <div class="bd"><input id="ageIn" type="date" min="1906-01-01" aria-label="Birthday"><button id="ageGo" type="button">Continue</button></div>
@@ -241,7 +241,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <div style="text-align:center;margin-top:12px"><button class="lnk" id="admBtn" type="button" style="font-size:13px;display:none">🔑 Admin login</button></div>
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div><div class="box" id="parBox" style="display:none">
-  <div class="hd"><img src="yathinai_icon.png" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon.png?v=2" alt="">Yathin AI</div>
   <div class="agq" id="parQ">Ask a parent to confirm</div>
   <div id="parS1"><div class="note" id="pNote">To use Yathin AI as 13 or older, a parent or adult must confirm by email.</div>
    <label for="pEmail" id="pLbl">Parent's email</label><div class="in"><input id="pEmail" type="email" placeholder="parent@email.com"></div>
@@ -255,7 +255,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
    <div class="err" id="pErr3"></div></div>
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div><div class="box" id="loginBox">
-  <div class="hd"><img src="yathinai_icon.png" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon.png?v=2" alt="">Yathin AI</div>
   <label for="lEmail">Email</label><div class="in"><input id="lEmail" type="email" placeholder="user@domain.com" autocomplete="email"></div>
   <label for="lPass">Password</label><div class="in"><input id="lPass" type="password" placeholder="" autocomplete="current-password"><button class="eye" id="eye" type="button">👁</button></div>
   <div id="lP2w" style="display:none"><label for="lPass2">Confirm password</label><div class="in"><input id="lPass2" type="password" autocomplete="new-password"></div></div>
@@ -281,6 +281,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <button class="btn2" onclick="yaiParent()" style="margin-top:12px;width:100%;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">👪 Parent controls</button>
   <button id="plusSw" type="button" onclick="plusSwap()" style="display:none;width:100%;box-sizing:border-box;margin-top:12px;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif"></button><button id="admBtn2" type="button" style="display:none;width:100%;box-sizing:border-box;margin-top:12px;padding:9px;border-radius:999px;border:1px solid #e8c766;background:#fff8e1;cursor:pointer;font:600 13px Geist,sans-serif">🔑 Admin: try Yathin AI+</button><a id="fbBtn" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=praveenmarketing26@gmail.com&amp;su=Yathin%20AI%20feedback" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;color:#111;margin-top:12px;width:100%;box-sizing:border-box;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">💬 Give feedback</a><button class="btn2" id="signOut" style="margin-top:12px;width:100%;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">Sign out</button>
   <div class="lim">🎨 Theme</div>
+  <label class="sm" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;cursor:pointer">Play intro animation every refresh<input type="checkbox" id="introAlways" style="width:20px;height:20px;cursor:pointer"></label>
   <div class="sm" style="margin-top:12px">Hover ring color <span style="font-size:11px;color:#a16207">(colors with AI+ ✨)</span></div><div id="rings"><button type="button" data-r="rgba(156,163,175,.75)" title="Grey" style="background:rgba(156,163,175,.75)"></button><button type="button" data-r="#8b5cf6" title="Violet" class="po" style="background:#8b5cf6"></button><button type="button" data-r="#ec4899" title="Pink" class="po" style="background:#ec4899"></button><button type="button" data-r="#f5b301" title="Gold" class="po" style="background:#f5b301"></button><button type="button" data-r="#06b6d4" title="Cyan" class="po" style="background:#06b6d4"></button><button type="button" data-r="#22c55e" title="Green" class="po" style="background:#22c55e"></button><button type="button" class="po" id="ringPick" title="Any color" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)"><input type="color" id="ringIn" style="opacity:0;position:absolute;inset:0;width:100%;height:100%;cursor:pointer;border:0;padding:0"></button></div>
   <div class="themes" id="themes">
     <button data-t="aurora" title="Aurora" style="background:linear-gradient(135deg,#f9a8d4,#a5b4fc,#67e8f9)"></button>
@@ -386,7 +387,7 @@ function bubble(cls,t,x){const d=document.createElement("div");d.className="msg 
 function setMode(m,keep){if(isKid()&&m==="physics")m="chat";if(!isKid()&&(m==="learn"||m==="games"))m="chat";document.body.classList.toggle("kz-on",m==="learn"||m==="games");if(m==="learn"||m==="games"){mode=m;document.body.classList.remove("home-on");document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));window.KZ&&KZ.show(m);return}document.body.classList.toggle("home-on",m==="home");document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));if(m==="home"){mode="home";drawHome();drawSide();return}mode=m;document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("#q").placeholder={chat:"Message Yathin AI",code:"Describe a website, game or app",model:"Describe something to 3D print",physics:"Ask a physics question"}[m];if(!keep){cur=null;render()}else drawSide()}
 document.querySelectorAll(".modes button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 function render(){const c=$("#chat");c.innerHTML="";
- if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon.png" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
+ if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon.png?v=2" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
   (mode==="model"&&localStorage.getItem("yai-plus")==="1"?["🏠 A two-story house with a garage","🏰 A castle with 4 towers","🏛️ A Greek temple with columns","🌉 A stone arch bridge"]:EX[mode]).forEach(t=>{const b=document.createElement("button");b.className="glass";b.textContent=t;b.onclick=()=>{$("#q").value=t;send()};c.querySelector(".ex").append(b)})}
  else cur.msgs.forEach(x=>{const d=bubble(x.role==="user"?"u":"a",x.content,x);if(x.role!=="user")after(d,x.content,false)});
  drawSide()}
@@ -471,6 +472,7 @@ window.YAI={ask:async(sys,user,as)=>{const was=mode;if(as)mode=as;try{await ensu
 $("#send").onclick=send;$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
 
 /* ---- previews ---- */
+const RVFIX=`<script>(function(){var q=".rv:not(.in),.reveal:not(.in):not(.visible):not(.show),[data-aos]:not(.aos-animate),.fade-in:not(.in):not(.visible):not(.show)";function c(){document.querySelectorAll(q).forEach(function(e){var r=e.getBoundingClientRect();if(r.top<innerHeight*.98&&r.bottom>-50){e.classList.add("in","visible","show","aos-animate");e.style.opacity="1";e.style.transform="none"}})}addEventListener("scroll",c,{passive:true});addEventListener("resize",c);setInterval(c,400);setTimeout(c,300)})()<\/script>`;
 function getHtml(out){const m=out.match(/```html\s*([\s\S]*?)```/i)||out.match(/(<!doctype[\s\S]*<\/html>)/i);return m&&m[1]}
 function getJson(out){out=out.replace(/```(json)?/gi,"");const t=out.slice(out.indexOf("{"),out.lastIndexOf("}")+1);try{return JSON.parse(t)}catch(e){try{return JSON.parse(t.replace(/,\s*([}\]])/g,"$1"))}catch(x){return null}}}
 function isSite(q){if(/\b(website|web site|site|landing|homepage|home page|portfolio|business|shop|store|restaurant|bakery|cafe|company|brand|agency|club|school|blog)\b/i.test(q))return true;if(/\b(game|play|calculator|timer|quiz|todo|to-do|clock|draw|paint|converter|counter|stopwatch|app|tool)\b/i.test(q))return false;return !!(cur&&cur.spec)||true}
@@ -489,7 +491,7 @@ function after(box,out,open){
 }
 const KIT=`<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Poppins,system-ui,sans-serif;line-height:1.6;color:#1e1b2e}img{max-width:100%;border-radius:16px}h1,h2,h3{line-height:1.15}section,.section{padding:72px 6vw}.hero{padding:110px 6vw;text-align:center;background:linear-gradient(135deg,#6366f1,#ec4899,#f59e0b);color:#fff}.hero h1{font-size:clamp(36px,6vw,64px);margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}.card{background:#fff;border-radius:20px;padding:24px;box-shadow:0 10px 30px rgba(40,20,90,.1);transition:transform .25s,box-shadow .25s}.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(40,20,90,.18)}.btn,button{display:inline-block;border:0;border-radius:999px;padding:12px 26px;font:600 15px Poppins,sans-serif;cursor:pointer;background:#1e1b2e;color:#fff;text-decoration:none;transition:transform .2s}.btn:hover,button:hover{transform:scale(1.05)}input,textarea,select{font:inherit;padding:10px 14px;border-radius:12px;border:1px solid #ddd}</style>`;
 function kit(h){if(h.includes("Made with Yathin AI"))return h;return /<head[^>]*>/i.test(h)?h.replace(/<head[^>]*>/i,m=>m+KIT):KIT+h}
-function showSite(html){html=kit(html);$("#view").classList.add("on");$("#three").style.display="none";$("#greyBtn").style.display="none";$("#site").style.display="block";$("#site").srcdoc=html;lastFile={name:"yathin-ai-site.html",blob:new Blob([html],{type:"text/html"})};$("#dl").textContent="Download website"}
+function showSite(html){html=kit(html);html=/<\/body>/i.test(html)?html.replace(/<\/body>(?![\s\S]*<\/body>)/i,RVFIX+"</body>"):html+RVFIX;$("#view").classList.add("on");$("#three").style.display="none";$("#greyBtn").style.display="none";$("#site").style.display="block";$("#site").srcdoc=html;lastFile={name:"yathin-ai-site.html",blob:new Blob([html],{type:"text/html"})};$("#dl").textContent="Download website"}
 $("#closeV").onclick=()=>{fsOff();$("#view").classList.remove("on")};
 function fsOff(){const v=$("#view");v.classList.remove("full");$("#fsV").textContent="⛶ Full screen";if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}
 $("#fsV").onclick=()=>{const v=$("#view");if(v.classList.contains("full")){fsOff();return}v.classList.add("full");$("#fsV").textContent="Exit full screen";if(v.requestFullscreen)v.requestFullscreen().catch(()=>{})};
@@ -606,10 +608,10 @@ async function parentPick(kid){const pin=document.getElementById("pPin").value.t
 document.getElementById("pKid").onclick=()=>parentPick(true);document.getElementById("pAdult").onclick=()=>parentPick(false);
 window.yaiParent=async()=>{const h=pinKey();if(!h){document.getElementById("prof").classList.remove("on");document.getElementById("login").classList.add("on");box("parBox");step(1);setTimeout(()=>document.getElementById("pEmail").focus(),50);return}const un=+sessionStorage.getItem("yai-pinok")||0;if(Date.now()>un){const p=prompt("Parent PIN:");if(!p)return;
  if(await sha("pin|"+p.trim())!==h){alert("Wrong PIN.");return}sessionStorage.setItem("yai-pinok",Date.now()+30*60e3)}const was=isKid();if(!confirm(was?"Kids mode is ON.\nSwitch to Grown-up mode (13+)?":"Grown-up mode is ON.\nSwitch to Kids mode (under 13)?"))return;localStorage.removeItem("yai-kidlock");doneAge(!was)};
-try{if(!localStorage.getItem("yai-agemig2")){const a=JSON.parse(localStorage.getItem("yai-agefor")||"{}");for(const k in a)if(a[k]===1)delete a[k];localStorage.setItem("yai-agefor",JSON.stringify(a));if(localStorage.getItem("yai-kid")==="1")localStorage.removeItem("yai-kid");localStorage.removeItem("yai-kidlock");localStorage.setItem("yai-agemig2","1")}}catch(e){}{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");if(u&&u in m)localStorage.setItem("yai-kid",m[u]===1?"1":"0")}document.body.classList.toggle("kid",localStorage.getItem("yai-kid")==="1");document.body.classList.toggle("plus",localStorage.getItem("yai-plus")==="1");if(localStorage.getItem("yai-plus")==="1"){const gi=()=>document.querySelectorAll('img[src="yathinai_icon.png"]').forEach(i=>i.src="yathinai_icon_gold.png");gi();new MutationObserver(gi).observe(document.body,{childList:true,subtree:true})}
+try{if(!localStorage.getItem("yai-agemig2")){const a=JSON.parse(localStorage.getItem("yai-agefor")||"{}");for(const k in a)if(a[k]===1)delete a[k];localStorage.setItem("yai-agefor",JSON.stringify(a));if(localStorage.getItem("yai-kid")==="1")localStorage.removeItem("yai-kid");localStorage.removeItem("yai-kidlock");localStorage.setItem("yai-agemig2","1")}}catch(e){}{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");if(u&&u in m)localStorage.setItem("yai-kid",m[u]===1?"1":"0")}document.body.classList.toggle("kid",localStorage.getItem("yai-kid")==="1");document.body.classList.toggle("plus",localStorage.getItem("yai-plus")==="1");if(localStorage.getItem("yai-plus")==="1"){const gi=()=>document.querySelectorAll('img[src="yathinai_icon.png?v=2"]').forEach(i=>i.src="yathinai_icon_gold.png?v=2");gi();new MutationObserver(gi).observe(document.body,{childList:true,subtree:true})}
 if(localStorage.getItem("yai-user")&&localStorage.getItem("yai-kid")===null)setTimeout(askAge,0);
 document.getElementById("signOut").onclick=()=>{localStorage.removeItem("yai-user");syncPlus();localStorage.removeItem("yai-kid");document.body.classList.remove("kid");document.getElementById("prof").classList.remove("on");document.getElementById("lPass").value="";openLogin()};
-if(localStorage.getItem("yai-intro"))openLogin();
+if(localStorage.getItem("yai-intro")&&localStorage.getItem("yai-introalways")!=="1")openLogin();
 
 
 /* ---- AI+ intro: "Yath" then i's grow sideways, "in AI" (logo colors), + 0.2 s later (once per visit) ---- */
@@ -623,7 +625,7 @@ if(localStorage.getItem("yai-intro"))openLogin();
   setTimeout(()=>{d.classList.add("out");setTimeout(()=>d.remove(),600)},200+1400)}},500)};
  Promise.race([document.fonts.load('700 100px Fredoka'),new Promise(r=>setTimeout(r,1200))]).then(go,go)})();
 /* ---- intro (first visit only, plays once) ---- */
-(function(){if(localStorage.getItem("yai-intro"))return;const I=document.getElementById("intro");I.style.display="grid";
+(function(){if(localStorage.getItem("yai-intro")&&localStorage.getItem("yai-introalways")!=="1")return;const I=document.getElementById("intro");I.style.display="grid";
  let done=false;const T=[];const fin=()=>{if(done)return;done=true;T.forEach(clearTimeout);I.classList.add("out");localStorage.setItem("yai-intro","1");setTimeout(()=>I.remove(),700);openLogin()};
  I.style.cursor="pointer";I.title="Tap to skip";I.addEventListener("click",fin);{const h=document.createElement("div");h.textContent="Tap Yathin AI to skip";h.style.cssText="position:absolute;top:18px;right:22px;font-size:13px;color:#9ca3af";I.append(h)}
  const setTimeout=(f,ms)=>{const id=window.setTimeout(f,ms);T.push(id);return id};
@@ -684,5 +686,5 @@ function apply(){const c=P()&&localStorage.getItem("yai-ring")||D;document.docum
 function lock(e){if(P())return false;e.preventDefault();e.stopPropagation();const m=document.getElementById("genMsg");if(m)m.textContent="Ring colors are for AI+ ✨";alert("Ring colors are part of Yathin AI+ ✨");return true}
 document.querySelectorAll("#rings [data-r]").forEach(b=>b.onclick=e=>{if(b.classList.contains("po")&&lock(e))return;localStorage.setItem("yai-ring",b.dataset.r);apply()});
 const ri=document.getElementById("ringIn");ri.addEventListener("click",e=>{lock(e)});ri.addEventListener("input",()=>{if(!P())return;localStorage.setItem("yai-ring",ri.value);apply()});
-apply();new MutationObserver(apply).observe(document.body,{attributes:true,attributeFilter:["class"]})})()</script></body>
+apply();new MutationObserver(apply).observe(document.body,{attributes:true,attributeFilter:["class"]})})()</script><script>(function(){const c=document.getElementById("introAlways");c.checked=localStorage.getItem("yai-introalways")==="1";c.onchange=()=>{if(c.checked)localStorage.setItem("yai-introalways","1");else localStorage.removeItem("yai-introalways")}})()</script></body>
 </html>

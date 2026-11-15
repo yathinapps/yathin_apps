@@ -7,7 +7,7 @@ const A=()=>JSON.parse(localStorage.getItem("yai-acc2")||"{}"),saveA=a=>localSto
 async function setPw(e,pw){const salt=hex(crypto.getRandomValues(new Uint8Array(16)));const a=A();a[e]={s:salt,i:ITER,h:await pbkdf2(pw,salt,ITER)};saveA(a);const old=JSON.parse(localStorage.getItem("yai-accounts")||"{}");if(old[e]){delete old[e];localStorage.setItem("yai-accounts",JSON.stringify(old))}}
 async function sha(t){return hex(await crypto.subtle.digest("SHA-256",enc.encode(t)))}
 /* state of an email on this device: "pbkdf2" | "legacy" (old sha hash) | "nohash" (known, never had a password) | "new" */
-function state(e){if(A()[e])return"pbkdf2";if(JSON.parse(localStorage.getItem("yai-accounts")||"{}")[e])return"legacy";const known=["yai-agefor","yai-pinfor","yai-plusfor","yai-gusers"].some(k=>{try{return e in JSON.parse(localStorage.getItem(k)||"{}")}catch(x){return false}});return known?"nohash":"new"}
+function state(e){if(A()[e])return"pbkdf2";if(JSON.parse(localStorage.getItem("yai-accounts")||"{}")[e])return"legacy";try{if(e in JSON.parse(localStorage.getItem("yai-gusers")||"{}"))return"google"}catch(x){}const known=["yai-agefor","yai-pinfor","yai-plusfor","yai-gusers"].some(k=>{try{return e in JSON.parse(localStorage.getItem(k)||"{}")}catch(x){return false}});return known?"nohash":"new"}
 async function check(e,pw){const s=state(e);if(s==="pbkdf2"){const r=A()[e];return(await pbkdf2(pw,r.s,r.i||ITER))===r.h}
  if(s==="legacy"){const ok=JSON.parse(localStorage.getItem("yai-accounts")||"{}")[e]===await sha(e+"|"+pw);if(ok&&pw.length>=8)await setPw(e,pw);return ok}return false}
 function markGoogle(e){const m=JSON.parse(localStorage.getItem("yai-gusers")||"{}");m[e]=1;localStorage.setItem("yai-gusers",JSON.stringify(m))}

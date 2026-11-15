@@ -538,6 +538,7 @@ let lMode="";document.getElementById("lEmail").addEventListener("input",()=>{lMo
 document.getElementById("lGo").onclick=async()=>{const e=document.getElementById("lEmail").value.trim().toLowerCase(),pw=document.getElementById("lPass").value,er=document.getElementById("lErr"),p2=document.getElementById("lPass2"),go=document.getElementById("lGo");
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){er.textContent="Enter a real email.";return}
  const st=YFix.state(e);
+ if(st==="google"){er.textContent="This account signs in with Google. Use the Google button.";return}
  if(st==="pbkdf2"||st==="legacy"){if(!pw){er.textContent="Enter your password.";return}er.textContent="Checking…";if(!(await YFix.check(e,pw))){er.textContent="Wrong password";return}er.textContent=""}
  else{const want=st==="new"?"create":"set";
   if(lMode!==want){lMode=want;document.getElementById("lP2w").style.display="";go.textContent=want==="create"?"Create account":"Set password";er.textContent=want==="create"?"New here? Choose a password (8+ characters) and type it again to create your account on this device.":"This account doesn't have a password yet. Set one now (8+ characters) and type it again.";p2.focus();return}
@@ -564,13 +565,13 @@ function doneAge(kid){if(!kid&&(mode==="learn"||mode==="games"))setTimeout(()=>s
 document.getElementById("ageK").onclick=()=>doneAge(true);
 document.getElementById("ageNum").onclick=()=>{const i=document.getElementById("ageIn"),n=i.type==="date";i.type=n?"text":"date";i.value="";i.placeholder=n?"Your age, like 12":"";i.inputMode=n?"numeric":"";document.getElementById("ageNum").textContent=n?"Pick my birthday instead":"Type my age instead";i.focus()};
 document.getElementById("ageGo").onclick=()=>{const r=YFix.age(document.getElementById("ageIn").value),er=document.getElementById("ageErr");if(r.err){er.textContent=r.err;return}er.textContent="";
- if(r.age<13){if(localStorage.getItem("yai-user")==="guest")localStorage.setItem("yai-kidlock","1");doneAge(true)}else document.getElementById("ageT").click()};
+ if(r.age<13){if(localStorage.getItem("yai-user")==="guest")localStorage.setItem("yai-kidlock","1");doneAge(true)}else doneAge(false)};
 document.getElementById("ageIn").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("ageGo").click()});
 const EJ={s:"service_pqelqat",t:"template_fi4tlhp",k:"wWMmhZFuMnJ9VDYJF"};let pCodeH="",pMail="",pTries=0,adm=false,reT=null;const ADMIN_H="16a37f4fbdfd00cfc7fc57d8891be5572af8992f03380858413f861c07f915d7";
 const box=id=>["ageBox","parBox","loginBox"].forEach(b=>document.getElementById(b).style.display=b===id?"":"none");
 const step=n=>[1,2,3].forEach(i=>document.getElementById("parS"+i).style.display=i===n?"":"none");
 function parMode(a){adm=a;document.getElementById("parQ").textContent=a?"Admin login":"Ask a parent to confirm";document.getElementById("pNote").textContent=a?"Enter the admin email and we'll send you a code.":"To use Yathin AI as 13 or older, a parent or adult must confirm by email.";document.getElementById("pLbl").textContent=a?"Admin email":"Parent's email";document.getElementById("pEmail").placeholder=a?"admin@email.com":"parent@email.com";document.getElementById("pErr").textContent="";document.querySelector("#parS3 .note").textContent=a?"Admin: pick the mode for this account.":"Thanks! Parent, pick the mode for this person.";box("parBox");step(1)}
-document.getElementById("ageT").onclick=()=>parMode(false);document.getElementById("admBtn").onclick=()=>parMode(true);
+document.getElementById("ageT").onclick=()=>doneAge(false);document.getElementById("admBtn").onclick=()=>parMode(true);
 document.getElementById("pBack").onclick=()=>box("ageBox");
 async function sendCode(again){const e=again===true?pMail:document.getElementById("pEmail").value.trim().toLowerCase(),er=document.getElementById(again===true?"pErr2":"pErr");
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){er.textContent="Enter a real email.";return}
@@ -609,13 +610,16 @@ if(localStorage.getItem("yai-intro"))openLogin();
  Promise.race([document.fonts.load('700 100px Fredoka'),new Promise(r=>setTimeout(r,1200))]).then(go,go)})();
 /* ---- intro (first visit only, plays once) ---- */
 (function(){if(localStorage.getItem("yai-intro"))return;const I=document.getElementById("intro");I.style.display="grid";
+ let done=false;const T=[];const fin=()=>{if(done)return;done=true;T.forEach(clearTimeout);I.classList.add("out");localStorage.setItem("yai-intro","1");setTimeout(()=>I.remove(),700);openLogin()};
+ I.style.cursor="pointer";I.title="Tap to skip";I.addEventListener("click",fin);{const h=document.createElement("div");h.textContent="Tap Yathin AI to skip";h.style.cssText="position:absolute;top:18px;right:22px;font-size:13px;color:#9ca3af";I.append(h)}
+ const setTimeout=(f,ms)=>{const id=window.setTimeout(f,ms);T.push(id);return id};
  const show=id=>{document.querySelectorAll("#intro .s").forEach(x=>x.classList.toggle("on",x.id===id))};
  show("s0");setTimeout(()=>{document.getElementById("by").style.opacity="1"},1200);
  setTimeout(()=>show("s1"),3000);
  setTimeout(()=>show("s2"),6000);
  setTimeout(()=>{show("s3");const ld=document.getElementById("ld"),pc=document.getElementById("pct"),t0=performance.now();requestAnimationFrame(()=>ld.classList.add("go"));
   (function tick(){const k=Math.min(1,(performance.now()-t0)/5690);pc.textContent=Math.round(k*100)+"%";if(k<1)requestAnimationFrame(tick)})()},10000);
- setTimeout(()=>{I.classList.add("out");localStorage.setItem("yai-intro","1");setTimeout(()=>I.remove(),700);openLogin()},15690);
+ setTimeout(fin,15690);
 })();
 
 if(localStorage.getItem("yai-plus")==="1")document.getElementById("planTxt").textContent="Yathin AI+ ✨";

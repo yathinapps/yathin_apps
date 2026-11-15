@@ -160,6 +160,9 @@ main{max-width:1200px;margin:0 auto;padding:0 14px 120px;min-width:0}
 footer{text-align:center;color:var(--mut);font-size:13px;margin:30px 0}
 @media (max-width:860px){.split{grid-template-columns:minmax(0,1fr)}.ide{position:static}.brand span{display:none}.stage{height:360px}}
 @media (max-width:520px){header{padding:6px 8px;gap:6px}.hero{padding-top:20px}.msg{max-width:94%}.plans h2{font-size:24px}}
+
+/* about-only page: no modes, no chatting (user ask) */
+nav.tabs,#composer,#guestBar,#kidBar{display:none!important}
 </style>
 </head>
 <body>
@@ -186,6 +189,6 @@ footer{text-align:center;color:var(--mut);font-size:13px;margin:30px 0}
 <div id="modalRoot"></div>
 <script src="fixes.js?v=2"></script>
 <script src="build3d.js?v=2"></script>
-<script type="module" src="app.js?v=7"></script>
+<script type="module" src="app.js?v=8"></script>
 </body>
 </html>

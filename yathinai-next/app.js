@@ -154,7 +154,14 @@ document.querySelectorAll(".pill [data-info]").forEach(b => b.onclick = () => {
   document.body.appendChild(d);
 });
 let CL = null;
-function render() {
+
+/* about-only page: show what Yathin AI does + plans, with a button to the real AI */
+function renderAbout() {
+  const M = $("#main"); if (!M) return;
+  M.innerHTML = HERO().replace("</section>", `<p style="text-align:center;margin:18px 0 0"><a class="btn" href="../yathinai/" style="display:inline-block;padding:12px 26px;border-radius:999px;background:var(--grad);color:#fff;font-weight:700;text-decoration:none">Open Yathin AI</a></p></section>`) + PLANS() + `<footer>Yathin AI · Part of Yathin Looops · Created by Yathin Pedamallu · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a></footer>`;
+}
+function render() { if (!window.YAI_APP) return renderAbout();
+
   const M = $("#main"); sim = null; ide = null; M.innerHTML = "";
   $("#q").placeholder = PH[tab] || "Message Yathin AI"; $("#composer").classList.remove("hidden");
   if (tab === "home") return renderHome(M);

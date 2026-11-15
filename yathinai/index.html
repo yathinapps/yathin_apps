@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <script>/* guests: nothing is kept after a refresh, and the intro plays again */
-(function(){var L=localStorage,u=L.getItem("yai-user");if(!u||u==="guest"){["yai-user","yai-intro","yai-projects","yai-panels","yai-name","yai-theme","yai-bg"].forEach(function(k){L.removeItem(k)});L.removeItem("yai-kid")}else if(L.getItem("yai-pin")){var m=JSON.parse(L.getItem("yai-pinfor")||"{}");if(!m[u])m[u]=L.getItem("yai-pin");L.setItem("yai-pinfor",JSON.stringify(m));L.removeItem("yai-pin")}})();
+/* each account keeps its own chats, name, panels and theme on this device; signing out puts them away instead of deleting them */
+(function(){var L=localStorage,K=["yai-projects","yai-name","yai-pic","yai-panels","yai-theme","yai-bg"];
+window.yaiStash=function(){var o=L.getItem("yai-owner"),s={};K.forEach(function(k){var v=L.getItem(k);if(v!==null)s[k]=v;L.removeItem(k)});L.removeItem("yai-owner");if(o&&o!=="guest"){try{L.setItem("yai-data:"+o,JSON.stringify(s))}catch(e){delete s["yai-bg"];try{L.setItem("yai-data:"+o,JSON.stringify(s))}catch(x){}}}};
+window.yaiLoad=function(u){var o=L.getItem("yai-owner"),d=L.getItem("yai-data:"+u);if(o===u)return false;if((!o||o==="guest")&&!d){L.setItem("yai-owner",u);return false}yaiStash();if(d){try{var s=JSON.parse(d);K.forEach(function(k){if(k in s)L.setItem(k,s[k])})}catch(e){}L.removeItem("yai-data:"+u)}L.setItem("yai-owner",u);return true};
+var u=L.getItem("yai-user");if(u&&u!=="guest"&&!L.getItem("yai-owner"))L.setItem("yai-owner",u);if((!u||u==="guest")&&L.getItem("yai-owner")&&L.getItem("yai-owner")!=="guest")yaiStash()})();
+(function(){var L=localStorage,u=L.getItem("yai-user");if(!u||u==="guest"){L.removeItem("yai-owner");["yai-user","yai-intro","yai-projects","yai-panels","yai-name","yai-theme","yai-bg"].forEach(function(k){L.removeItem(k)});L.removeItem("yai-kid")}else if(L.getItem("yai-pin")){var m=JSON.parse(L.getItem("yai-pinfor")||"{}");if(!m[u])m[u]=L.getItem("yai-pin");L.setItem("yai-pinfor",JSON.stringify(m));L.removeItem("yai-pin")}})();
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -560,7 +565,7 @@ document.getElementById("lGo").onclick=async()=>{const e=document.getElementById
   if(pw.length<8){er.textContent="Password needs 8 or more characters.";return}
   if(pw!==p2.value){er.textContent="The two passwords don't match.";return}
   await YFix.setPw(e,pw);lMode="";document.getElementById("lP2w").style.display="none";go.textContent="Login";p2.value="";er.textContent=""}
- localStorage.setItem("yai-user",e);syncPlus();
+ localStorage.setItem("yai-user",e);syncPlus();if(yaiLoad(e))yaiReload();
  if(!localStorage.getItem("yai-name")){const n=e.split("@")[0].replace(/[^a-z]/gi," ").trim();localStorage.setItem("yai-name",n.charAt(0).toUpperCase()+n.slice(1))}
  drawName();{const m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");if(e in m){doneAge(m[e]===1);return}}askAge()};
 document.getElementById("lPass2").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("lGo").click()});
@@ -569,14 +574,14 @@ const GCID="148201480683-9894qd6i7mjoqmrujbvq50k0pekqtafs.apps.googleusercontent
 function yaiSess(){try{const s=JSON.parse(localStorage.getItem("yai2-sess")||"null");return s&&s.u===localStorage.getItem("yai-user")&&s.x>Date.now()?s.t:undefined}catch(e){}}
 async function yaiLink(c,e){try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({v:2,mode:"auth",credential:c})});const j=await r.json();if(j.ok&&j.session)localStorage.setItem("yai2-sess",JSON.stringify({u:j.email||e,t:j.session,x:Date.now()+(j.days||30)*864e5-36e5}))}catch(x){}}
 function gDone(r){try{const b=r.credential.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");const j=JSON.parse(decodeURIComponent(escape(atob(b))));if(!j.email)throw 0;
- localStorage.setItem("yai-user",j.email.toLowerCase());YFix.markGoogle(j.email.toLowerCase());yaiLink(r.credential,j.email.toLowerCase());syncPlus();localStorage.setItem("yai-name",j.given_name||j.name||j.email.split("@")[0]);if(j.picture)localStorage.setItem("yai-pic",j.picture);
+ localStorage.setItem("yai-user",j.email.toLowerCase());if(yaiLoad(j.email.toLowerCase()))yaiReload();YFix.markGoogle(j.email.toLowerCase());yaiLink(r.credential,j.email.toLowerCase());syncPlus();localStorage.setItem("yai-name",j.given_name||j.name||j.email.split("@")[0]);if(j.picture)localStorage.setItem("yai-pic",j.picture);
  drawName();{const m=JSON.parse(localStorage.getItem("yai-agefor")||"{}"),e=j.email.toLowerCase();if(e in m)doneAge(m[e]===1);else askAge()}}catch(e){document.getElementById("lErr").textContent="Google sign-in didn't work. Try email instead."}}
 function gInit(){if(!window.google||!google.accounts)return;google.accounts.id.initialize({client_id:GCID,callback:gDone,ux_mode:"popup"});
  const g=document.getElementById("lG");g.style.position="relative";g.style.overflow="hidden";const o=document.createElement("div");o.style.cssText="position:absolute;inset:0;opacity:.01;display:flex;align-items:center;justify-content:center;transform:scale(1.6)";g.append(o);
  google.accounts.id.renderButton(o,{type:"icon",size:"large",shape:"square"})}
 document.getElementById("lG").onclick=()=>{if(!window.google)document.getElementById("lErr").textContent="Google is still loading. Try again in a second."};
 {const sc=document.createElement("script");sc.src="https://accounts.google.com/gsi/client";sc.async=true;sc.onload=gInit;document.head.append(sc)}
-document.getElementById("lGuest").onclick=()=>{localStorage.setItem("yai-user","guest");syncPlus();askAge()};
+document.getElementById("lGuest").onclick=()=>{localStorage.setItem("yai-user","guest");if(yaiLoad("guest"))yaiReload();syncPlus();askAge()};
 async function admShow(){const e=localStorage.getItem("yai-user"),ok=!!e&&["16a37f4fbdfd00cfc7fc57d8891be5572af8992f03380858413f861c07f915d7","f9c6b5b3978adcae2c1569e9f9e6a62d30a05ee55d9a64904bd63c14a9ef4cef"].includes(await sha("admin|"+e.toLowerCase()));document.getElementById("admBtn").style.display=ok?"":"none";document.getElementById("admBtn2").style.display=ok?"block":"none"}
 function askAge(){admShow();if(localStorage.getItem("yai-user")==="guest"&&localStorage.getItem("yai-kidlock")==="1"){doneAge(true);return}document.getElementById("loginBox").style.display="none";document.getElementById("ageBox").style.display="";document.getElementById("login").classList.add("on")}
 function doneAge(kid){if(!kid&&(mode==="learn"||mode==="games"))setTimeout(()=>setMode("chat"),0);localStorage.setItem("yai-kid",kid?"1":"0");{const u=localStorage.getItem("yai-user");if(u&&u!=="guest"){const m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");m[u]=kid?1:0;localStorage.setItem("yai-agefor",JSON.stringify(m))}}document.body.classList.toggle("kid",kid);if(kid&&mode==="physics")setMode("chat");drawLim();box("loginBox");document.getElementById("login").classList.remove("on")}
@@ -612,8 +617,9 @@ document.getElementById("pKid").onclick=()=>parentPick(true);document.getElement
 window.yaiParent=async()=>{const h=pinKey();if(!h){document.getElementById("prof").classList.remove("on");document.getElementById("login").classList.add("on");box("parBox");step(1);setTimeout(()=>document.getElementById("pEmail").focus(),50);return}const un=+sessionStorage.getItem("yai-pinok")||0;if(Date.now()>un){const p=prompt("Parent PIN:");if(!p)return;
  if(await sha("pin|"+p.trim())!==h){alert("Wrong PIN.");return}sessionStorage.setItem("yai-pinok",Date.now()+30*60e3)}const was=isKid();if(!confirm(was?"Kids mode is ON.\nSwitch to Grown-up mode (13+)?":"Grown-up mode is ON.\nSwitch to Kids mode (under 13)?"))return;localStorage.removeItem("yai-kidlock");doneAge(!was)};
 try{if(!localStorage.getItem("yai-agemig2")){const a=JSON.parse(localStorage.getItem("yai-agefor")||"{}");for(const k in a)if(a[k]===1)delete a[k];localStorage.setItem("yai-agefor",JSON.stringify(a));if(localStorage.getItem("yai-kid")==="1")localStorage.removeItem("yai-kid");localStorage.removeItem("yai-kidlock");localStorage.setItem("yai-agemig2","1")}}catch(e){}{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");if(u&&u in m)localStorage.setItem("yai-kid",m[u]===1?"1":"0")}document.body.classList.toggle("kid",localStorage.getItem("yai-kid")==="1");document.body.classList.toggle("plus",localStorage.getItem("yai-plus")==="1");if(localStorage.getItem("yai-plus")==="1"){const gi=()=>document.querySelectorAll('img[src="yathinai_icon.png?v=3"]').forEach(i=>i.src="yathinai_icon_gold.png?v=3");gi();new MutationObserver(gi).observe(document.body,{childList:true,subtree:true})}
+function yaiReload(){P=JSON.parse(localStorage.getItem("yai-projects")||"[]");cur=null;PN=JSON.parse(localStorage.getItem("yai-panels")||'[{"t":"weather"},{"t":"clock"},{"t":"fact"}]');drawName();setTheme(localStorage.getItem("yai-theme")||"aurora");if(mode==="home")drawHome();else render()}
 if(localStorage.getItem("yai-user")&&localStorage.getItem("yai-kid")===null)setTimeout(askAge,0);
-document.getElementById("signOut").onclick=()=>{localStorage.removeItem("yai-user");syncPlus();localStorage.removeItem("yai-kid");document.body.classList.remove("kid");document.getElementById("prof").classList.remove("on");document.getElementById("lPass").value="";openLogin()};
+document.getElementById("signOut").onclick=()=>{localStorage.removeItem("yai-user");yaiStash();yaiReload();syncPlus();localStorage.removeItem("yai-kid");document.body.classList.remove("kid");document.getElementById("prof").classList.remove("on");document.getElementById("lPass").value="";openLogin()};
 if(localStorage.getItem("yai-intro")&&localStorage.getItem("yai-introalways")!=="1")openLogin();
 
 

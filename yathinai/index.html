@@ -238,7 +238,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <div style="text-align:center;margin-top:6px"><button class="lnk" id="ageNum" type="button" style="font-size:13px">Type my age instead</button></div>
   <div class="err" id="ageErr" style="color:#be123c;font-size:13px;margin-top:8px;min-height:16px"></div>
   <div class="ages" style="display:none"><button id="ageK" class="k" type="button">Under 13</button><button id="ageT" type="button">13 or older</button></div>
-  <div style="text-align:center;margin-top:12px"><button class="lnk" id="admBtn" type="button" style="font-size:13px">🔑 Admin login</button></div>
+  <div style="text-align:center;margin-top:12px"><button class="lnk" id="admBtn" type="button" style="font-size:13px;display:none">🔑 Admin login</button></div>
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div><div class="box" id="parBox" style="display:none">
   <div class="hd"><img src="yathinai_icon.png" alt="">Yathin AI</div>
@@ -279,7 +279,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <div class="lim">👨‍💻 Code today <small id="lk"></small><div class="bar"><i id="bk"></i></div></div>
   <div class="plus"><span>COMING SOON</span><b>Yathin AI+</b><br>Way smarter: a brain about 5 times bigger for chat, code, 3D and physics. 140 hours of chat and 130 hours of code a month. No daily limits.</div>
   <button class="btn2" onclick="yaiParent()" style="margin-top:12px;width:100%;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">👪 Parent controls</button>
-  <a id="fbBtn" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=praveenmarketing26@gmail.com&amp;su=Yathin%20AI%20feedback" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;color:#111;margin-top:12px;width:100%;box-sizing:border-box;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">💬 Give feedback</a><button class="btn2" id="signOut" style="margin-top:12px;width:100%;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">Sign out</button>
+  <button id="admBtn2" type="button" style="display:none;width:100%;box-sizing:border-box;margin-top:12px;padding:9px;border-radius:999px;border:1px solid #e8c766;background:#fff8e1;cursor:pointer;font:600 13px Geist,sans-serif">🔑 Admin: try Yathin AI+</button><a id="fbBtn" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=praveenmarketing26@gmail.com&amp;su=Yathin%20AI%20feedback" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;color:#111;margin-top:12px;width:100%;box-sizing:border-box;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">💬 Give feedback</a><button class="btn2" id="signOut" style="margin-top:12px;width:100%;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">Sign out</button>
   <div class="lim">🎨 Theme</div>
   <div class="themes" id="themes">
     <button data-t="aurora" title="Aurora" style="background:linear-gradient(135deg,#f9a8d4,#a5b4fc,#67e8f9)"></button>
@@ -560,22 +560,23 @@ function gInit(){if(!window.google||!google.accounts)return;google.accounts.id.i
 document.getElementById("lG").onclick=()=>{if(!window.google)document.getElementById("lErr").textContent="Google is still loading. Try again in a second."};
 {const sc=document.createElement("script");sc.src="https://accounts.google.com/gsi/client";sc.async=true;sc.onload=gInit;document.head.append(sc)}
 document.getElementById("lGuest").onclick=()=>{localStorage.setItem("yai-user","guest");syncPlus();askAge()};
-function askAge(){if(localStorage.getItem("yai-user")==="guest"&&localStorage.getItem("yai-kidlock")==="1"){doneAge(true);return}document.getElementById("loginBox").style.display="none";document.getElementById("ageBox").style.display="";document.getElementById("login").classList.add("on")}
+async function admShow(){const e=localStorage.getItem("yai-user"),ok=!!e&&["16a37f4fbdfd00cfc7fc57d8891be5572af8992f03380858413f861c07f915d7","f9c6b5b3978adcae2c1569e9f9e6a62d30a05ee55d9a64904bd63c14a9ef4cef"].includes(await sha("admin|"+e.toLowerCase()));document.getElementById("admBtn").style.display=ok?"":"none";document.getElementById("admBtn2").style.display=ok?"block":"none"}
+function askAge(){admShow();if(localStorage.getItem("yai-user")==="guest"&&localStorage.getItem("yai-kidlock")==="1"){doneAge(true);return}document.getElementById("loginBox").style.display="none";document.getElementById("ageBox").style.display="";document.getElementById("login").classList.add("on")}
 function doneAge(kid){if(!kid&&(mode==="learn"||mode==="games"))setTimeout(()=>setMode("chat"),0);localStorage.setItem("yai-kid",kid?"1":"0");{const u=localStorage.getItem("yai-user");if(u&&u!=="guest"){const m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");m[u]=kid?1:0;localStorage.setItem("yai-agefor",JSON.stringify(m))}}document.body.classList.toggle("kid",kid);if(kid&&mode==="physics")setMode("chat");drawLim();box("loginBox");document.getElementById("login").classList.remove("on")}
 document.getElementById("ageK").onclick=()=>doneAge(true);
 document.getElementById("ageNum").onclick=()=>{const i=document.getElementById("ageIn"),n=i.type==="date";i.type=n?"text":"date";i.value="";i.placeholder=n?"Your age, like 12":"";i.inputMode=n?"numeric":"";document.getElementById("ageNum").textContent=n?"Pick my birthday instead":"Type my age instead";i.focus()};
 document.getElementById("ageGo").onclick=()=>{const r=YFix.age(document.getElementById("ageIn").value),er=document.getElementById("ageErr");if(r.err){er.textContent=r.err;return}er.textContent="";
  if(r.age<13){if(localStorage.getItem("yai-user")==="guest")localStorage.setItem("yai-kidlock","1");doneAge(true)}else doneAge(false)};
 document.getElementById("ageIn").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("ageGo").click()});
-const EJ={s:"service_pqelqat",t:"template_fi4tlhp",k:"wWMmhZFuMnJ9VDYJF"};let pCodeH="",pMail="",pTries=0,adm=false,reT=null;const ADMIN_H="16a37f4fbdfd00cfc7fc57d8891be5572af8992f03380858413f861c07f915d7";
+const EJ={s:"service_pqelqat",t:"template_fi4tlhp",k:"wWMmhZFuMnJ9VDYJF"};let pCodeH="",pMail="",pTries=0,adm=false,reT=null;const ADMIN_H=["16a37f4fbdfd00cfc7fc57d8891be5572af8992f03380858413f861c07f915d7","f9c6b5b3978adcae2c1569e9f9e6a62d30a05ee55d9a64904bd63c14a9ef4cef"],isAdm=async e=>!!e&&ADMIN_H.includes(await sha("admin|"+e.toLowerCase()));admShow();
 const box=id=>["ageBox","parBox","loginBox"].forEach(b=>document.getElementById(b).style.display=b===id?"":"none");
 const step=n=>[1,2,3].forEach(i=>document.getElementById("parS"+i).style.display=i===n?"":"none");
 function parMode(a){adm=a;document.getElementById("parQ").textContent=a?"Admin login":"Ask a parent to confirm";document.getElementById("pNote").textContent=a?"Enter the admin email and we'll send you a code.":"To use Yathin AI as 13 or older, a parent or adult must confirm by email.";document.getElementById("pLbl").textContent=a?"Admin email":"Parent's email";document.getElementById("pEmail").placeholder=a?"admin@email.com":"parent@email.com";document.getElementById("pErr").textContent="";document.querySelector("#parS3 .note").textContent=a?"Admin: pick the mode for this account.":"Thanks! Parent, pick the mode for this person.";box("parBox");step(1)}
-document.getElementById("ageT").onclick=()=>doneAge(false);document.getElementById("admBtn").onclick=()=>parMode(true);
+document.getElementById("ageT").onclick=()=>doneAge(false);document.getElementById("admBtn").onclick=()=>parMode(true);document.getElementById("admBtn2").onclick=()=>{document.getElementById("login").classList.add("on");parMode(true);document.getElementById("pEmail").value=localStorage.getItem("yai-user")||""};
 document.getElementById("pBack").onclick=()=>box("ageBox");
 async function sendCode(again){const e=again===true?pMail:document.getElementById("pEmail").value.trim().toLowerCase(),er=document.getElementById(again===true?"pErr2":"pErr");
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){er.textContent="Enter a real email.";return}
- if(adm&&await sha("admin|"+e)!==ADMIN_H){er.textContent="That isn't an admin email.";return}
+ if(adm&&(!(await isAdm(e))||e!==localStorage.getItem("yai-user"))){er.textContent="Admin is only for the admin accounts.";return}
  const me=localStorage.getItem("yai-user");if(!adm&&me&&me===e){er.textContent="Use a parent's email, not your own.";return}
  let sl=JSON.parse(localStorage.getItem("yai-psend")||"[]").filter(t=>Date.now()-t<36e5);if(sl.length>=3){er.textContent="Too many codes. Try again in an hour.";return}
  const c=String(crypto.getRandomValues(new Uint32Array(1))[0]%1e6).padStart(6,"0");er.textContent="Sending…";
@@ -588,7 +589,7 @@ document.getElementById("pSend").onclick=()=>sendCode(false);document.getElement
 document.getElementById("pVer").onclick=async()=>{const er=document.getElementById("pErr2");if(++pTries>5){er.textContent="Too many tries. Send a new code.";pCodeH="";return}
  if(pCodeH&&await sha(document.getElementById("pCode").value.trim())===pCodeH){step(3)}else er.textContent="That code isn't right."};
 async function parentPick(kid){const pin=document.getElementById("pPin").value.trim();if(!/^\d{4}$/.test(pin)){document.getElementById("pErr3").textContent="Set a 4-digit PIN first.";return}
- setPin(await sha("pin|"+pin));localStorage.setItem("yai-parent",pMail);if(adm)localStorage.setItem("yai-admin","1");box("loginBox");doneAge(kid)}
+ setPin(await sha("pin|"+pin));localStorage.setItem("yai-parent",pMail);if(adm){localStorage.setItem("yai-admin","1");const m=JSON.parse(localStorage.getItem("yai-plusfor")||"{}");m[pMail]=1;localStorage.setItem("yai-plusfor",JSON.stringify(m));localStorage.setItem("yai-plus","1")}box("loginBox");doneAge(kid);if(adm)setTimeout(()=>location.reload(),300)}
 document.getElementById("pKid").onclick=()=>parentPick(true);document.getElementById("pAdult").onclick=()=>parentPick(false);
 window.yaiParent=async()=>{const h=pinKey();if(!h){document.getElementById("prof").classList.remove("on");document.getElementById("login").classList.add("on");box("parBox");step(1);setTimeout(()=>document.getElementById("pEmail").focus(),50);return}const un=+sessionStorage.getItem("yai-pinok")||0;if(Date.now()>un){const p=prompt("Parent PIN:");if(!p)return;
  if(await sha("pin|"+p.trim())!==h){alert("Wrong PIN.");return}sessionStorage.setItem("yai-pinok",Date.now()+30*60e3)}const was=isKid();if(!confirm(was?"Kids mode is ON.\nSwitch to Grown-up mode (13+)?":"Grown-up mode is ON.\nSwitch to Kids mode (under 13)?"))return;localStorage.removeItem("yai-kidlock");doneAge(!was)};

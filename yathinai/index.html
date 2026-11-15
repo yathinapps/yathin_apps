@@ -411,11 +411,11 @@ async function ensure(){
  if($("#useOl").checked)return;
  if(cloudOn()&&Date.now()>cloudFail){$("#brainInfo").textContent="Brain: Smart ("+(localStorage.getItem("yai-plus")==="1"?"GPT-OSS 120B":(mode==="code"||mode==="model"?"Qwen2.5 Coder 32B":"Qwen3 30B"))+", online)";return}
  const want=(localStorage.getItem("yai-plus")==="1"?PLUS:MODELS)[mode];if(loaded===want)return;
- if(!navigator.gpu)throw new Error("Your computer can't run the on-device brain. Turn on Smart brain in your profile.");
+ const noDev=()=>new Error(cloudOn()?"The smart brain is busy right now. Wait a minute and try again.":"Your computer can't run the on-device brain. Turn on Smart brain in your profile.");if(!navigator.gpu)throw noDev();
  if(!webllm){pill("Getting the on-device brain");webllm=await import("https://esm.run/@mlc-ai/web-llm")}
  const cb=r=>pill("Loading brain "+Math.round((r.progress||0)*100)+"%");
  try{if(engine)await engine.reload(want);else engine=await webllm.CreateMLCEngine(want,{initProgressCallback:cb});loaded=want}
- catch(e){pill("Trying a smaller brain");try{if(engine)await engine.reload(FALLBACK);else engine=await webllm.CreateMLCEngine(FALLBACK,{initProgressCallback:cb});loaded=FALLBACK}catch(x){throw new Error(/GPU/i.test(x.message||"")?"Your computer can't run the on-device brain. Turn on Smart brain in your profile.":x.message)}}
+ catch(e){pill("Trying a smaller brain");try{if(engine)await engine.reload(FALLBACK);else engine=await webllm.CreateMLCEngine(FALLBACK,{initProgressCallback:cb});loaded=FALLBACK}catch(x){throw /GPU|adapter/i.test(x.message||"")?noDev():new Error(x.message)}}
  pill("");$("#brainInfo").textContent="Brain: "+loaded.split("-q4")[0];
 }
 const BRAIN="https://yathin-ai.yathinlooops.workers.dev";

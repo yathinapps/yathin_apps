@@ -9,7 +9,7 @@
 <title>Yathin AI · Free AI that runs in your browser</title>
 <link rel="canonical" href="https://yathinlooops.pages.dev/yathinai/">
 <meta name="description" content="Yathin AI: a free, independent AI that runs right in your browser. No API key, no server. Chat, write code and websites, make 3D print models, and solve physics. Part of Yathin Looops.">
-<link rel="icon" href="yathinai_icon.png?v=2"><link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="yathinai_icon.png?v=3"><link rel="apple-touch-icon" href="icon-180.png">
 <meta property="og:title" content="Yathin AI · Free, no API key"><meta property="og:description" content="An independent AI that runs in your browser."><meta property="og:image" content="https://yathinlooops.pages.dev/promo/yathin-ai-free-app.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono&display=swap" rel="stylesheet">
@@ -110,7 +110,7 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 #plusIntro{position:fixed;inset:0;z-index:60;overflow:hidden;background:radial-gradient(circle at 50% 50%,#fff7d6,#fde68a 55%,#f59e0b);transition:opacity .5s}
 #plusIntro.out{opacity:0;transform:scale(1.04);pointer-events:none}#plusIntro{transition:opacity .6s,transform .6s}
 #plusIntro .pitr{display:block;margin:0;padding:0;background:none;border:0;box-shadow:none;height:auto;width:auto;position:absolute;top:50%;left:0;white-space:nowrap;font:700 clamp(90px,16vw,230px) Fredoka,'Baloo 2',sans-serif;letter-spacing:.01em;color:#111;transition:transform .35s cubic-bezier(.22,.8,.3,1)}
-#plusIntro .pia,#plusIntro .pip{font:inherit;font-size:1em;line-height:1.1;padding:0;display:inline-block;background:linear-gradient(90deg,#7c3aed,#ec4899,#06b6d4);-webkit-background-clip:text;background-clip:text;color:transparent}
+#plusIntro .pia,#plusIntro .pip{font:inherit;font-size:1em;line-height:1.1;padding:0;display:inline-block;background:linear-gradient(90deg,#a855f7,#ec4899 25%,#ec4899 70%,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
 #plusIntro .piii,#plusIntro .pitl{all:unset;font:inherit;color:inherit;white-space:nowrap}#plusIntro .pitl{display:none}#plusIntro .pitl.on{display:inline-block;animation:piin .45s cubic-bezier(.22,.8,.3,1)}#plusIntro .pi1{all:unset;font:inherit;color:inherit;display:inline-block;animation:piin .3s ease-out}@keyframes piin{from{opacity:0;transform:translateY(.15em) scale(.85)}to{opacity:1;transform:none}}
 #plusIntro .pip{margin-left:.06em;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#facc15;-webkit-text-stroke:.07em #111;paint-order:stroke fill;filter:drop-shadow(0 0 .12em rgba(250,204,21,.8));transform:scale(0);opacity:0;transition:transform .45s cubic-bezier(.2,1.6,.4,1),opacity .2s}
 #plusIntro .pip.on{transform:scale(1);opacity:1}
@@ -119,12 +119,12 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 #intro .s{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .6s}
 #intro .s.on{opacity:1}
 #intro h1{font-size:clamp(40px,7vw,84px);margin:0;font-weight:700;letter-spacing:-.02em;color:#2e1065}
-#intro h1 em{font-style:normal;background:linear-gradient(90deg,#7c3aed,#ec4899,#06b6d4);-webkit-background-clip:text;background-clip:text;color:transparent}
+#intro h1 em{font-style:normal;background:linear-gradient(90deg,#a855f7,#ec4899 25%,#ec4899 70%,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
 #intro p{font-size:22px;color:#4c1d95;opacity:.75;margin:10px 0 0}
 #intro img{width:120px;border-radius:0;box-shadow:none;filter:drop-shadow(0 12px 22px rgba(124,58,237,.35));animation:pop .8s cubic-bezier(.2,1.4,.4,1)}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
 #intro .load{width:min(420px,70vw);height:12px;border-radius:9px;background:rgba(255,255,255,.6);margin:26px auto 0;overflow:hidden}
-#intro .load i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,#7c3aed,#ec4899,#06b6d4)}
+#intro .load i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,#a855f7,#ec4899 25%,#ec4899 70%,#38bdf8)}
 #intro .load i.go{width:100%;transition:width 5.69s cubic-bezier(.45,.05,.35,1)}
 #intro .pct{font:600 18px Geist,sans-serif;color:#4c1d95;margin-top:10px}
 .inv{margin-top:12px;padding:12px;border-radius:16px;background:rgba(255,255,255,.7);font-size:13px}
@@ -226,12 +226,12 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
 <body>
 <div id="intro" style="display:none">
   <div class="s" id="s0"><div><h1><em>Yathin AI</em></h1><p id="by" style="color:#6b7280;opacity:0;transition:opacity .7s">by Yathin Pedamallu</p></div><div style="position:absolute;bottom:34px;left:0;right:0;color:#9ca3af;font-size:16px">A part of Yathin Looops</div></div>
-  <div class="s" id="s1"><div><img src="yathinai_icon_intro.png" alt=""><h1>Hello,<br>Welcome to <em>Yathin AI</em></h1></div></div>
+  <div class="s" id="s1"><div><img src="yathinai_icon_intro.png?v=3" alt=""><h1>Hello,<br>Welcome to <em>Yathin AI</em></h1></div></div>
   <div class="s" id="s2"><div><h1>Do more with<br><em>Yathin AI+</em></h1><p>A way smarter brain. Bigger limits.</p></div></div>
-  <div class="s" id="s3"><div><img src="yathinai_icon_intro.png" alt=""><p>Getting Yathin AI ready</p><div class="load"><i id="ld"></i></div><div class="pct" id="pct">0%</div></div></div>
+  <div class="s" id="s3"><div><img src="yathinai_icon_intro.png?v=3" alt=""><p>Getting Yathin AI ready</p><div class="load"><i id="ld"></i></div><div class="pct" id="pct">0%</div></div></div>
 </div>
 <div id="login"><div class="box" id="ageBox" style="display:none">
-  <div class="hd"><img src="yathinai_icon.png?v=2" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon.png?v=3" alt="">Yathin AI</div>
   <div class="agq">How old are you?</div>
   <div class="sm" style="color:#555;font-size:14px">Enter your birthday (or just your age). Under 13 gets Kids mode, made safe and simple.</div>
   <div class="bd"><input id="ageIn" type="date" min="1906-01-01" aria-label="Birthday"><button id="ageGo" type="button">Continue</button></div>
@@ -241,7 +241,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <div style="text-align:center;margin-top:12px"><button class="lnk" id="admBtn" type="button" style="font-size:13px;display:none">🔑 Admin login</button></div>
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div><div class="box" id="parBox" style="display:none">
-  <div class="hd"><img src="yathinai_icon.png?v=2" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon.png?v=3" alt="">Yathin AI</div>
   <div class="agq" id="parQ">Ask a parent to confirm</div>
   <div id="parS1"><div class="note" id="pNote">To use Yathin AI as 13 or older, a parent or adult must confirm by email.</div>
    <label for="pEmail" id="pLbl">Parent's email</label><div class="in"><input id="pEmail" type="email" placeholder="parent@email.com"></div>
@@ -255,7 +255,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
    <div class="err" id="pErr3"></div></div>
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div><div class="box" id="loginBox">
-  <div class="hd"><img src="yathinai_icon.png?v=2" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon.png?v=3" alt="">Yathin AI</div>
   <label for="lEmail">Email</label><div class="in"><input id="lEmail" type="email" placeholder="user@domain.com" autocomplete="email"></div>
   <label for="lPass">Password</label><div class="in"><input id="lPass" type="password" placeholder="" autocomplete="current-password"><button class="eye" id="eye" type="button">👁</button></div>
   <div id="lP2w" style="display:none"><label for="lPass2">Confirm password</label><div class="in"><input id="lPass2" type="password" autocomplete="new-password"></div></div>
@@ -387,7 +387,7 @@ function bubble(cls,t,x){const d=document.createElement("div");d.className="msg 
 function setMode(m,keep){if(isKid()&&m==="physics")m="chat";if(!isKid()&&(m==="learn"||m==="games"))m="chat";document.body.classList.toggle("kz-on",m==="learn"||m==="games");if(m==="learn"||m==="games"){mode=m;document.body.classList.remove("home-on");document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));window.KZ&&KZ.show(m);return}document.body.classList.toggle("home-on",m==="home");document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));if(m==="home"){mode="home";drawHome();drawSide();return}mode=m;document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("#q").placeholder={chat:"Message Yathin AI",code:"Describe a website, game or app",model:"Describe something to 3D print",physics:"Ask a physics question"}[m];if(!keep){cur=null;render()}else drawSide()}
 document.querySelectorAll(".modes button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 function render(){const c=$("#chat");c.innerHTML="";
- if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon.png?v=2" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
+ if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon.png?v=3" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
   (mode==="model"&&localStorage.getItem("yai-plus")==="1"?["🏠 A two-story house with a garage","🏰 A castle with 4 towers","🏛️ A Greek temple with columns","🌉 A stone arch bridge"]:EX[mode]).forEach(t=>{const b=document.createElement("button");b.className="glass";b.textContent=t;b.onclick=()=>{$("#q").value=t;send()};c.querySelector(".ex").append(b)})}
  else cur.msgs.forEach(x=>{const d=bubble(x.role==="user"?"u":"a",x.content,x);if(x.role!=="user")after(d,x.content,false)});
  drawSide()}
@@ -608,7 +608,7 @@ async function parentPick(kid){const pin=document.getElementById("pPin").value.t
 document.getElementById("pKid").onclick=()=>parentPick(true);document.getElementById("pAdult").onclick=()=>parentPick(false);
 window.yaiParent=async()=>{const h=pinKey();if(!h){document.getElementById("prof").classList.remove("on");document.getElementById("login").classList.add("on");box("parBox");step(1);setTimeout(()=>document.getElementById("pEmail").focus(),50);return}const un=+sessionStorage.getItem("yai-pinok")||0;if(Date.now()>un){const p=prompt("Parent PIN:");if(!p)return;
  if(await sha("pin|"+p.trim())!==h){alert("Wrong PIN.");return}sessionStorage.setItem("yai-pinok",Date.now()+30*60e3)}const was=isKid();if(!confirm(was?"Kids mode is ON.\nSwitch to Grown-up mode (13+)?":"Grown-up mode is ON.\nSwitch to Kids mode (under 13)?"))return;localStorage.removeItem("yai-kidlock");doneAge(!was)};
-try{if(!localStorage.getItem("yai-agemig2")){const a=JSON.parse(localStorage.getItem("yai-agefor")||"{}");for(const k in a)if(a[k]===1)delete a[k];localStorage.setItem("yai-agefor",JSON.stringify(a));if(localStorage.getItem("yai-kid")==="1")localStorage.removeItem("yai-kid");localStorage.removeItem("yai-kidlock");localStorage.setItem("yai-agemig2","1")}}catch(e){}{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");if(u&&u in m)localStorage.setItem("yai-kid",m[u]===1?"1":"0")}document.body.classList.toggle("kid",localStorage.getItem("yai-kid")==="1");document.body.classList.toggle("plus",localStorage.getItem("yai-plus")==="1");if(localStorage.getItem("yai-plus")==="1"){const gi=()=>document.querySelectorAll('img[src="yathinai_icon.png?v=2"]').forEach(i=>i.src="yathinai_icon_gold.png?v=2");gi();new MutationObserver(gi).observe(document.body,{childList:true,subtree:true})}
+try{if(!localStorage.getItem("yai-agemig2")){const a=JSON.parse(localStorage.getItem("yai-agefor")||"{}");for(const k in a)if(a[k]===1)delete a[k];localStorage.setItem("yai-agefor",JSON.stringify(a));if(localStorage.getItem("yai-kid")==="1")localStorage.removeItem("yai-kid");localStorage.removeItem("yai-kidlock");localStorage.setItem("yai-agemig2","1")}}catch(e){}{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");if(u&&u in m)localStorage.setItem("yai-kid",m[u]===1?"1":"0")}document.body.classList.toggle("kid",localStorage.getItem("yai-kid")==="1");document.body.classList.toggle("plus",localStorage.getItem("yai-plus")==="1");if(localStorage.getItem("yai-plus")==="1"){const gi=()=>document.querySelectorAll('img[src="yathinai_icon.png?v=3"]').forEach(i=>i.src="yathinai_icon_gold.png?v=3");gi();new MutationObserver(gi).observe(document.body,{childList:true,subtree:true})}
 if(localStorage.getItem("yai-user")&&localStorage.getItem("yai-kid")===null)setTimeout(askAge,0);
 document.getElementById("signOut").onclick=()=>{localStorage.removeItem("yai-user");syncPlus();localStorage.removeItem("yai-kid");document.body.classList.remove("kid");document.getElementById("prof").classList.remove("on");document.getElementById("lPass").value="";openLogin()};
 if(localStorage.getItem("yai-intro")&&localStorage.getItem("yai-introalways")!=="1")openLogin();

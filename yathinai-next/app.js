@@ -136,7 +136,11 @@ const PLANS = () => `<section class="plans" id="plans"><h2>Choose Your Plan</h2>
   <li>Access to Chat, Code, 3D, Physics, Learn, and Games once signed in</li>
   <li>Built-in Kids Mode for Learning with parent PIN protection</li>
   <li>Generous daily use: 20 h of Chat and 14 h of Code · <span class="reset">Limits reset 12 hours after you run out</span></li></ul></div>
- <div class="plan plus"><img src="yathinai_plus_logo.svg" alt=""><h3>Yathin AI+</h3><span class="tag">Coming Soon</span><ul>
+ <div class="plan plus"><img src="yathinai_plus_logo.svg" alt=""><h3>Yathin AI+</h3><span class="tag">Coming Soon</span>
+  <p style="margin:10px 0 4px">Everything in Free, with a <b style="color:#d99a00;font-weight:800">better</b>, more <b style="color:#d99a00;font-weight:800">advanced</b> AI.</p>
+  <div class="prices" style="display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 2px">
+   <div><b style="color:#d99a00;font-weight:800;font-size:26px">$15.99</b> <span>per month</span><br><s style="color:#9ca3af">$35.99</s></div>
+   <div><b style="color:#d99a00;font-weight:800;font-size:26px">$55.99</b> <span>per year</span><br><s style="color:#9ca3af">$300.99</s></div></div><ul>
   <li>Instant guest access plus one-click login to unlock 3D, Physics, Code, and Chat with custom Home panels</li>
   <li>Smart online AI mode on by default with offline browser fallback</li>
   <li>Access to Chat, Code, 3D, Physics, Learn, and Games once signed in</li>

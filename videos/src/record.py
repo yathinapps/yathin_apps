@@ -66,6 +66,17 @@ def run(app):
         inputs += ["-i", c]; d = int(m) + 250
         filt.append(f"[{i}:a]aresample=44100,adelay={d}|{d},volume=1.6[a{i}]")
     n = len(clips); T = total / 1000.0
+    ch = sc.get("chant")
+    if ch:  # hype ad-libs: a shout on each scene change, a chant over the end card
+        cv = ch.get("voice", "en-US-AndrewNeural"); shouts = ch.get("shouts", ["Hey!"]); k = n
+        cues = [(marks[i] / 1000.0 - 0.3, shouts[(i - 1) % len(shouts)], ch.get("gain", 0.55)) for i in range(1, len(marks))]
+        if ch.get("outro"): cues.append((marks[-1] / 1000.0 + durs[-1] + 0.45, ch["outro"], 1.0))
+        for j, (at, txt, g) in enumerate(cues):
+            if at < 0 or at > T - 0.4: continue
+            pth = f"{work}/c{j}.mp3"; say(txt, pth, cv, ch.get("rate", "+20%"))
+            inputs += ["-i", pth]; d = int(at * 1000)
+            filt.append(f"[{k}:a]aresample=44100,asetrate=44100*0.94,aresample=44100,aecho=0.8:0.6:120:0.25,adelay={d}|{d},volume={g}[a{k}]"); k += 1
+        n = k
     music = (f"aevalsrc='0.5*sin(2*PI*130.81*t)+0.35*sin(2*PI*196*t)+0.3*sin(2*PI*246.94*t)+0.25*sin(2*PI*329.63*t)':s=44100:d={T:.2f},"
              f"tremolo=f=0.25:d=0.5,lowpass=f=900,volume=0.05,afade=t=in:d=1.5,afade=t=out:st={max(0,T-2):.2f}:d=2[m]")
     if sc.get("music"):

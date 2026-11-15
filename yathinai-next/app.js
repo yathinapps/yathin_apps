@@ -141,11 +141,11 @@ const PLANS = () => `<section class="plans" id="plans"><h2>Choose Your Plan</h2>
   <div class="prices" style="display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 2px">
    <div><b style="color:#d99a00;font-weight:800;font-size:26px">$15.99</b> <span>per month</span><br><s style="color:#9ca3af">$35.99</s></div>
    <div><b style="color:#d99a00;font-weight:800;font-size:26px">$55.99</b> <span>per year</span><br><s style="color:#9ca3af">$300.99</s></div></div><ul>
-  <li>Instant guest access plus one-click login to unlock 3D, Physics, Code, and Chat with custom Home panels</li>
-  <li>Smart online AI mode on by default with offline browser fallback</li>
-  <li>Access to Chat, Code, 3D, Physics, Learn, and Games once signed in</li>
-  <li>Built-in Kids Mode for Learning with parent PIN protection</li>
-  <li>5x Larger AI Brain</li>
+  <li>Instant guest access plus one-click login to unlock 3D, Physics, Code, and Chat with <b style="color:#d99a00;font-weight:800">better</b> custom Home panels</li>
+  <li><b style="color:#d99a00;font-weight:800">Advanced</b> online AI mode on by default with offline browser fallback</li>
+  <li>Access to <b style="color:#d99a00;font-weight:800">better</b> Chat, Code, 3D, Physics, Learn, and Games once signed in</li>
+  <li><b style="color:#d99a00;font-weight:800">Advanced</b> Kids Mode for Learning with parent PIN protection</li>
+  <li>5x Larger, more <b style="color:#d99a00;font-weight:800">advanced</b> AI Brain</li>
   <li>Huge Monthly Limits: <b style="color:#d99a00;font-weight:800">140</b> hours of Chat and <b style="color:#d99a00;font-weight:800">130</b> hours of Code every month with no daily caps · <span class="reset">Limits reset 2 days after you run out</span></li>
   <li>Prompt-to-Scene 3D &amp; Physics Builder</li>
   <li>One-Click "Explain &amp; Spawn" Lessons</li>

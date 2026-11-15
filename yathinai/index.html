@@ -151,6 +151,8 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 #login .ages button{flex:1;padding:14px 10px;border:0;border-radius:14px;font:600 15px Geist,sans-serif;cursor:pointer;background:rgba(255,255,255,.85)}
 #login .ages button.k{background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff}
 #login .agq{font-size:22px;font-weight:700;margin:10px 0 6px}
+#chat{overflow-x:hidden!important;min-width:0;max-width:100%}#wrap{overflow-x:hidden}.msg{overflow-wrap:anywhere;word-break:break-word;min-width:0;max-width:min(88%,100%)}.msg *{max-width:100%;min-width:0}.msg pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;overflow:auto;max-width:100%}.lsum{font-weight:600}.lfull{margin-top:8px;max-height:240px;overflow:auto;opacity:.9;font-size:14px}.ltog{margin-top:8px;border:0;border-radius:999px;padding:6px 14px;min-height:32px;background:rgba(0,0,0,.08);color:inherit;font:600 13px Geist,sans-serif;cursor:pointer}
+#login .bd{display:flex;gap:10px;margin-top:12px}#login .bd input{flex:1}#login .bd button{border:0;border-radius:14px;padding:0 20px;min-height:44px;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;font:600 15px Geist,sans-serif;cursor:pointer}
 .kidtag{display:none;position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:5;background:#fef3c7;color:#92400e;font:600 12px Geist,sans-serif;padding:5px 12px;border-radius:999px}
 body.kid .kidtag{display:block}
 .parent{margin-top:10px;padding:8px 12px;border-radius:12px;background:#fef3c7;color:#92400e;font-size:13px}
@@ -231,8 +233,11 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
 <div id="login"><div class="box" id="ageBox" style="display:none">
   <div class="hd"><img src="yathinai_icon.png" alt="">Yathin AI</div>
   <div class="agq">How old are you?</div>
-  <div class="sm" style="color:#555;font-size:14px">Yathin AI is for ages 13 and up. Younger kids get Kids mode, made safe and simple.</div>
-  <div class="ages"><button id="ageK" class="k" type="button">Under 13</button><button id="ageT" type="button">13 or older</button></div>
+  <div class="sm" style="color:#555;font-size:14px">Enter your birthday (or just your age). Under 13 gets Kids mode, made safe and simple.</div>
+  <div class="bd"><input id="ageIn" type="date" min="1906-01-01" aria-label="Birthday"><button id="ageGo" type="button">Continue</button></div>
+  <div style="text-align:center;margin-top:6px"><button class="lnk" id="ageNum" type="button" style="font-size:13px">Type my age instead</button></div>
+  <div class="err" id="ageErr" style="color:#be123c;font-size:13px;margin-top:8px;min-height:16px"></div>
+  <div class="ages" style="display:none"><button id="ageK" class="k" type="button">Under 13</button><button id="ageT" type="button">13 or older</button></div>
   <div style="text-align:center;margin-top:12px"><button class="lnk" id="admBtn" type="button" style="font-size:13px">🔑 Admin login</button></div>
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div><div class="box" id="parBox" style="display:none">
@@ -253,6 +258,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <div class="hd"><img src="yathinai_icon.png" alt="">Yathin AI</div>
   <label for="lEmail">Email</label><div class="in"><input id="lEmail" type="email" placeholder="user@domain.com" autocomplete="email"></div>
   <label for="lPass">Password</label><div class="in"><input id="lPass" type="password" placeholder="" autocomplete="current-password"><button class="eye" id="eye" type="button">👁</button></div>
+  <div id="lP2w" style="display:none"><label for="lPass2">Confirm password</label><div class="in"><input id="lPass2" type="password" autocomplete="new-password"></div></div>
   <div class="err" id="lErr"></div>
   <div class="acts2"><button class="sq" id="lG" title="Google" type="button"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg></button><button class="lg" id="lGo" type="button">Login</button></div>
   <div style="text-align:center"><button class="guest" id="lGuest" type="button">Continue as guest</button></div>
@@ -315,6 +321,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
 <script>function pinKey(){const u=localStorage.getItem("yai-user")||"guest";return JSON.parse(localStorage.getItem("yai-pinfor")||"{}")[u]||""}function setPin(h){const u=localStorage.getItem("yai-user")||"guest",m=JSON.parse(localStorage.getItem("yai-pinfor")||"{}");m[u]=h;localStorage.setItem("yai-pinfor",JSON.stringify(m))}
 function syncPlus(){try{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-plusfor")||"{}");if(localStorage.getItem("yai-plus")==="1"&&u&&!(u in m)&&!localStorage.getItem("yai-plusmig")){m[u]=1;localStorage.setItem("yai-plusfor",JSON.stringify(m))}localStorage.setItem("yai-plusmig","1");if(u&&m[u])localStorage.setItem("yai-plus","1");else localStorage.removeItem("yai-plus")}catch(e){}}syncPlus()</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script src="fixes.js?v=1"></script>
 <script src="sitegen.js?v=2"></script>
 <script src="build3d.js?v=2"></script>
 <script type="module">
@@ -373,13 +380,13 @@ $("#olModel").value=localStorage.getItem("yai-olm")||"llama3.2";$("#olModel").on
 /* ---- ui ---- */
 function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
 function fmt(t){return esc(t).replace(/```(\w*)\n?([\s\S]*?)(```|$)/g,(_,l,c)=>`<pre>${c}</pre>`).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}
-function bubble(cls,t){const d=document.createElement("div");d.className="msg "+cls;d.innerHTML=cls==="a"?fmt(t):esc(t);$("#chat").append(d);$("#chat").scrollTop=1e9;return d}
+function bubble(cls,t,x){const d=document.createElement("div");d.className="msg "+cls;d.innerHTML=cls==="a"?fmt(t):esc(t);if(cls==="u"&&window.YFix)YFix.decorate(d,t,sumAI,x&&x.sum,g=>{if(x){x.sum=g;saveP()}});$("#chat").append(d);$("#chat").scrollTop=1e9;return d}
 function setMode(m,keep){if(isKid()&&m==="physics")m="chat";if(!isKid()&&(m==="learn"||m==="games"))m="chat";document.body.classList.toggle("kz-on",m==="learn"||m==="games");if(m==="learn"||m==="games"){mode=m;document.body.classList.remove("home-on");document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));window.KZ&&KZ.show(m);return}document.body.classList.toggle("home-on",m==="home");document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));if(m==="home"){mode="home";drawHome();drawSide();return}mode=m;document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("#q").placeholder={chat:"Message Yathin AI",code:"Describe a website, game or app",model:"Describe something to 3D print",physics:"Ask a physics question"}[m];if(!keep){cur=null;render()}else drawSide()}
 document.querySelectorAll(".modes button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 function render(){const c=$("#chat");c.innerHTML="";
  if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon.png" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
   (mode==="model"&&localStorage.getItem("yai-plus")==="1"?["🏠 A two-story house with a garage","🏰 A castle with 4 towers","🏛️ A Greek temple with columns","🌉 A stone arch bridge"]:EX[mode]).forEach(t=>{const b=document.createElement("button");b.className="glass";b.textContent=t;b.onclick=()=>{$("#q").value=t;send()};c.querySelector(".ex").append(b)})}
- else cur.msgs.forEach(x=>{const d=bubble(x.role==="user"?"u":"a",x.content);if(x.role!=="user")after(d,x.content,false)});
+ else cur.msgs.forEach(x=>{const d=bubble(x.role==="user"?"u":"a",x.content,x);if(x.role!=="user")after(d,x.content,false)});
  drawSide()}
 $("#addBtn").onclick=newProject;
 
@@ -403,6 +410,7 @@ async function ensure(){
  pill("");$("#brainInfo").textContent="Brain: "+loaded.split("-q4")[0];
 }
 const BRAIN="https://yathin-ai.yathinlooops.workers.dev";
+async function sumAI(t){if(!cloudOn())return"";const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({mode:"chat",json:true,messages:[{role:"system",content:"Summarize the user's text in one plain line under 15 words. Output only the summary."},{role:"user",content:t.slice(0,4000)}]})});if(!r.ok)return"";const x=await r.text();const m=x.match(/^data: (.*)$/m);try{return JSON.parse(m[1]).choices[0].delta.content}catch(e){return""}}
 async function cloudReq(msgs){
  try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({messages:msgs,mode:mode,json:!!msgs.json,plus:localStorage.getItem("yai-plus")==="1"})});if(r.ok)return r}catch(e){}
  return fetch("https://text.pollinations.ai/openai",{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({model:"openai",messages:msgs,stream:true,referrer:"yathinai"})})}
@@ -432,7 +440,7 @@ async function send(){
  if(over()){if(!cur)render();bubble("a",`You've used today's ${bucket(mode)} time. It resets at midnight. Yathin AI+ is coming soon.`);return}
  if(!cur){cur={id:Date.now(),title:q.slice(0,34),mode,msgs:[]};P.unshift(cur);$("#chat").innerHTML=""}
  busy=true;$("#send").disabled=true;$("#q").value="";
- bubble("u",q);cur.msgs.push({role:"user",content:q});saveP();drawSide();
+ {const um={role:"user",content:q};bubble("u",q,um);cur.msgs.push(um)}saveP();drawSide();
  think(true);let box=null,out="";
  try{await ensure();
   if(isKid()&&KIDBAD.test(q)){think(false);const b=bubble("a","That's a grown-up topic, so I can't help with it in Kids mode. Please talk to a parent or a trusted grown-up about it. 💛");cur.msgs.push({role:"assistant",content:b.textContent});saveP();busy=false;$("#send").disabled=false;return}
@@ -526,18 +534,24 @@ async function sha(t){const b=await crypto.subtle.digest("SHA-256",new TextEncod
 function openLogin(){if(!localStorage.getItem("yai-user"))document.getElementById("login").classList.add("on")}
 window.yaiOpenLogin=openLogin;
 document.getElementById("eye").onclick=()=>{const p=document.getElementById("lPass");p.type=p.type==="password"?"text":"password"};
-document.getElementById("lGo").onclick=async()=>{const e=document.getElementById("lEmail").value.trim().toLowerCase(),pw=document.getElementById("lPass").value,er=document.getElementById("lErr");
+let lMode="";document.getElementById("lEmail").addEventListener("input",()=>{lMode="";document.getElementById("lP2w").style.display="none";document.getElementById("lGo").textContent="Login"});
+document.getElementById("lGo").onclick=async()=>{const e=document.getElementById("lEmail").value.trim().toLowerCase(),pw=document.getElementById("lPass").value,er=document.getElementById("lErr"),p2=document.getElementById("lPass2"),go=document.getElementById("lGo");
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){er.textContent="Enter a real email.";return}
- if(pw.length<6){er.textContent="Password needs 6 or more characters.";return}
- const acc=JSON.parse(localStorage.getItem("yai-accounts")||"{}"),h=await sha(e+"|"+pw);
- if(acc[e]&&acc[e]!==h){er.textContent="Wrong password for this email.";return}
- acc[e]=h;localStorage.setItem("yai-accounts",JSON.stringify(acc));localStorage.setItem("yai-user",e);syncPlus();
+ const st=YFix.state(e);
+ if(st==="pbkdf2"||st==="legacy"){if(!pw){er.textContent="Enter your password.";return}er.textContent="Checking…";if(!(await YFix.check(e,pw))){er.textContent="Wrong password";return}er.textContent=""}
+ else{const want=st==="new"?"create":"set";
+  if(lMode!==want){lMode=want;document.getElementById("lP2w").style.display="";go.textContent=want==="create"?"Create account":"Set password";er.textContent=want==="create"?"New here? Choose a password (8+ characters) and type it again to create your account on this device.":"This account doesn't have a password yet. Set one now (8+ characters) and type it again.";p2.focus();return}
+  if(pw.length<8){er.textContent="Password needs 8 or more characters.";return}
+  if(pw!==p2.value){er.textContent="The two passwords don't match.";return}
+  await YFix.setPw(e,pw);lMode="";document.getElementById("lP2w").style.display="none";go.textContent="Login";p2.value="";er.textContent=""}
+ localStorage.setItem("yai-user",e);syncPlus();
  if(!localStorage.getItem("yai-name")){const n=e.split("@")[0].replace(/[^a-z]/gi," ").trim();localStorage.setItem("yai-name",n.charAt(0).toUpperCase()+n.slice(1))}
  drawName();{const m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");if(e in m){doneAge(m[e]===1);return}}askAge()};
+document.getElementById("lPass2").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("lGo").click()});
 document.getElementById("lPass").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("lGo").click()});
 const GCID="148201480683-9894qd6i7mjoqmrujbvq50k0pekqtafs.apps.googleusercontent.com";
 function gDone(r){try{const b=r.credential.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");const j=JSON.parse(decodeURIComponent(escape(atob(b))));if(!j.email)throw 0;
- localStorage.setItem("yai-user",j.email.toLowerCase());syncPlus();localStorage.setItem("yai-name",j.given_name||j.name||j.email.split("@")[0]);if(j.picture)localStorage.setItem("yai-pic",j.picture);
+ localStorage.setItem("yai-user",j.email.toLowerCase());YFix.markGoogle(j.email.toLowerCase());syncPlus();localStorage.setItem("yai-name",j.given_name||j.name||j.email.split("@")[0]);if(j.picture)localStorage.setItem("yai-pic",j.picture);
  drawName();{const m=JSON.parse(localStorage.getItem("yai-agefor")||"{}"),e=j.email.toLowerCase();if(e in m)doneAge(m[e]===1);else askAge()}}catch(e){document.getElementById("lErr").textContent="Google sign-in didn't work. Try email instead."}}
 function gInit(){if(!window.google||!google.accounts)return;google.accounts.id.initialize({client_id:GCID,callback:gDone,ux_mode:"popup"});
  const g=document.getElementById("lG");g.style.position="relative";g.style.overflow="hidden";const o=document.createElement("div");o.style.cssText="position:absolute;inset:0;opacity:.01;display:flex;align-items:center;justify-content:center;transform:scale(1.6)";g.append(o);
@@ -545,9 +559,13 @@ function gInit(){if(!window.google||!google.accounts)return;google.accounts.id.i
 document.getElementById("lG").onclick=()=>{if(!window.google)document.getElementById("lErr").textContent="Google is still loading. Try again in a second."};
 {const sc=document.createElement("script");sc.src="https://accounts.google.com/gsi/client";sc.async=true;sc.onload=gInit;document.head.append(sc)}
 document.getElementById("lGuest").onclick=()=>{localStorage.setItem("yai-user","guest");syncPlus();askAge()};
-function askAge(){document.getElementById("loginBox").style.display="none";document.getElementById("ageBox").style.display="";document.getElementById("login").classList.add("on")}
+function askAge(){if(localStorage.getItem("yai-user")==="guest"&&localStorage.getItem("yai-kidlock")==="1"){doneAge(true);return}document.getElementById("loginBox").style.display="none";document.getElementById("ageBox").style.display="";document.getElementById("login").classList.add("on")}
 function doneAge(kid){if(!kid&&(mode==="learn"||mode==="games"))setTimeout(()=>setMode("chat"),0);localStorage.setItem("yai-kid",kid?"1":"0");{const u=localStorage.getItem("yai-user");if(u&&u!=="guest"){const m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");m[u]=kid?1:0;localStorage.setItem("yai-agefor",JSON.stringify(m))}}document.body.classList.toggle("kid",kid);if(kid&&mode==="physics")setMode("chat");drawLim();box("loginBox");document.getElementById("login").classList.remove("on")}
 document.getElementById("ageK").onclick=()=>doneAge(true);
+document.getElementById("ageNum").onclick=()=>{const i=document.getElementById("ageIn"),n=i.type==="date";i.type=n?"text":"date";i.value="";i.placeholder=n?"Your age, like 12":"";i.inputMode=n?"numeric":"";document.getElementById("ageNum").textContent=n?"Pick my birthday instead":"Type my age instead";i.focus()};
+document.getElementById("ageGo").onclick=()=>{const r=YFix.age(document.getElementById("ageIn").value),er=document.getElementById("ageErr");if(r.err){er.textContent=r.err;return}er.textContent="";
+ if(r.age<13){if(localStorage.getItem("yai-user")==="guest")localStorage.setItem("yai-kidlock","1");doneAge(true)}else document.getElementById("ageT").click()};
+document.getElementById("ageIn").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("ageGo").click()});
 const EJ={s:"service_pqelqat",t:"template_fi4tlhp",k:"wWMmhZFuMnJ9VDYJF"};let pCodeH="",pMail="",pTries=0,adm=false,reT=null;const ADMIN_H="16a37f4fbdfd00cfc7fc57d8891be5572af8992f03380858413f861c07f915d7";
 const box=id=>["ageBox","parBox","loginBox"].forEach(b=>document.getElementById(b).style.display=b===id?"":"none");
 const step=n=>[1,2,3].forEach(i=>document.getElementById("parS"+i).style.display=i===n?"":"none");
@@ -572,7 +590,7 @@ async function parentPick(kid){const pin=document.getElementById("pPin").value.t
  setPin(await sha("pin|"+pin));localStorage.setItem("yai-parent",pMail);if(adm)localStorage.setItem("yai-admin","1");box("loginBox");doneAge(kid)}
 document.getElementById("pKid").onclick=()=>parentPick(true);document.getElementById("pAdult").onclick=()=>parentPick(false);
 window.yaiParent=async()=>{const h=pinKey();if(!h){document.getElementById("prof").classList.remove("on");document.getElementById("login").classList.add("on");box("parBox");step(1);setTimeout(()=>document.getElementById("pEmail").focus(),50);return}const p=prompt("Parent PIN:");if(!p)return;
- if(await sha("pin|"+p.trim())!==h){alert("Wrong PIN.");return}const was=isKid();if(!confirm(was?"Kids mode is ON.\nSwitch to Grown-up mode (13+)?":"Grown-up mode is ON.\nSwitch to Kids mode (under 13)?"))return;doneAge(!was)};
+ if(await sha("pin|"+p.trim())!==h){alert("Wrong PIN.");return}const was=isKid();if(!confirm(was?"Kids mode is ON.\nSwitch to Grown-up mode (13+)?":"Grown-up mode is ON.\nSwitch to Kids mode (under 13)?"))return;localStorage.removeItem("yai-kidlock");doneAge(!was)};
 {const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-agefor")||"{}");if(u&&u in m)localStorage.setItem("yai-kid",m[u]===1?"1":"0")}document.body.classList.toggle("kid",localStorage.getItem("yai-kid")==="1");document.body.classList.toggle("plus",localStorage.getItem("yai-plus")==="1");if(localStorage.getItem("yai-plus")==="1"){const gi=()=>document.querySelectorAll('img[src="yathinai_icon.png"]').forEach(i=>i.src="yathinai_icon_gold.png");gi();new MutationObserver(gi).observe(document.body,{childList:true,subtree:true})}
 if(localStorage.getItem("yai-user")&&localStorage.getItem("yai-kid")===null)setTimeout(askAge,0);
 document.getElementById("signOut").onclick=()=>{localStorage.removeItem("yai-user");syncPlus();localStorage.removeItem("yai-kid");document.body.classList.remove("kid");document.getElementById("prof").classList.remove("on");document.getElementById("lPass").value="";openLogin()};

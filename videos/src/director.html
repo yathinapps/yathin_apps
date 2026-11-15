@@ -320,6 +320,39 @@ const SCRIPTS = {
     run: async () => { await sleep(300); await popAll(".s1",500); }},
    {end:true, say:"QuizLooop. Free on Yathin Looops."}
   ]},
+ yathinai: { bg:"linear-gradient(135deg,#ec4899 0%,#a855f7 50%,#3b82f6 100%)", btn:"linear-gradient(90deg,#ec4899,#8b5cf6,#3b82f6)",
+  icon:"/yathinai/yathinai_icon.png", title:"Yathin AI", tag:"A free AI. No key. No download.",
+  chips:["100% free","No API key","Kids mode"], foot:"yathinlooops.pages.dev/yathinai",
+  scenes:[
+   {hook:["AI that needs a key?","A credit card?","A big download?"], strike:true, say:"An AI that needs a key, a credit card, or a big download?"},
+   {say:"Meet Yathin AI. Just open it and start talking. It's free.", pill:"Open it and talk. Free.", html:`
+     <div class="h">💬 Chat</div>
+     <div class="card hide ya" style="margin-left:auto;width:62%;font-size:30px;background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff">Why is the sky blue?</div>
+     <div class="card hide ya" style="width:78%;font-size:28px;margin-top:22px;line-height:1.5">Sunlight has every color. Blue light bounces around the air the most, so blue reaches your eyes from every direction. 🌤️</div>`,
+    run: async () => { await sleep(300); await popAll(".ya",900); await sleep(900); }},
+   {say:"Ask for a game, and it writes the code and runs it for you.", pill:"Ask for a game. It writes the code.", html:`
+     <div style="display:flex;gap:34px;height:100%"><div class="card" style="flex:1;font-family:monospace;font-size:22px;line-height:1.7;color:#c4b5fd">
+      ${["&lt;canvas id=\"board\"&gt;","const cells = Array(9).fill('');","function play(i){","  cells[i] = turn;","  turn = turn==='X' ? 'O' : 'X';","  draw(); checkWin();","}"].map(l=>`<div class="ln hide">${l}</div>`).join("")}</div>
+      <div class="card hide" id="ttt" style="width:400px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-self:center">
+      ${["X","O","X","","X","O","O","","X"].map(c=>`<div style="height:110px;border-radius:12px;background:#2a2a38;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:800;color:${c==="X"?"#ec4899":"#60a5fa"}">${c}</div>`).join("")}</div></div>`,
+    run: async () => { await sleep(200); await popAll(".ln",260); q("#ttt").classList.add("popin"); await sleep(1500); }},
+   {say:"Ask for a castle, and it builds a 3D model. Spin it, then download it for a 3D printer.", pill:"3D models you can print", html:`
+     <div style="display:flex;gap:34px;align-items:center;height:100%"><div style="flex:1">
+      <div class="card hide ya" style="margin-left:auto;width:85%;font-size:28px;background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff">Build me a castle with 4 towers 🏰</div>
+      <div class="card hide ya" style="width:85%;font-size:26px;margin-top:20px">Here's your castle: towers, walls and a gate.</div>
+      <div style="margin-top:26px"><span class="btn hide ya" id="dl">⬇ Download for 3D printer</span></div></div>
+     <div class="card hide ya" id="cs" style="width:440px;height:400px;display:flex;align-items:flex-end;justify-content:center;gap:6px;padding-bottom:40px;box-sizing:border-box">
+      ${[[60,160],[90,110],[70,210],[90,110],[60,160]].map(b=>`<div style="width:${b[0]}px;height:${b[1]}px;background:#78716c;border-radius:6px 6px 0 0;position:relative"><div style="position:absolute;top:-34px;left:-6px;right:-6px;height:36px;background:#7f1d1d;clip-path:polygon(50% 0,100% 100%,0 100%)"></div></div>`).join("")}</div></div>`,
+    run: async () => { await sleep(300); await popAll(".ya",650); q("#cs").animate([{transform:"rotateY(-14deg)"},{transform:"rotateY(14deg)"}],{duration:1300,iterations:4,direction:"alternate"}); await sleep(600); await cursorTo("#dl",800); await click("#dl"); hideCursor(); await sleep(900); }},
+   {say:"It also helps with homework, physics, and even writes songs.", pill:"Chat · Code · 3D · Physics · Songs", html:`
+     <div style="text-align:center;padding-top:70px">${["💬 Chat","👨‍💻 Code","🧊 3D","🧪 Physics","🎵 Songs","🎮 Games"].map(c=>`<span class="chip hide" style="font-size:34px;display:inline-block;margin:14px">${c}</span>`).join("")}</div>`,
+    run: async () => { await sleep(300); await popAll(".chip",380); await sleep(700); }},
+   {say:"And for kids, there's Kids mode, locked with a parent PIN.", pill:"Kids mode with a parent PIN", html:`
+     <div style="text-align:center;padding-top:40px"><div style="font-size:110px">🧒</div><div class="h" style="font-size:46px">Kids mode</div>
+     <div class="chip hide" style="font-size:28px;display:inline-block;margin:10px">🛡️ Kid-safe answers</div><br><div class="chip hide" style="font-size:28px;display:inline-block;margin:10px">🔒 Parent PIN to turn it off</div></div>`,
+    run: async () => { await sleep(300); await popAll(".chip",600); await sleep(900); }},
+   {end:true, say:"Yathin AI. Free on Yathin Loops."}
+  ]},
  whattowear: { bg:"linear-gradient(135deg,#48b1fb 0%,#6667b5 50%,#f02c38 100%)", btn:"linear-gradient(90deg,#3b9cf0,#7c6fd0,#f02c38)",
   icon:"/whattowear/whattowear_icon_sq.png", title:"What to Wear", tag:"Check the weather, get your outfit.",
   chips:["100% free","No sign-up","Phones & web"], foot:"Your city  ·  Today's weather  ·  Your outfit",
@@ -457,7 +490,7 @@ const SCRIPTS = {
    {end:true, say:"ClassView. Free on Yathin Apps."}
   ]}
 };
-for (const [k, g] of [["whattowear","linear-gradient(180deg,#48b1fb 0%,#6667b5 50%,#f02c38 100%)"],["screenread","linear-gradient(180deg,#f2c500 0%,#6fa8a0 50%,#0278fe 100%)"]]) SCRIPTS[k + "-vertical"] = {...SCRIPTS[k], vertical:true, vk:true, bg:g};
+for (const [k, g] of [["yathinai","linear-gradient(180deg,#ec4899 0%,#a855f7 50%,#3b82f6 100%)"],["whattowear","linear-gradient(180deg,#48b1fb 0%,#6667b5 50%,#f02c38 100%)"],["screenread","linear-gradient(180deg,#f2c500 0%,#6fa8a0 50%,#0278fe 100%)"]]) SCRIPTS[k + "-vertical"] = {...SCRIPTS[k], vertical:true, vk:true, bg:g};
 const app = new URLSearchParams(location.search).get("app");
 const S = SCRIPTS[app];
 if (S.vertical) document.documentElement.classList.add("v");

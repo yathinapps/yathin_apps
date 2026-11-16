@@ -17,7 +17,7 @@ var u=L.getItem("yai-user");if(u&&u!=="guest"&&!L.getItem("yai-owner"))L.setItem
 <link rel="icon" href="yathinai_icon.png?v=3"><link rel="apple-touch-icon" href="icon-180.png">
 <meta property="og:title" content="Yathin AI · Free, no API key"><meta property="og:description" content="An independent AI that runs in your browser."><meta property="og:image" content="https://yathinlooops.pages.dev/promo/yathin-ai-free-app.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono&display=swap" rel="stylesheet"></noscript>
 <style>
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -89,9 +89,9 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 .st{align-self:flex-start;padding:14px 26px;border-radius:999px;border:1.5px solid rgba(90,110,140,.35);color:rgba(70,85,110,.6);font-size:20px;background:linear-gradient(90deg,rgba(70,85,110,.55) 0%,rgba(70,85,110,.55) 40%,rgba(255,255,255,.95) 50%,rgba(70,85,110,.55) 60%,rgba(70,85,110,.55) 100%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shine 2s linear infinite}
 @keyframes shine{from{background-position:100% 0}to{background-position:-150% 0}}
 .hello{margin:auto;text-align:center}
-.hello img{width:84px;border-radius:22px;box-shadow:0 10px 26px rgba(80,40,160,.25)}
+.hello img{height:auto;width:84px;border-radius:22px;box-shadow:0 10px 26px rgba(80,40,160,.25)}
 .hello h1{font-size:40px;margin:14px 0 6px;font-weight:600}
-.hello p{color:rgba(30,40,60,.6);margin:0 0 18px}
+.hello p{color:rgba(30,40,60,.8);margin:0 0 18px}
 .ex{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .ex button{border:0;padding:10px 16px;border-radius:999px;font:500 14px Geist,sans-serif;cursor:pointer;color:#333}
 .ask{width:min(680px,92vw);margin:0 0 26px;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 24px;border-radius:999px;background:rgba(240,243,247,.85)}
@@ -126,7 +126,7 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 #intro h1{font-size:clamp(40px,7vw,84px);margin:0;font-weight:700;letter-spacing:-.02em;color:#2e1065}
 #intro h1 em{font-style:normal;background:linear-gradient(90deg,#a855f7,#ec4899 25%,#ec4899 70%,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
 #intro p{font-size:22px;color:#4c1d95;opacity:.75;margin:10px 0 0}
-#intro img{width:120px;border-radius:0;box-shadow:none;filter:drop-shadow(0 12px 22px rgba(124,58,237,.35));animation:pop .8s cubic-bezier(.2,1.4,.4,1)}
+#intro img{height:auto;width:120px;border-radius:0;box-shadow:none;filter:drop-shadow(0 12px 22px rgba(124,58,237,.35));animation:pop .8s cubic-bezier(.2,1.4,.4,1)}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
 #intro .load{width:min(420px,70vw);height:12px;border-radius:9px;background:rgba(255,255,255,.6);margin:26px auto 0;overflow:hidden}
 #intro .load i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,#a855f7,#ec4899 25%,#ec4899 70%,#38bdf8)}
@@ -231,12 +231,12 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
 <body>
 <div id="intro" style="display:none">
   <div class="s" id="s0"><div><h1><em>Yathin AI</em></h1><p id="by" style="color:#6b7280;opacity:0;transition:opacity .7s">by Yathin Pedamallu</p></div><div style="position:absolute;bottom:34px;left:0;right:0;color:#9ca3af;font-size:16px">A part of Yathin Looops</div></div>
-  <div class="s" id="s1"><div><img src="yathinai_icon_intro.png?v=3" alt=""><h1>Hello,<br>Welcome to <em>Yathin AI</em></h1></div></div>
+  <div class="s" id="s1"><div><img src="yathinai_icon_intro_256.webp" width="256" height="256" alt=""><h1>Hello,<br>Welcome to <em>Yathin AI</em></h1></div></div>
   <div class="s" id="s2"><div><h1>Do more with<br><em>Yathin AI+</em></h1><p>A way smarter brain. Bigger limits.</p></div></div>
-  <div class="s" id="s3"><div><img src="yathinai_icon_intro.png?v=3" alt=""><p>Getting Yathin AI ready</p><div class="load"><i id="ld"></i></div><div class="pct" id="pct">0%</div></div></div>
+  <div class="s" id="s3"><div><img src="yathinai_icon_intro_256.webp" width="256" height="256" alt=""><p>Getting Yathin AI ready</p><div class="load"><i id="ld"></i></div><div class="pct" id="pct">0%</div></div></div>
 </div>
 <div id="login"><div class="box" id="ageBox" style="display:none">
-  <div class="hd"><img src="yathinai_icon.png?v=3" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon_256.webp" width="256" height="256" alt="">Yathin AI</div>
   <div class="agq">How old are you?</div>
   <div class="sm" style="color:#555;font-size:14px">Enter your birthday (or just your age). Under 13 gets Kids mode, made safe and simple.</div>
   <div class="bd"><input id="ageIn" type="date" min="1906-01-01" aria-label="Birthday"><button id="ageGo" type="button">Continue</button></div>
@@ -246,7 +246,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <div style="text-align:center;margin-top:12px"><button class="lnk" id="admBtn" type="button" style="font-size:13px;display:none">🔑 Admin login</button></div>
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div><div class="box" id="parBox" style="display:none">
-  <div class="hd"><img src="yathinai_icon.png?v=3" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon_256.webp" width="256" height="256" alt="">Yathin AI</div>
   <div class="agq" id="parQ">Ask a parent to confirm</div>
   <div id="parS1"><div class="note" id="pNote">To use Yathin AI as 13 or older, a parent or adult must confirm by email.</div>
    <label for="pEmail" id="pLbl">Parent's email</label><div class="in"><input id="pEmail" type="email" placeholder="parent@email.com"></div>
@@ -260,7 +260,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
    <div class="err" id="pErr3"></div></div>
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div><div class="box" id="loginBox">
-  <div class="hd"><img src="yathinai_icon.png?v=3" alt="">Yathin AI</div>
+  <div class="hd"><img src="yathinai_icon_256.webp" width="256" height="256" alt="">Yathin AI</div>
   <label for="lEmail">Email</label><div class="in"><input id="lEmail" type="email" placeholder="user@domain.com" autocomplete="email"></div>
   <label for="lPass">Password</label><div class="in"><input id="lPass" type="password" placeholder="" autocomplete="current-password"><button class="eye" id="eye" type="button">👁</button></div>
   <div id="lP2w" style="display:none"><label for="lPass2">Confirm password</label><div class="in"><input id="lPass2" type="password" autocomplete="new-password"></div></div>
@@ -270,7 +270,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <div class="ft">Secured by <b>Yathin AI</b></div>
 </div></div>
 <div class="kidtag">🧒 Kids mode · ask a grown-up for help</div>
-<div id="sky"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div id="sky" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
 <header><a class="home glass" href="../" title="Yathin Looops" aria-label="Back to Yathin Looops"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/></svg></a>
 <div class="modes glass" role="navigation" aria-label="Modes">
@@ -393,7 +393,7 @@ function bubble(cls,t,x){const d=document.createElement("div");d.className="msg 
 function setMode(m,keep){if(isKid()&&(m==="physics"||m==="shop"))m="chat";if(m==="shop"&&localStorage.getItem("yai-user")==="guest"){document.getElementById("signOut").click();document.getElementById("lErr").textContent="Log in to unlock Shopping.";return}if(!isKid()&&(m==="learn"||m==="games"))m="chat";document.body.classList.toggle("kz-on",m==="learn"||m==="games");if(m==="learn"||m==="games"){mode=m;document.body.classList.remove("home-on");document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));window.KZ&&KZ.show(m);return}document.body.classList.toggle("home-on",m==="home");document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));if(m==="home"){mode="home";drawHome();drawSide();return}mode=m;document.querySelectorAll(".modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));{const ob=document.querySelector(".modes button.on");if(ob&&ob.scrollIntoView&&innerWidth<=600)ob.scrollIntoView({block:"nearest",inline:"nearest"})}$("#q").placeholder={chat:"Message Yathin AI",code:"Describe a website, game or app",model:"Describe something to 3D print",physics:"Ask a physics question",shop:"What are you shopping for? Add a budget"}[m];if(!keep){cur=null;render()}else drawSide()}
 document.querySelectorAll(".modes button").forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 function render(){const c=$("#chat");c.innerHTML="";
- if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon.png?v=3" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question",shop:"Smart shopping helper"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
+ if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon_256.webp" width="256" height="256" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question",shop:"Smart shopping helper"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
   (mode==="model"&&localStorage.getItem("yai-plus")==="1"?["🏠 A two-story house with a garage","🏰 A castle with 4 towers","🏛️ A Greek temple with columns","🌉 A stone arch bridge"]:EX[mode]).forEach(t=>{const b=document.createElement("button");b.className="glass";b.textContent=t;b.onclick=()=>{$("#q").value=t;send()};c.querySelector(".ex").append(b)})}
  else cur.msgs.forEach(x=>{const d=bubble(x.role==="user"?"u":"a",x.content,x);if(x.role!=="user")after(d,x.content,false)});
  drawSide()}
@@ -581,7 +581,7 @@ function gInit(){if(!window.google||!google.accounts)return;google.accounts.id.i
  const g=document.getElementById("lG");g.style.position="relative";g.style.overflow="hidden";const o=document.createElement("div");o.style.cssText="position:absolute;inset:0;opacity:.01;display:flex;align-items:center;justify-content:center;transform:scale(1.6)";g.append(o);
  google.accounts.id.renderButton(o,{type:"icon",size:"large",shape:"square"})}
 document.getElementById("lG").onclick=()=>{if(!window.google)document.getElementById("lErr").textContent="Google is still loading. Try again in a second."};
-{const sc=document.createElement("script");sc.src="https://accounts.google.com/gsi/client";sc.async=true;sc.onload=gInit;document.head.append(sc)}
+{/* load Google sign-in only once the visitor interacts (keeps ~100 KB off the first load) */let gl=0;const ev=["pointerdown","pointermove","keydown","touchstart","scroll","focusin"],go=()=>{if(gl)return;gl=1;ev.forEach(e=>removeEventListener(e,go,true));const sc=document.createElement("script");sc.src="https://accounts.google.com/gsi/client";sc.async=true;sc.onload=gInit;document.head.append(sc)};ev.forEach(e=>addEventListener(e,go,{capture:true,passive:true}))}
 document.getElementById("lGuest").onclick=()=>{localStorage.setItem("yai-user","guest");if(yaiLoad("guest"))yaiReload();syncPlus();askAge()};
 async function admShow(){const e=localStorage.getItem("yai-user"),ok=!!e&&["16a37f4fbdfd00cfc7fc57d8891be5572af8992f03380858413f861c07f915d7","f9c6b5b3978adcae2c1569e9f9e6a62d30a05ee55d9a64904bd63c14a9ef4cef"].includes(await sha("admin|"+e.toLowerCase()));document.getElementById("admBtn").style.display=ok?"":"none";document.getElementById("admBtn2").style.display=ok?"block":"none"}
 function askAge(){admShow();if(localStorage.getItem("yai-user")==="guest"&&localStorage.getItem("yai-kidlock")==="1"){doneAge(true);return}document.getElementById("loginBox").style.display="none";document.getElementById("ageBox").style.display="";document.getElementById("login").classList.add("on")}
@@ -689,7 +689,7 @@ async function genPanel(what,btn){if(!what||busy)return;busy=true;btn.textConten
 
 drawName();drawLim();setMode("chat");
 </script>
-<script>(function(){try{var b="https://abacus.jasoncameron.dev/hit/praveenp-yathinai/";fetch(b+"visits",{mode:"cors"}).catch(function(){});if(!localStorage.getItem("yai_seen")){localStorage.setItem("yai_seen","1");fetch(b+"visitors",{mode:"cors"}).catch(function(){});}}catch(e){}})();</script>
+<script>addEventListener("load",function(){setTimeout(function(){(function(){try{var b="https://abacus.jasoncameron.dev/hit/praveenp-yathinai/";fetch(b+"visits",{mode:"cors"}).catch(function(){});if(!localStorage.getItem("yai_seen")){localStorage.setItem("yai_seen","1");fetch(b+"visitors",{mode:"cors"}).catch(function(){});}}catch(e){}})();},1500)});</script>
 <script src="kidzone.js?v=5"></script>
 <script>(function(){const P=()=>document.body.classList.contains("plus");document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#themes .po");if(b&&!P()){e.stopImmediatePropagation();e.preventDefault();const m=document.getElementById("genMsg");if(m)m.textContent="That one is for AI+ ✨";}},true);const fix=()=>{if(!P()&&["forest","night","photo"].includes(document.body.dataset.theme)){const a=document.querySelector('#themes button[data-t="aurora"]');if(a)a.click()}};setTimeout(fix,300);setInterval(fix,3000)})();</script><script>(function(){let ok=false;document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#signOut");if(!b||ok||!document.body.classList.contains("plus"))return;e.stopImmediatePropagation();e.preventDefault();const d=document.createElement("div");d.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;font-family:Geist,sans-serif";d.innerHTML='<div style="background:#fff;color:#1f2937;border-radius:22px;padding:24px;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3)"><b style="font-size:18px">Are you sure you want to sign out?</b><p style="color:#4b5563;font-size:14px;margin:10px 0 18px">You have Yathin AI+. Your AI+ stays with this account.</p><div style="display:flex;gap:10px"><button id="soNo" style="flex:1;padding:10px;border-radius:999px;border:1px solid #ddd;background:#fff;font:600 14px Geist,sans-serif;cursor:pointer">Stay</button><button id="soYes" style="flex:1;padding:10px;border-radius:999px;border:0;background:#1f2937;color:#fff;font:600 14px Geist,sans-serif;cursor:pointer">Sign out</button></div></div>';document.body.append(d);d.querySelector("#soNo").onclick=()=>d.remove();d.querySelector("#soYes").onclick=()=>{d.remove();ok=true;b.click();ok=false}},true)})();</script><script>(function(){const P=()=>document.body.classList.contains("plus"),D="rgba(156,163,175,.75)";
 function apply(){const c=P()&&localStorage.getItem("yai-ring")||D;document.documentElement.style.setProperty("--ring",c);document.querySelectorAll("#rings [data-r]").forEach(b=>b.classList.toggle("on",b.dataset.r===c))}

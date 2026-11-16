@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yathinlooops.pages.dev/sitemap.xml

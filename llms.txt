@@ -1,0 +1,18 @@
+# Yathin Looops
+
+> Free apps by Yathin Pedamallu, all in one place. No paid services, no sign-up walls.
+
+## Apps
+
+- [Yathin AI](https://yathinlooops.pages.dev/yathinai/): free AI chat, coding, physics and 3D, with no key and no download
+- [Magic Cursor](https://yathinlooops.pages.dev/magiccursor/): fun animated cursors for Windows
+- [ClassView](https://yathinlooops.pages.dev/classview/): classroom Chromebook monitor demo for teachers
+- [Fridge Chef](https://yathinlooops.pages.dev/fridgechef/): photo of your fridge to recipes
+- [Plant Doc](https://yathinlooops.pages.dev/plantdoc/): plant photo health check
+- [What to Wear](https://yathinlooops.pages.dev/whattowear/): outfit ideas from the weather
+- [Finko](https://yathinlooops.pages.dev/finko/): virtual robot pet
+
+## More
+
+- [Home](https://yathinlooops.pages.dev/): every app in one place
+- [Sitemap](https://yathinlooops.pages.dev/sitemap.xml)

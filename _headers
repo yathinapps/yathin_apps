@@ -1,0 +1,17 @@
+/yathinai/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+
+/yathinai/*.webp
+  Cache-Control: public, max-age=2592000
+
+/yathinai/*.png
+  Cache-Control: public, max-age=604800
+
+/yathinai/*.ttf
+  Cache-Control: public, max-age=2592000
+
+/yathinai/*.js
+  Cache-Control: public, max-age=86400

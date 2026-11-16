@@ -485,13 +485,22 @@ $("#send").onclick=send;$("#q").addEventListener("keydown",e=>{if(e.key==="Enter
 const RVFIX=`<script>(function(){var q=".rv:not(.in),.reveal:not(.in):not(.visible):not(.show),[data-aos]:not(.aos-animate),.fade-in:not(.in):not(.visible):not(.show)";function c(){document.querySelectorAll(q).forEach(function(e){var r=e.getBoundingClientRect();if(r.top<innerHeight*.98&&r.bottom>-50){e.classList.add("in","visible","show","aos-animate");e.style.opacity="1";e.style.transform="none"}})}addEventListener("scroll",c,{passive:true});addEventListener("resize",c);setInterval(c,400);setTimeout(c,300)})()<\/script>`;
 function getHtml(out){const m=out.match(/```html\s*([\s\S]*?)```/i)||out.match(/(<!doctype[\s\S]*<\/html>)/i);return m&&m[1]}
 function getJson(out){out=out.replace(/```(json)?/gi,"");const t=out.slice(out.indexOf("{"),out.lastIndexOf("}")+1);try{return JSON.parse(t)}catch(e){try{return JSON.parse(t.replace(/,\s*([}\]])/g,"$1"))}catch(x){return null}}}
-function isSite(q){if(/\b(website|web site|site|landing|homepage|home page|portfolio|business|shop|store|restaurant|bakery|cafe|company|brand|agency|club|school|blog)\b/i.test(q))return true;if(/\b(game|play|calculator|timer|quiz|todo|to-do|clock|draw|paint|converter|counter|stopwatch|app|tool)\b/i.test(q))return false;return !!(cur&&cur.spec)||true}
+function isSite(q){const t=q.trim();if(!lastSpec()&&/^(change|rename|make it|add|remove|edit|update|fix|put)\b/i.test(t)&&cur&&cur.msgs.some(m=>m.role==="assistant"&&/```html/i.test(m.content)))return false;if(/^(hi+|hey+|hello+|yo|sup|thanks?( you)?|thank you|ok(ay)?|cool|nice|wow|bye|good (morning|night|afternoon|evening))[\s!.?]*$/i.test(t))return false;if(/^(who|what|why|how|when|where|is|are|can|could|do|does|did|will|would|should)\b/i.test(t)&&!/\b(make|build|create|change|add|remove|rename|edit|update)\b/i.test(t))return false;if(/\b(website|web site|site|landing|homepage|home page|portfolio|business|shop|store|restaurant|bakery|cafe|company|brand|agency|club|school|blog)\b/i.test(q))return true;if(/\b(game|play|calculator|timer|quiz|todo|to-do|clock|draw|paint|converter|counter|stopwatch|app|tool)\b/i.test(q))return false;return true}
+function lastSpec(){if(cur&&cur.spec)return cur.spec;return null}
+function deepFill(n,o){if(Array.isArray(o))return Array.isArray(n)&&n.length?n:o;if(o&&typeof o==="object"){const r={...o};for(const k in (n||{}))r[k]=deepFill(n[k],o[k]);return r}return (n==null||n==="")?o:n}
+function swapName(x,a,b){if(!a||!b||a===b)return x;const re=new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"g");const w=v=>typeof v==="string"?v.replace(re,b):Array.isArray(v)?v.map(w):v&&typeof v==="object"?Object.fromEntries(Object.entries(v).map(([k,y])=>[k,w(y)])):v;return w(x)}
+function fullSpec(j){return j&&j.name&&j.hero&&j.hero.title&&Array.isArray(j.features)&&j.features.length>=3}
 async function makeSite(q){
- const msgs=[{role:"system",content:YSite.SYS+(isKid()?KID:"")}];msgs.json=true;
- if(cur&&cur.spec)msgs.push({role:"user",content:"Current website JSON:\n"+JSON.stringify(cur.spec)+"\n\nChange it like this: "+q+"\nKeep everything not mentioned. Reply with the full updated JSON."});
+ const msgs=[{role:"system",content:YSite.SYS+(isKid()?KID:"")}];msgs.json=true;const old=lastSpec();
+ const wantName=/\b(name|rename|call it|called)\b/i.test(q);
+ if(old)msgs.push({role:"user",content:"Current website JSON:\n"+JSON.stringify(old)+"\n\nChange it like this: "+q+(wantName?"\nThe user wants a DIFFERENT brand name than \""+old.name+"\" (use the exact name if they gave one, otherwise invent a fresh new one), and update the name everywhere it appears.":"")+"\nKeep everything not mentioned. Reply with the full updated JSON."});
  else msgs.push({role:"user",content:"Website request: "+q});
- let j=null;for(let tries=0;tries<2&&!j;tries++){let out="";for await(const t of stream(msgs))out+=t;j=getJson(out);if(j&&!j.name)j=null}
+ let j=null;for(let tries=0;tries<3&&!j;tries++){let out="";for await(const t of stream(msgs))out+=t;j=getJson(out);
+  if(j&&old)j=deepFill(j,old);
+  if(!fullSpec(j))j=null;
+  else if(old&&wantName&&j.name===old.name){j=null;msgs.push({role:"user",content:"You kept the name \""+old.name+"\". The user asked to change it. Pick a different name and reply with the full JSON."})}}
  if(!j)throw new Error("The plan didn't come out right. Try asking a little differently.");
+ if(old&&j.name!==old.name)j=swapName(j,old.name,j.name);
  j.kid=isKid();cur.spec=j;const html=YSite.render(j);
  return{text:"",store:`Here's **${j.name}**: ${j.tagline||""}\n\`\`\`html\n${html}\n\`\`\``}}
 function after(box,out,open){

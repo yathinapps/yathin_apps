@@ -1,6 +1,6 @@
 /* Yathin AI next — main app (preview build) */
 import { $, $$, esc, el, md, stripThink, getJson, fmtLeft, sha, loadScript } from "./util.js";
-import { mountIDE } from "./code.js?v=5";
+import { mountIDE } from "./code.js?v=6";
 import { show3D, simulate } from "./scene.js?v=3";
 import { MODEL3D, ARCH } from "./prompts3d.js";
 

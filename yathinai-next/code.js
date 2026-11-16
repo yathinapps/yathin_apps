@@ -187,7 +187,7 @@ export function mountIDE(root, ctx) {
       const msgs = [...(prev || []).slice(-11), { role: "user", content: has ? `${request}\n\nCurrent project files (edit only what is needed; prefer EDIT search/replace blocks for small changes):\n${filesCtx()}` : request }];
       const out = await ctx.ask("code", msgs, ctrl.signal); if (stop) return;
       const a = await applyOut(out);
-      const note = a.parsed.note || (a.res.changed.length ? "Done." : "");
+      const note = a.res.changed.length || a.res.failed.length ? (a.parsed.note || "Done.") : String(out || "").trim(); // plain chat (no files) shows the whole reply
       ctx.answer(bubble, (note || "I couldn't find code in that answer.") + (a.res.failed.length ? `\n\n_Some edits didn't apply: ${a.res.failed.join("; ")}_` : ""), out);
       if (a.diff) ctx.note(bubble, "", a.diff, `Changed ${a.res.changed.join(", ")}`);
       if (!a.res.changed.length) { st("No files changed"); return }

@@ -414,6 +414,7 @@ function openLogin(why) {
    <div id="orLine" style="text-align:center;color:#6b6880;font-size:13px;margin:8px 0">or use email (saved on this device only)</div>
    <label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="email" placeholder="you@example.com">
    <label for="lPass">Password</label><input id="lPass" type="password" autocomplete="current-password">
+   <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;margin-top:10px;cursor:pointer"><input type="checkbox" id="lNews" style="width:auto;margin-top:2px" onchange="this.checked?localStorage.setItem('yai-news-pending','1'):localStorage.removeItem('yai-news-pending')"> Email me Yathin AI news and updates. Unsubscribe anytime.</label>
    <div id="lP2w" class="hidden"><label for="lPass2">Confirm password</label><input id="lPass2" type="password" autocomplete="new-password"></div>
    <div class="err" id="lErr" role="alert"></div>
    <div class="row2"><button class="btn ghost" id="lCancel">Continue as guest</button><button class="btn" id="lGo">Log in</button></div>`);
@@ -435,6 +436,8 @@ function openLogin(why) {
   $("#lGo").onclick = goF; [$("#lPass"), $("#lPass2")].forEach(i => i.onkeydown = e => { if (e.key === "Enter") goF() });
   setTimeout(() => $("#lEmail") && $("#lEmail").focus(), 50);
 }
+function newsSrv(on) { const u = user(); if (!u) return Promise.resolve({ on: false }); return fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "news", email: u, auth: sessTok(), ...(on === true || on === false ? { on } : {}) }) }).then(r => r.ok ? r.json() : { on: false }).catch(() => ({ on: false })) }
+setInterval(() => { if (L.getItem("yai-news-pending") !== "1" || !user() || getJ("yai-agefor", {})[user()] == null) return; L.removeItem("yai-news-pending"); if (!isKid()) { L.setItem("yai-news", "1"); newsSrv(true) } }, 3000);
 function ageSrv(set) { const u = user(); if (!u) return Promise.resolve(null); return fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "age", email: u, auth: sessTok(), ...(set === 0 || set === 1 ? { set } : {}) }) }).then(r => r.ok ? r.json() : null).then(j => j ? j.kid : null).catch(() => null) }
 async function afterLogin(e) { e = String(e || "").toLowerCase().trim(); L.setItem("yai-user", e); const m = getJ("yai-agefor", {}); if (e in m) { closeModal(); refresh(); ageSrv(m[e]); return }
   const k = await ageSrv(); if (k === 0 || k === 1) { m[e] = k; setJ("yai-agefor", m); closeModal(); refresh() } else askAge() }
@@ -496,6 +499,7 @@ function drawAcct() {
     const u = getJ(K("use"), { chat: 0, code: 0 }); a.append(el("div", { class: "sub" }, `Today: Chat ${Math.round(u.chat / 60)} min of 20 h · Code ${Math.round(u.code / 60)} min of 14 h`));
     row("✏️ Change my name", () => { const n = prompt("What should Yathin AI call you?", L.getItem("yai-name") || ""); if (n != null && n.trim()) { L.setItem("yai-name", n.trim().slice(0, 40)); drawTabs(); toast("Got it, " + n.trim().slice(0, 40) + "!") } });
     row("🧒 Kids Mode for Learning", () => { if (isKid()) parentGate(() => setKid(false)); else if (pinOf()) parentGate(() => setKid(true)); else { setKid(true); setPinModal(true) } a.classList.add("hidden") }, isKid());
+    if (!isKid()) { row("📬 Email me Yathin AI news", () => { const on = L.getItem("yai-news") !== "1"; L.setItem("yai-news", on ? "1" : "0"); newsSrv(on); drawAcct() }, L.getItem("yai-news") === "1"); if (!drawAcct.n) { drawAcct.n = 1; newsSrv().then(j => { L.setItem("yai-news", j.on ? "1" : "0") }) } }
     row(pinOf() ? "🔑 Change parent PIN" : "🔑 Set parent PIN", () => { if (pinOf()) parentGate(() => setPinModal(false)); else setPinModal(false) }) }
   row("⚙️ Advanced / Offline Settings", openSettings);
   row("👑 Choose Your Plan", openPlans);

@@ -1,6 +1,6 @@
 /* Yathin AI next — main app (preview build) */
-import { $, $$, esc, el, md, stripThink, getJson, fmtLeft, sha, loadScript } from "./util.js";
-import { mountIDE } from "./code.js?v=6";
+import { $, $$, esc, el, md, stripThink, getJson, fmtLeft, sha, loadScript } from "./util.js?v=2";
+import { mountIDE } from "./code.js?v=7";
 import { show3D, simulate } from "./scene.js?v=3";
 import { MODEL3D, ARCH } from "./prompts3d.js";
 
@@ -135,7 +135,8 @@ const PLANS = () => `<section class="plans" id="plans"><h2>Choose Your Plan</h2>
   <li>Smart online AI mode on by default with offline browser fallback</li>
   <li>Access to Chat, Code, 3D, Physics, Learn, and Games once signed in</li>
   <li>Built-in Kids Mode for Learning with parent PIN protection</li>
-  <li>Generous daily use: 20 h of Chat and 14 h of Code · <span class="reset">Limits reset 12 hours after you run out</span></li></ul></div>
+  <li>Generous daily use: 20 h of Chat and 14 h of Code · <span class="reset">Limits reset 12 hours after you run out</span></li>
+  <li>Up to 50 hours a month · <span class="reset">after 50 hours, a 4-day break, then a fresh month</span></li></ul></div>
  <div class="plan plus"><img src="yathinai_plus_logo.svg" alt=""><div style="position:absolute;top:22px;right:22px;display:flex;flex-direction:column;align-items:flex-end;gap:8px"><span style="background:#fef3c7;color:#92400e;font-weight:800;font-size:14px;border-radius:999px;padding:4px 12px;border:1px solid #e9c46a">Save 56% off per month</span><span style="background:#fef3c7;color:#92400e;font-weight:800;font-size:14px;border-radius:999px;padding:4px 12px;border:1px solid #e9c46a">Save 80% off per year</span></div><h3>Yathin AI+</h3><span class="tag">Coming Soon</span>
   <p style="margin:10px 0 4px">Everything in Free, with a <b style="color:#d99a00;font-weight:800">better</b>, more <b style="color:#d99a00;font-weight:800">advanced</b> AI.</p>
   <div class="prices" style="display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 2px">
@@ -206,12 +207,13 @@ let lockT = null;
 function lockCard(until) {
   $$(".lockc").forEach(x => x.remove()); clearInterval(lockT);
   const g = guest(); const c = el("div", { class: "lockc", role: "status" });
-  c.innerHTML = `<img src="yathinai_logo.svg" alt="" style="width:52px;height:52px"><h3 style="margin:6px 0">${g ? "You've used your 15 free guest messages" : "You've reached your Free limit"}</h3><div class="cd"></div><p style="color:#6b6880;margin:0 0 12px">${g ? "Log in for more: signed-in Free accounts get much bigger limits and every mode." : "Take a break. Everything you made is saved on this device."}</p><div class="acts" style="justify-content:center"></div>`;
+  const mo = until - Date.now() > 13 * 36e5; /* longer than the 12-hour window = the monthly 50-hour cap */
+  c.innerHTML = `<img src="yathinai_logo.svg" alt="" style="width:52px;height:52px"><h3 style="margin:6px 0">${mo ? "You've used your 50 free hours this month" : (g ? "You've used your 15 free guest messages" : "You've reached your Free limit")}</h3><div class="cd"></div><p style="color:#6b6880;margin:0 0 12px">${g ? "Log in for more: signed-in Free accounts get much bigger limits and every mode." : "Take a break. Everything you made is saved on this device."}</p><div class="acts" style="justify-content:center"></div>`;
   const a = $(".acts", c);
   if (g) a.append(el("button", { class: "btn", onclick: () => openLogin() }, "Log in for more"));
   if (navigator.gpu) a.append(el("button", { class: "btn ghost", onclick: () => { SS.setItem("yai2-offnow", "1"); c.remove(); toast("Offline browser model on for this visit. It downloads once (about 1 GB).") } }, "Use offline browser model"));
   a.append(el("button", { class: "btn ghost", onclick: openPlans }, "See plans"));
-  const tick = () => { const left = until - Date.now(); if (left <= 0) { clearInterval(lockT); lockedUntil(); c.remove(); return } $(".cd", c).textContent = `Your ${g ? "guest" : "free"} limit resets in ${fmtLeft(left)}` };
+  const tick = () => { const left = until - Date.now(); if (left <= 0) { clearInterval(lockT); lockedUntil(); c.remove(); return } $(".cd", c).textContent = mo ? `Your 4-day break ends in ${fmtLeft(left)}` : `Your ${g ? "guest" : "free"} limit resets in ${fmtLeft(left)}` };
   tick(); lockT = setInterval(tick, 1000); CL && CL.append(c); c.scrollIntoView({ block: "end" });
 }
 

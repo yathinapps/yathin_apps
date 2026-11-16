@@ -1,5 +1,5 @@
 /* Yathin AI next: Code tab coding agent (plan -> write -> run -> capture errors -> auto-fix up to 3 rounds) */
-import { $, esc, el, stripThink, loadScript } from "./util.js";
+import { $, esc, el, stripThink, loadScript } from "./util.js?v=2";
 
 const PYODIDE = "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js";
 const JSZIP = "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";

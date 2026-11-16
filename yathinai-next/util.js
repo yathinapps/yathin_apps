@@ -52,6 +52,6 @@ export function getJson(out) {
   const t = out.slice(a, b + 1);
   try { return JSON.parse(t) } catch (e) { try { return JSON.parse(t.replace(/,\s*([}\]])/g, "$1")) } catch (x) { return null } }
 }
-export const fmtLeft = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3); return h ? `${h}h ${m}m` : (m ? `${m}m ${s}s` : `${s}s`) };
+export const fmtLeft = ms => { ms = Math.max(0, ms); if (ms >= 48 * 36e5) { const d = Math.floor(ms / 864e5); return `${d}d ${Math.floor(ms % 864e5 / 36e5)}h` } const h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3); return h ? `${h}h ${m}m` : (m ? `${m}m ${s}s` : `${s}s`) };
 export async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("") }
 export function loadScript(src) { return new Promise((res, rej) => { if (document.querySelector(`script[src="${src}"]`) && window.__ls && window.__ls[src]) return res(); const s = document.createElement("script"); s.src = src; s.onload = () => { (window.__ls = window.__ls || {})[src] = 1; res() }; s.onerror = () => rej(new Error("Couldn't load " + src)); document.head.append(s) }) }

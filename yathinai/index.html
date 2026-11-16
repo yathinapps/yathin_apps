@@ -282,6 +282,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
   <input type="text" id="nameIn" placeholder="Your name">
   <div class="lim">💬 Chat today <small id="lc"></small><div class="bar"><i id="bc"></i></div></div>
   <div class="lim">👨‍💻 Code today <small id="lk"></small><div class="bar"><i id="bk"></i></div></div>
+  <div class="lim">📅 This month <small id="lm"></small><div class="bar"><i id="bm"></i></div></div>
   <div class="plus"><span>COMING SOON</span><b>Yathin AI+</b><br>Way smarter: a brain about 5 times bigger for chat, code, 3D and physics. <b style="color:#d99a00;font-weight:800">140</b> hours of chat and <b style="color:#d99a00;font-weight:800">130</b> hours of code a month. No daily limits.</div>
   <button class="btn2" onclick="yaiParent()" style="margin-top:12px;width:100%;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">👪 Parent controls</button>
   <button id="plusSw" type="button" onclick="plusSwap()" style="display:none;width:100%;box-sizing:border-box;margin-top:12px;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif"></button><button id="admBtn2" type="button" style="display:none;width:100%;box-sizing:border-box;margin-top:12px;padding:9px;border-radius:999px;border:1px solid #e8c766;background:#fff8e1;cursor:pointer;font:600 13px Geist,sans-serif">🔑 Admin: try Yathin AI+</button><a id="fbBtn" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=praveenmarketing26@gmail.com&amp;su=Yathin%20AI%20feedback" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;color:#111;margin-top:12px;width:100%;box-sizing:border-box;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">💬 Give feedback</a><button class="btn2" id="signOut" style="margin-top:12px;width:100%;padding:9px;border-radius:999px;border:1px solid #ddd;background:#fff;cursor:pointer;font:600 13px Geist,sans-serif">Sign out</button>
@@ -373,10 +374,13 @@ function U(){let u=JSON.parse(localStorage.getItem("yai-use")||"{}");if(u.d!==to
 const bucket=m=>m==="code"||m==="model"?"code":"chat";
 /* only real chatting counts: typing in the message box (last 60 s) or the AI answering */
 let lastAct=0;$("#q").addEventListener("input",()=>lastAct=Date.now());
-setInterval(()=>{if(mode==="home"||document.hidden||(Date.now()-lastAct>60000&&!busy))return;const u=U();u[bucket(mode)]+=5;localStorage.setItem("yai-use",JSON.stringify(u));drawLim()},5000);
+setInterval(()=>{if(mode==="home"||document.hidden||(Date.now()-lastAct>60000&&!busy))return;const u=U();u[bucket(mode)]+=5;localStorage.setItem("yai-use",JSON.stringify(u));const um=UM();if(!um.hit){um.s+=5;if(um.s>=MH)um.hit=Date.now()}saveUM(um);drawLim()},5000);
 const hrs=s=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h}h ${m}m`:`${m}m`};
-function drawLim(){const u=U();$("#lc").textContent=`${hrs(u.chat)} of 20 h`;$("#lk").textContent=`${hrs(u.code)} of ${lim("code")/3600} h`;$("#bc").style.width=Math.min(100,u.chat/LIM.chat*100)+"%";$("#bk").style.width=Math.min(100,u.code/lim("code")*100)+"%"}
-const over=()=>{const b=bucket(mode);return U()[b]>=lim(b)};
+function drawLim(){const u=U();$("#lc").textContent=`${hrs(u.chat)} of 20 h`;$("#lk").textContent=`${hrs(u.code)} of ${lim("code")/3600} h`;$("#bc").style.width=Math.min(100,u.chat/LIM.chat*100)+"%";$("#bk").style.width=Math.min(100,u.code/lim("code")*100)+"%";const um=UM();$("#lm").textContent=um.hit?"4-day break":`${hrs(um.s)} of 50 h`;$("#bm").style.width=(um.hit?100:Math.min(100,um.s/MH*100))+"%"}
+/* monthly cap: 50 hours of active use per 30 days, then a 4-day break (the server enforces it too) */
+const MH=50*3600,MW=4*864e5;function UM(){let u=JSON.parse(localStorage.getItem("yai-usem")||"null");const n=Date.now();if(!u||(u.hit&&n>=u.hit+MW)||(!u.hit&&n-u.t>30*864e5))u={t:n,s:0,hit:0};return u}
+const saveUM=u=>localStorage.setItem("yai-usem",JSON.stringify(u)),monthLock=()=>{const u=UM();return u.hit?u.hit+MW:0};
+const over=()=>{if(monthLock())return true;const b=bucket(mode);return U()[b]>=lim(b)};
 
 /* ---- profile ---- */
 function drawName(){const n=localStorage.getItem("yai-name")||"";$("#pName").textContent=n||"You";$("#meBtn").textContent=(n[0]||"Y").toUpperCase();$("#nameIn").value=n}
@@ -429,7 +433,7 @@ function topic(q){let s=q.replace(/\s+/g," ").trim().replace(/[?.!]+$/,"");for(l
 window.topic=topic;async function aiTitle(p,q){try{if(!cloudOn())return;const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({mode:"chat",json:true,messages:[{role:"system",content:"Give a short topic title (2 to 5 words, no quotes, no period) for this request, like 'Lemonade stand website' or 'Why the sky is blue'. Output only the title."},{role:"user",content:q.slice(0,500)}]})});if(!r.ok)return;const x=await r.text(),m=x.match(/^data: (.*)$/m);let t=JSON.parse(m[1]).choices[0].delta.content||"";t=t.replace(/["'*#]/g,"").replace(/[.!]+$/,"").trim();if(t&&t.length<=40&&t.split(" ").length<=7&&!p.renamed){p.title=t;saveP();drawSide()}}catch(e){}}
 async function sumAI(t){if(!cloudOn())return"";const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({mode:"chat",json:true,messages:[{role:"system",content:"Summarize the user's text in one plain line under 15 words. Output only the summary."},{role:"user",content:t.slice(0,4000)}]})});if(!r.ok)return"";const x=await r.text();const m=x.match(/^data: (.*)$/m);try{return JSON.parse(m[1]).choices[0].delta.content}catch(e){return""}}
 async function cloudReq(msgs){
- try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({messages:msgs,mode:mode,json:!!msgs.json,plus:localStorage.getItem("yai-plus")==="1",auth:yaiSess()})});if(r.ok)return r}catch(e){}
+ try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({messages:msgs,mode:mode,json:!!msgs.json,plus:localStorage.getItem("yai-plus")==="1",auth:yaiSess()})});if(r.ok)return r;if(r.status===429){const j=await r.clone().json().catch(()=>({}));if(j.monthly&&j.resetAt){const u=UM();u.hit=j.resetAt-MW;saveUM(u)}}}catch(e){}
  return fetch("https://text.pollinations.ai/openai",{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({model:"openai",messages:msgs,stream:true,referrer:"yathinai"})})}
 async function* cloud(msgs){
  const r=await cloudReq(msgs);
@@ -454,7 +458,7 @@ async function* stream(msgs){
 }
 async function send(){
  const q=$("#q").value.trim();if(!q||busy)return;
- if(over()){if(!cur)render();bubble("a",`You've used today's ${bucket(mode)} time. It resets at midnight. Yathin AI+ is coming soon.`);return}
+ if(over()){if(!cur)render();const ml=monthLock();if(ml){const d=new Date(ml);bubble("a",`You've used your 50 free hours this month. Take a 4-day break: you're back on ${d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})} at ${d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}.`)}else bubble("a",`You've used today's ${bucket(mode)} time. It resets at midnight. Yathin AI+ is coming soon.`);return}
  if(!cur){cur={id:Date.now(),title:topic(q),mode,msgs:[]};P.unshift(cur);$("#chat").innerHTML="";aiTitle(cur,q)}
  busy=true;$("#send").disabled=true;$("#q").value="";
  {const um={role:"user",content:q};bubble("u",q,um);cur.msgs.push(um)}saveP();drawSide();

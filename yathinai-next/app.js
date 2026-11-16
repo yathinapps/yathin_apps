@@ -410,7 +410,9 @@ function openLogin(why) {
   $("#lGo").onclick = goF; [$("#lPass"), $("#lPass2")].forEach(i => i.onkeydown = e => { if (e.key === "Enter") goF() });
   setTimeout(() => $("#lEmail") && $("#lEmail").focus(), 50);
 }
-function afterLogin(e) { L.setItem("yai-user", e); const m = getJ("yai-agefor", {}); if (e in m) { closeModal(); refresh() } else askAge() }
+function ageSrv(set) { const u = user(); if (!u) return Promise.resolve(null); return fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "age", email: u, auth: sessTok(), ...(set === 0 || set === 1 ? { set } : {}) }) }).then(r => r.ok ? r.json() : null).then(j => j ? j.kid : null).catch(() => null) }
+async function afterLogin(e) { e = String(e || "").toLowerCase().trim(); L.setItem("yai-user", e); const m = getJ("yai-agefor", {}); if (e in m) { closeModal(); refresh(); ageSrv(m[e]); return }
+  const k = await ageSrv(); if (k === 0 || k === 1) { m[e] = k; setJ("yai-agefor", m); closeModal(); refresh() } else askAge() }
 function askAge() {
   modal(`<h3><img src="yathinai_logo.svg" alt="">How old are you?</h3><p class="note">Enter your birthday (or just your age). Under 13 gets Kids Mode for Learning, made safe and simple.</p>
    <label for="ageIn" id="ageLbl">Birthday</label><input id="ageIn" type="date" min="1906-01-01">
@@ -418,7 +420,7 @@ function askAge() {
    <div class="err" id="ageErr" role="alert"></div><div class="row2"><button class="btn" id="ageGo">Continue</button></div>`);
   $("#ageNum").onclick = () => { const i = $("#ageIn"), d = i.type === "date"; i.type = d ? "text" : "date"; i.value = ""; i.setAttribute("inputmode", d ? "numeric" : "text"); i.placeholder = d ? "Your age, like 12" : ""; $("#ageLbl").textContent = d ? "Age" : "Birthday"; $("#ageNum").textContent = d ? "Pick my birthday instead" : "Type my age instead"; i.focus() };
   $("#ageGo").onclick = () => { const r = window.YFix.age($("#ageIn").value); if (r.err) { $("#ageErr").textContent = r.err; return }
-    const m = getJ("yai-agefor", {}); m[user()] = r.age < 13 ? 1 : 0; setJ("yai-agefor", m);
+    const m = getJ("yai-agefor", {}); m[user()] = r.age < 13 ? 1 : 0; setJ("yai-agefor", m); ageSrv(r.age < 13 ? 1 : 0);
     if (r.age < 13) setPinModal(true); else { closeModal(); refresh() } };
   $("#ageIn").onkeydown = e => { if (e.key === "Enter") $("#ageGo").click() };
 }
@@ -438,7 +440,7 @@ function parentGate(then) {
   $("#pinNo").onclick = closeModal; const ok = async () => { if (await sha("pin|" + $("#pinIn").value.trim()) !== pinOf()) { $("#pinErr").textContent = "Wrong PIN."; return } SS.setItem("yai-pinok", Date.now() + 30 * 60e3); closeModal(); then() };
   $("#pinOk").onclick = ok; $("#pinIn").onkeydown = e => { if (e.key === "Enter") ok() }; setTimeout(() => $("#pinIn").focus(), 50);
 }
-function setKid(on) { const m = getJ("yai-agefor", {}); m[user()] = on ? 1 : 0; setJ("yai-agefor", m); if (isKid() && KID_NO.includes(tab)) tab = "learn"; refresh() }
+function setKid(on) { const m = getJ("yai-agefor", {}); m[user()] = on ? 1 : 0; setJ("yai-agefor", m); ageSrv(on ? 1 : 0); if (isKid() && KID_NO.includes(tab)) tab = "learn"; refresh() }
 function openSettings() {
   const go2 = () => { const b = modal(`<h3><img src="yathinai_logo.svg" alt="">Advanced / Offline Settings</h3>
    <button class="row" id="sOn" style="width:100%;display:flex;justify-content:space-between;align-items:center;border:0;background:#f6f4ff;border-radius:14px;padding:0 14px;margin-top:10px">Smart online AI (recommended)<span class="sw ${L.getItem("yai2-online") === "0" ? "" : "on"}"></span></button>

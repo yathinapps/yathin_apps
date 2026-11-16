@@ -162,7 +162,7 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 body.kid .kidtag{display:block}
 .parent{margin-top:10px;padding:8px 12px;border-radius:12px;background:#fef3c7;color:#92400e;font-size:13px}
 /* ---- rename ---- */
-.side .it{position:relative}.side .ren{position:absolute;right:6px;top:8px;width:28px!important;padding:2px!important;opacity:0;text-align:center!important;font-size:14px!important}
+.side .it{position:relative}.side .ren{position:absolute;right:6px;top:8px;width:28px!important;padding:2px!important;opacity:0;text-align:center!important;font-size:14px!important}.side .ren.del{right:34px;font-size:13px!important}@media(hover:none){.side .ren{opacity:.7}}
 .side .it:hover .ren{opacity:.7}.side input.rn{width:100%;border:0;border-radius:12px;padding:10px 12px;font:600 16px Geist,sans-serif;background:#fff;outline:2px solid #a78bfa}
 /* ---- home panels ---- */
 #homeV{position:fixed;inset:0;z-index:3;display:none;overflow:auto;padding:110px max(40px,calc(50vw - 560px)) 80px}
@@ -366,7 +366,7 @@ const saveP=()=>localStorage.setItem("yai-projects",JSON.stringify(P.slice(0,40)
 function newProject(){cur=null;render()}
 function drawSide(){const s=$("#side");s.innerHTML="";const n=document.createElement("button");n.className="new";n.textContent=mode==="chat"||mode==="home"||mode==="shop"||mode==="image"?"＋ New chat":"＋ New project";n.onclick=()=>{if(mode==="home")setMode("chat");newProject()};s.append(n);$("#addBtn").title=mode==="chat"||mode==="image"?"New chat":"New project";
  P.forEach(p=>{const w=document.createElement("div");w.className="it";const b=document.createElement("button");if(cur&&cur.id===p.id)b.className="on";b.innerHTML=esc(p.title)+`<small>${TITLE[p.mode]}</small>`;b.onclick=()=>{cur=p;setMode(p.mode,true);render()};b.ondblclick=()=>ren(p,w);
-  const r=document.createElement("button");r.className="ren";r.title="Rename";r.textContent="✎";r.onclick=e=>{e.stopPropagation();ren(p,w)};w.append(b,r);s.append(w)})}
+  const r=document.createElement("button");r.className="ren";r.title="Rename";r.textContent="✎";r.onclick=e=>{e.stopPropagation();ren(p,w)};const x=document.createElement("button");x.className="ren del";x.title="Delete";x.textContent="🗑";x.onclick=e=>{e.stopPropagation();if(!confirm("Delete \""+p.title+"\"?"))return;const i=P.indexOf(p);if(i>=0)P.splice(i,1);saveP();if(cur===p){cur=null;render()}else drawSide()};w.append(b,r,x);s.append(w)})}
 function ren(p,w){const i=document.createElement("input");i.className="rn";i.value=p.title;w.replaceChildren(i);i.focus();i.select();
  const done=ok=>{if(ok&&i.value.trim()){p.title=i.value.trim().slice(0,60);p.renamed=1}saveP();drawSide()};
  i.onkeydown=e=>{if(e.key==="Enter")done(true);if(e.key==="Escape")done(false)};i.onblur=()=>done(true)}
@@ -403,7 +403,9 @@ function render(){const c=$("#chat");c.innerHTML="";
  if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon_256.webp" width="256" height="256" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question",shop:"Smart shopping helper",image:"Describe your image"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
   (mode==="model"&&localStorage.getItem("yai-plus")==="1"?["🏠 A two-story house with a garage","🏰 A castle with 4 towers","🏛️ A Greek temple with columns","🌉 A stone arch bridge"]:EX[mode]).forEach(t=>{const b=document.createElement("button");b.className="glass";b.textContent=t;b.onclick=()=>{$("#q").value=t;send()};c.querySelector(".ex").append(b)})}
  else cur.msgs.forEach(x=>{const d=bubble(x.role==="user"?"u":"a",x.show||x.content,x);if(x.role!=="user"){if(x.gen)imgBox(d,x,x.img);else after(d,x.content,false)}});
- drawSide()}
+ drawSide();
+ if(cur&&cur.msgs.length&&!busy&&cur.msgs[cur.msgs.length-1].role==="user"){const d=bubble("a","The page was refreshed before I could answer. ");const b=document.createElement("button");b.className="glass";b.textContent="↻ Answer now";b.style.cssText="margin-left:6px;padding:6px 14px;border-radius:999px;border:0;cursor:pointer;font:inherit";b.onclick=()=>{const u=cur.msgs.pop();saveP();render();if(!cur.msgs.length)$("#chat").innerHTML="";else d.remove();$("#q").value=u.content;send()};d.append(b)}
+}
 $("#addBtn").onclick=newProject;
 
 /* ---- status pill ---- */
@@ -438,7 +440,7 @@ async function sumAI(t){if(!cloudOn())return"";const r=await fetch(BRAIN,{method
 async function cloudReq(msgs){
  {const nm=(localStorage.getItem("yai-name")||"").trim(),u=localStorage.getItem("yai-user");if(nm&&u&&u!=="guest"&&!msgs.json){const note="\n\nThe user's name is "+nm.slice(0,40)+". Use it naturally now and then (like when greeting them), not in every message.";if(msgs[0]&&msgs[0].role==="system"){if(!msgs[0].content.includes(note))msgs=Object.assign([{role:"system",content:msgs[0].content+note},...msgs.slice(1)],{json:msgs.json})}else msgs=Object.assign([{role:"system",content:note.trim()},...msgs],{json:msgs.json})}}
  try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({messages:msgs,mode:mode,json:!!msgs.json,plus:localStorage.getItem("yai-plus")==="1",auth:yaiSess()})});if(r.ok)return r;if(r.status===429){const j=await r.clone().json().catch(()=>({}));if(j.monthly&&j.resetAt){const u=UM();u.hit=j.resetAt-MW;saveUM(u)}}}catch(e){}
- return fetch("https://text.pollinations.ai/openai",{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({model:"openai",messages:msgs,stream:true,referrer:"yathinai"})})}
+ const pf=()=>fetch("https://text.pollinations.ai/openai",{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({model:"openai",messages:msgs,stream:true,referrer:"yathinai"})});let pr=await pf().catch(()=>null);if(!pr||!pr.ok){await new Promise(r=>setTimeout(r,2500));pr=await pf()}return pr}
 async function* cloud(msgs){
  const r=await cloudReq(msgs);
  if(!r.ok)throw new Error("cloud "+r.status);
@@ -484,7 +486,7 @@ async function send(){
  document.body.classList.remove("thinking");busy=false;$("#send").disabled=false;
 }
 window.YAI={ask:async(sys,user,as)=>{const was=mode;if(as)mode=as;try{await ensure();const M=[{role:"system",content:sys+KID}, {role:"user",content:user}];M.json=!as;let o="";for await(const t of stream(M))o+=t;return o}finally{mode=was}},getJson:o=>getJson(o),bad:q=>KIDBAD.test(q)};
-$("#send").onclick=send;$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+addEventListener("beforeunload",e=>{if(busy){e.preventDefault();e.returnValue=""}});$("#send").onclick=send;$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
 
 /* ---- previews ---- */
 const RVFIX=`<script>(function(){var q=".rv:not(.in),.reveal:not(.in):not(.visible):not(.show),[data-aos]:not(.aos-animate),.fade-in:not(.in):not(.visible):not(.show)";function c(){document.querySelectorAll(q).forEach(function(e){var r=e.getBoundingClientRect();if(r.top<innerHeight*.98&&r.bottom>-50){e.classList.add("in","visible","show","aos-animate");e.style.opacity="1";e.style.transform="none"}})}addEventListener("scroll",c,{passive:true});addEventListener("resize",c);setInterval(c,400);setTimeout(c,300)})()<\/script>`;

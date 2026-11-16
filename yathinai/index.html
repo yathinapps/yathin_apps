@@ -452,7 +452,7 @@ async function* cloud(msgs){
 async function* stream(msgs){
  if(cloudOn()&&Date.now()>cloudFail){let got=false;
   try{for await(const t of cloud(msgs)){got=true;yield t}return}
-  catch(e){if(got)return;cloudFail=Date.now()+5*60e3;if(!navigator.gpu)throw new Error("The smart brain is busy right now. Wait a minute and try again.");pill("Switching to the on-device brain");await ensure()}}
+  catch(e){if(got)return;throw new Error("Yathin AI is very busy right now. Please try again in a few minutes.")}}
  if($("#useOl").checked){
   const r=await fetch("http://localhost:11434/api/chat",{method:"POST",body:JSON.stringify({model:$("#olModel").value.trim()||"llama3.2",messages:msgs,stream:true})});
   if(!r.ok)throw new Error("Ollama said no. Is the model pulled?");
@@ -482,7 +482,7 @@ async function send(){
   think(false);if(isKid()&&window.KZ&&!KZ.safe(out)){out="Let's talk about something else! 🌟 Want a fun fact about space or animals instead?";if(box)box.innerHTML=fmt(out)}if(!box)box=bubble("a",out);
   cur.msgs.push({role:"assistant",content:out});saveP();after(box,out,true);
   }
- catch(e){if(e!=="done"){think(false);{const m=String(e.message||e);bubble("a",/fetch|network|import|load/i.test(m)?"I couldn't reach my brain just now. Check your internet and try again in a moment.":"Oops: "+m)}}}
+ catch(e){if(e!=="done"){think(false);{const m=String(e.message||e);bubble("a",/fetch|network|import|load/i.test(m)?"I couldn't reach my brain just now. Check your internet and try again in a moment.":(/busy/.test(m)?m:"Oops: "+m))}}}
  document.body.classList.remove("thinking");busy=false;$("#send").disabled=false;
 }
 window.YAI={ask:async(sys,user,as)=>{const was=mode;if(as)mode=as;try{await ensure();const M=[{role:"system",content:sys+KID}, {role:"user",content:user}];M.json=!as;let o="";for await(const t of stream(M))o+=t;return o}finally{mode=was}},getJson:o=>getJson(o),bad:q=>KIDBAD.test(q)};

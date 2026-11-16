@@ -25,8 +25,8 @@ const KID_REDIRECT = "That's not a kids topic, so let's pick something else! �
 const GAMESYS = 'Reply ONLY with JSON: {"title":"short title","kind":"quiz" or "match","questions":[{"q":"question","choices":["a","b","c","d"],"answer":0,"why":"one-line explanation"}],"pairs":[["term","meaning"]]}. For a quiz give 5 to 8 questions with exactly 4 choices and the index of the right one; for a match game give 5 or 6 short pairs. Use quiz unless the user asks for matching. Facts must be correct.';
 const SIMRE = /\b(simulat\w*|drop|throw|launch|orbit\w*|solar system|bounce|collid\w*|collision|pendulum|projectile|build (a|an|the)\b|scene|gravity on|mars gravity|moon gravity)\b/i;
 
-const TABS = [["home", "🏠", "Home"], ["chat", "💬", "Chat"], ["code", "</>", "Code"], ["3d", "🧊", "3D"], ["physics", "🪐", "Physics"], ["learn", "📚", "Learn"], ["games", "🎮", "Games"], ["shop", "🛍️", "Shopping"]];
-const GUEST_OK = ["home", "chat"], KID_NO = ["code", "shop"];
+const TABS = [["home", "🏠", "Home"], ["chat", "💬", "Chat"], ["code", "</>", "Code"], ["3d", "🧊", "3D"], ["image", "🎨", "Images"], ["physics", "🪐", "Physics"], ["learn", "📚", "Learn"], ["games", "🎮", "Games"], ["shop", "🛍️", "Shopping"]];
+const GUEST_OK = ["home", "chat"], KID_NO = ["code", "shop", "image"];
 let tab = L.getItem("yai2-tab") || "chat";
 let busy = false, stopFn = null, ide = null, sim = null, att = null, lastAct = 0;
 
@@ -85,6 +85,7 @@ class LimitErr extends Error { constructor(until) { super("limit"); this.until =
 async function ask(mode, msgs, signal, extra) {
   extra = extra || {};
   let sys = extra.system || ""; if (isKid()) sys += KID;
+  { const nm = (L.getItem("yai-name") || "").trim(); if (nm && !guest()) sys += `\n\nThe user's name is ${nm.slice(0, 40)}. Use it naturally now and then (like when greeting them), not in every message.` }
   const until = lockedUntil(); if (until && !offlineOnly()) throw new LimitErr(until);
   if (L.getItem("yai2-ollama") === "1") return ollama(sys, msgs);
   if (offlineOnly()) return local(sys, msgs, pill);
@@ -152,8 +153,8 @@ const PLANS = () => `<section class="plans" id="plans"><h2>Choose Your Plan</h2>
   <li>One-Click "Explain &amp; Spawn" Lessons</li>
   <li>Cloud Sync &amp; Project Exports (.zip / .stl)</li></ul>
   <button class="btn" disabled style="opacity:.6;width:100%;margin-top:10px">Coming Soon</button></div></div></section>`;
-const EX = { chat: ["Tell me a fun fact about space", "What's new in AI this week?", "Help me plan a study schedule"], code: ["Make a to-do app with local storage", "Python fizzbuzz with tests", "Make a snake game"], "3d": ["A small rocket", "A phone stand", "A castle with 4 towers"], physics: ["Simulate Mars gravity", "Build a solar system", "A ball falls from 20 m. How long to land?"], learn: ["How do volcanoes work?", "Explain photosynthesis", "What caused World War I?"], games: ["Make a quiz about the planets", "A matching game for French animal words"], shop: ["Best wireless earbuds under $100", "Laptop for a student under $700", "Kid-friendly tablet under $200"] };
-const PH = { chat: "Message Yathin AI", code: "Describe an app, game or Python script", "3d": "Describe something to build in 3D", physics: "Ask a physics question or say “Simulate Mars gravity”", learn: "What do you want to learn?", games: "Make a game about…", shop: "What are you shopping for? Add a budget", home: "Message Yathin AI" };
+const EX = { image: ["A candy dragon flying over a city at sunset", "A cozy cabin in snowy mountains, watercolor", "A cute robot chef cooking pancakes"], chat: ["Tell me a fun fact about space", "What's new in AI this week?", "Help me plan a study schedule"], code: ["Make a to-do app with local storage", "Python fizzbuzz with tests", "Make a snake game"], "3d": ["A small rocket", "A phone stand", "A castle with 4 towers"], physics: ["Simulate Mars gravity", "Build a solar system", "A ball falls from 20 m. How long to land?"], learn: ["How do volcanoes work?", "Explain photosynthesis", "What caused World War I?"], games: ["Make a quiz about the planets", "A matching game for French animal words"], shop: ["Best wireless earbuds under $100", "Laptop for a student under $700", "Kid-friendly tablet under $200"] };
+const PH = { image: "Describe the image you want", chat: "Message Yathin AI", code: "Describe an app, game or Python script", "3d": "Describe something to build in 3D", physics: "Ask a physics question or say “Simulate Mars gravity”", learn: "What do you want to learn?", games: "Make a game about…", shop: "What are you shopping for? Add a budget", home: "Message Yathin AI" };
 
 /* info pill (What it does / Plans) */
 document.querySelectorAll(".pill [data-info]").forEach(b => b.onclick = () => {
@@ -183,7 +184,7 @@ function render() { if (!window.YAI_APP) return renderAbout();
 }
 function drawHist() {
   const h = hist(tab); CL.innerHTML = "";
-  if (!h.length) { if (tab === "chat") CL.insertAdjacentHTML("beforeend", HERO()); else CL.insertAdjacentHTML("beforeend", `<div class="hero" style="padding:20px 6px"><img src="yathinai_logo.svg" alt="" style="width:56px;height:56px"><h1 style="font-size:26px">${{ code: "What should we build?", "3d": "What should we build in 3D?", physics: "Physics lab", learn: "What do you want to learn?", games: "Learning games", shop: "Smart shopping helper" }[tab]}</h1></div>`);
+  if (!h.length) { if (tab === "chat") CL.insertAdjacentHTML("beforeend", HERO()); else CL.insertAdjacentHTML("beforeend", `<div class="hero" style="padding:20px 6px"><img src="yathinai_logo.svg" alt="" style="width:56px;height:56px"><h1 style="font-size:26px">${{ code: "What should we build?", "3d": "What should we build in 3D?", physics: "Physics lab", learn: "What do you want to learn?", games: "Learning games", shop: "Smart shopping helper", image: "Describe your image" }[tab]}</h1></div>`);
     const ex = el("div", { class: "ex" }); (EX[tab] || []).forEach(t => ex.append(el("button", { class: "chip", onclick: () => { $("#q").value = t; send() } }, t))); CL.append(ex);
     if (tab === "chat") CL.insertAdjacentHTML("beforeend", PLANS()); }
   h.forEach(m => { const b = bubble(m.role === "user" ? "u" : "a", m.show || m.content, m); if (m.role !== "user") afterAnswer(b, m) });
@@ -236,6 +237,7 @@ async function send(forced) {
   bubble("u", q, um);
   if (guest()) { GL.n++; if (GL.n >= GUEST_MAX) GL.hit = Date.now(); saveGuest(); if (GL.n >= GUEST_MAX) setHit(GL.hit) }
   if (isKid() && KIDBAD.test(q)) { const b = bubble("a", KID_REDIRECT); saveHist(tab, h.concat({ role: "assistant", content: KID_REDIRECT })); return }
+  if (tab === "image") return makeImage(h);
   if (tab === "code") { const b = bubble("a", "…"); b.innerHTML = '<span style="color:#6b6880">Working on it…</span>'; return ide.agent(um.content, b, prev) }
   const ctrl = new AbortController(); setBusy(true, () => ctrl.abort()); pill(tab === "physics" || tab === "learn" ? "Thinking it through…" : "Thinking…");
   try {
@@ -254,7 +256,30 @@ async function send(forced) {
   } catch (e) { pill(null); if (e instanceof LimitErr) lockCard(e.until); else bubble("a", errText(e)) }
   finally { setBusy(false) }
 }
-function afterAnswer(b, m, fresh) {
+async function makeImage(h) {
+  const ctrl = new AbortController(); setBusy(true, () => ctrl.abort()); pill("Thinking about your image…");
+  const tm = setTimeout(() => pill("Painting it… this takes about 10 seconds"), 2500);
+  try {
+    const msgs = h.slice(-6).map(m => ({ role: m.role, content: m.content }));
+    const r = await fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "image", signedIn: !guest(), auth: sessTok(), messages: msgs }), signal: ctrl.signal });
+    if (r.status === 429) { const j = await r.json().catch(() => ({})); if (j.error === "img_limit") { bubble("a", j.all ? `Today's free images are all used up. More in ${fmtLeft((+j.resetAt || Date.now()) - Date.now())}.` : `You've made today's ${j.limit} images. You can make more in ${fmtLeft((+j.resetAt || Date.now()) - Date.now())}.`); return } const reset = +j.resetAt || Date.now() + WAIT[plan()]; setHit(reset - WAIT[plan()]); throw new LimitErr(reset) }
+    if (r.status === 403) { openLogin("Log in to make images."); throw new Error("Log in to make images.") }
+    if (!r.ok) throw new Error("The image maker is busy right now. Try again in a minute.");
+    const j = JSON.parse((await r.text()).split("\n")[0].slice(5)); const t = j.choices?.[0]?.delta?.content || "";
+    pill(null);
+    if (!j.image) { const am = { role: "assistant", content: t }; bubble("a", t, am); saveHist("image", hist("image").concat(am)); return }
+    const small = await shrinkImg(j.image, 768);
+    const am = { role: "assistant", content: "Made an image: " + (j.prompt || t), show: t, img: small, full: null, mode: "image" };
+    const b = bubble("a", t, am); afterAnswer(b, am, true, j.image);
+    const hh = hist("image").concat(am); let n = 0; for (let i = hh.length - 1; i >= 0; i--) if (hh[i].img && ++n > 10) delete hh[i].img;
+    try { saveHist("image", hh) } catch (e) { hh.forEach((m, i) => { if (m.img && i < hh.length - 3) delete m.img }); try { saveHist("image", hh) } catch (x) { } }
+    if (typeof j.left === "number" && j.left <= 2) toast(j.left ? `${j.left} image${j.left > 1 ? "s" : ""} left today.` : "That was your last image for today.");
+  } catch (e) { pill(null); if (e instanceof LimitErr) lockCard(e.until); else bubble("a", errText(e)) }
+  finally { clearTimeout(tm); setBusy(false) }
+}
+function shrinkImg(src, w) { return new Promise(res => { const i = new Image(); i.onload = () => { const c = document.createElement("canvas"), s = Math.min(1, w / i.width); c.width = Math.round(i.width * s); c.height = Math.round(i.height * s); c.getContext("2d").drawImage(i, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", 0.85)) }; i.onerror = () => res(""); i.src = src }) }
+function afterAnswer(b, m, fresh, full) {
+  if (m.img) { b.innerHTML = `<b>${esc(m.show || "Your image")}</b>`; const im = el("img", { src: full || m.img, alt: m.show || "AI image", style: "display:block;width:100%;max-width:520px;border-radius:16px;margin-top:8px" }); b.append(im, el("div", { class: "acts" }, el("button", { class: "btn", onclick: () => { const a = document.createElement("a"); a.href = full || m.img; a.download = (m.show || "yathin-ai-image").replace(/[^a-z0-9]+/gi, "-").toLowerCase() + ".jpg"; a.click() } }, "⬇ Download"), el("button", { class: "btn ghost", onclick: () => send("Make another version of that") } , "🔁 Another version"))); return }
   if (m.mode === "model" || (tab === "3d" && m.data)) { const j = m.data; if (j && j.parts || j && j.components) { b.innerHTML = `<b>${esc(j.name || "Your model")}</b> · ready to spin and print.`; b.append(el("div", { class: "acts" }, el("button", { class: "btn", onclick: () => open3D(j, true) }, "🧊 Open model"))); if (fresh) open3D(j, true) } else b.innerHTML = md(m.content || "That model didn't come out right. Try asking a little differently.") }
   else if (m.mode === "sim" || (tab === "physics" && m.data)) { const j = m.data; if (j && Array.isArray(j.bodies)) { b.innerHTML = `<b>${esc(j.title || "Simulation")}</b><br>${esc(j.explain || "")}`; b.append(el("div", { class: "acts" }, el("button", { class: "btn", onclick: () => openSim(j, true) }, "▶ Run simulation"))); if (fresh) openSim(j, true) } else b.innerHTML = md(m.content || "That simulation didn't come out right. Try again.") }
   else if (tab === "games" && m.role === "assistant") { const j = m.data; if (j && (j.questions || j.pairs)) { b.innerHTML = `🎮 <b>${esc(j.title || "New game")}</b> is ready.`; b.append(el("div", { class: "acts" }, el("button", { class: "btn", onclick: () => playGame(j) }, "▶ Play"))); if (fresh) saveGame(j, true) } }
@@ -469,6 +494,7 @@ function drawAcct() {
   if (guest()) { a.append(el("h4", {}, "Guest"), el("div", { class: "sub" }, `${Math.max(0, GUEST_MAX - GL.n)} of ${GUEST_MAX} free guest messages left`)); row("Log in / Sign up", () => openLogin()) }
   else { a.append(el("h4", {}, L.getItem("yai-name") || "You"), el("div", { class: "sub" }, user() + " · Free plan"));
     const u = getJ(K("use"), { chat: 0, code: 0 }); a.append(el("div", { class: "sub" }, `Today: Chat ${Math.round(u.chat / 60)} min of 20 h · Code ${Math.round(u.code / 60)} min of 14 h`));
+    row("✏️ Change my name", () => { const n = prompt("What should Yathin AI call you?", L.getItem("yai-name") || ""); if (n != null && n.trim()) { L.setItem("yai-name", n.trim().slice(0, 40)); drawTabs(); toast("Got it, " + n.trim().slice(0, 40) + "!") } });
     row("🧒 Kids Mode for Learning", () => { if (isKid()) parentGate(() => setKid(false)); else if (pinOf()) parentGate(() => setKid(true)); else { setKid(true); setPinModal(true) } a.classList.add("hidden") }, isKid());
     row(pinOf() ? "🔑 Change parent PIN" : "🔑 Set parent PIN", () => { if (pinOf()) parentGate(() => setPinModal(false)); else setPinModal(false) }) }
   row("⚙️ Advanced / Offline Settings", openSettings);

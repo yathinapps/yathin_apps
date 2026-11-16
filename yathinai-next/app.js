@@ -417,12 +417,14 @@ function askAge() {
   modal(`<h3><img src="yathinai_logo.svg" alt="">How old are you?</h3><p class="note">Enter your birthday (or just your age). Under 13 gets Kids Mode for Learning, made safe and simple.</p>
    <label for="ageIn" id="ageLbl">Birthday</label><input id="ageIn" type="date" min="1906-01-01">
    <button class="btn ghost" id="ageNum" style="margin-top:8px">Type my age instead</button>
+   <button class="btn ghost" id="ageSwitch" style="margin-top:4px">Use a different account</button>
    <div class="err" id="ageErr" role="alert"></div><div class="row2"><button class="btn" id="ageGo">Continue</button></div>`);
   $("#ageNum").onclick = () => { const i = $("#ageIn"), d = i.type === "date"; i.type = d ? "text" : "date"; i.value = ""; i.setAttribute("inputmode", d ? "numeric" : "text"); i.placeholder = d ? "Your age, like 12" : ""; $("#ageLbl").textContent = d ? "Age" : "Birthday"; $("#ageNum").textContent = d ? "Pick my birthday instead" : "Type my age instead"; i.focus() };
   $("#ageGo").onclick = () => { const r = window.YFix.age($("#ageIn").value); if (r.err) { $("#ageErr").textContent = r.err; return }
     const m = getJ("yai-agefor", {}); m[user()] = r.age < 13 ? 1 : 0; setJ("yai-agefor", m); ageSrv(r.age < 13 ? 1 : 0);
     if (r.age < 13) setPinModal(true); else { closeModal(); refresh() } };
   $("#ageIn").onkeydown = e => { if (e.key === "Enter") $("#ageGo").click() };
+  $("#ageSwitch").onclick = () => { L.removeItem("yai-user"); SS.removeItem("yai-pinok"); closeModal(); refresh(); openLogin() };
 }
 const pinMap = () => getJ("yai-pinfor", {}), pinOf = () => pinMap()[user()] || "";
 function setPinModal(first) {

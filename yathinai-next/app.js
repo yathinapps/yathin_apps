@@ -489,6 +489,34 @@ function openSettings() {
   if (isKid()) parentGate(go2); else go2();
 }
 function openPlans() { modal(PLANS() + '<div class="row2"><button class="btn" id="plOk">Close</button></div>').style.width = "min(980px,100%)"; $("#plOk").onclick = closeModal }
+/* Coach screen (owner only; the brain checks the verified Google sign-in) */
+const COACHES = ["praveenmarketing26@gmail.com"];
+function coachSrv(set) { return fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "coach", auth: sessTok(), ...(set ? { set } : {}) }) }).then(r => r.json()) }
+async function openCoach() {
+  if (!sessTok()) { toast("Sign in with Google to coach Yathin AI."); return }
+  const box = modal('<h3 style="margin:0 0 4px">🎓 Coach Yathin AI</h3><div class="sub" style="font-size:13px;opacity:.75;margin-bottom:10px">Rules and example answers you write here are followed in every chat, for everyone. Changes apply within a minute.</div><div id="coBody">Loading…</div>');
+  box.style.width = "min(720px,100%)";
+  let c; try { c = await coachSrv() } catch (e) { c = { error: "busy" } }
+  if (c.error) { $("#coBody").textContent = c.error === "not_coach" ? "This account can't coach. Sign in with the coach Google account." : "Couldn't load right now. Try again in a bit."; return }
+  const ex = (c.ex || []).slice(); const ta = 'style="width:100%;box-sizing:border-box;border-radius:12px;padding:10px;font:inherit;border:1px solid #ccc"';
+  const draw = () => {
+    $("#coBody").innerHTML = `<label style="font-weight:600;font-size:14px">Rules (one per line)</label>
+<textarea id="coR" rows="7" maxlength="4000" ${ta} placeholder="Keep answers short and friendly.&#10;Always end with one helpful follow-up idea.&#10;Explain things like you're talking to a 12-year-old."></textarea>
+<div style="font-weight:600;font-size:14px;margin:14px 0 6px">Example answers (${ex.length}/12)</div><div id="coEx"></div>
+<button class="btn ghost" id="coAdd" style="margin-top:6px">+ Add example</button>
+<div class="row2" style="margin-top:14px"><button class="btn ghost" id="coCancel">Close</button><button class="btn" id="coSave">Save coaching</button></div>
+${c.at ? `<div style="font-size:12px;opacity:.6;margin-top:8px">Last saved ${new Date(c.at).toLocaleString()}</div>` : ""}`;
+    $("#coR").value = c.rules || "";
+    ex.forEach((e, i) => { const d = el("div", { style: "border:1px solid #ddd;border-radius:14px;padding:10px;margin-bottom:8px" });
+      d.innerHTML = `<input placeholder="When someone asks…" maxlength="600" ${ta.replace("width:100%", "width:100%;margin-bottom:6px")}><textarea rows="3" maxlength="1500" placeholder="Yathin AI should answer…" ${ta}></textarea><button class="btn ghost" style="margin-top:6px">Remove</button>`;
+      const [q, a, rm] = d.querySelectorAll("input,textarea,button"); q.value = e.q; a.value = e.a; q.oninput = () => e.q = q.value; a.oninput = () => e.a = a.value; rm.onclick = () => { c.rules = $("#coR").value; ex.splice(i, 1); draw() }; $("#coEx").append(d) });
+    $("#coAdd").onclick = () => { if (ex.length >= 12) return toast("12 examples max."); c.rules = $("#coR").value; ex.push({ q: "", a: "" }); draw() };
+    $("#coCancel").onclick = closeModal;
+    $("#coSave").onclick = async () => { const bt = $("#coSave"); bt.disabled = true; bt.textContent = "Saving…";
+      try { const j = await coachSrv({ rules: $("#coR").value, ex: ex.filter(e => e.q.trim() && e.a.trim()) }); if (j.error) throw 0; toast("Coaching saved. Yathin AI will follow it from now on."); closeModal() } catch (e) { bt.disabled = false; bt.textContent = "Save coaching"; toast("Couldn't save. Try again.") } };
+  };
+  draw();
+}
 /* account menu */
 $("#meBtn").onclick = e => { e.stopPropagation(); const a = $("#acct"); if (!a.classList.contains("hidden")) { a.classList.add("hidden"); return } drawAcct(); a.classList.remove("hidden") };
 document.addEventListener("click", e => { const a = $("#acct"); if (!a.classList.contains("hidden") && !a.contains(e.target)) a.classList.add("hidden") });
@@ -501,6 +529,7 @@ function drawAcct() {
     row("🧒 Kids Mode for Learning", () => { if (isKid()) parentGate(() => setKid(false)); else if (pinOf()) parentGate(() => setKid(true)); else { setKid(true); setPinModal(true) } a.classList.add("hidden") }, isKid());
     if (!isKid()) { row("📬 Email me Yathin AI news", () => { const on = L.getItem("yai-news") !== "1"; L.setItem("yai-news", on ? "1" : "0"); newsSrv(on); drawAcct() }, L.getItem("yai-news") === "1"); if (!drawAcct.n) { drawAcct.n = 1; newsSrv().then(j => { L.setItem("yai-news", j.on ? "1" : "0") }) } }
     row(pinOf() ? "🔑 Change parent PIN" : "🔑 Set parent PIN", () => { if (pinOf()) parentGate(() => setPinModal(false)); else setPinModal(false) }) }
+  if (!guest() && COACHES.includes(String(user()).toLowerCase())) row("🎓 Coach Yathin AI", openCoach);
   row("⚙️ Advanced / Offline Settings", openSettings);
   row("👑 Choose Your Plan", openPlans);
   if (!guest()) row("Sign out", () => { L.removeItem("yai-user"); SS.removeItem("yai-pinok"); refresh() });

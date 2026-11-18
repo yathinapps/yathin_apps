@@ -96,7 +96,7 @@ body.thinking #sky i:nth-child(6){opacity:.45}
 .ex button{border:0;padding:10px 16px;border-radius:999px;font:500 14px Geist,sans-serif;cursor:pointer;color:#333}
 .ask{width:min(680px,92vw);margin:0 0 26px;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 24px;border-radius:999px;background:rgba(240,243,247,.85)}
 .ask textarea{flex:1;border:0;background:none;resize:none;height:26px;font:17px Geist,sans-serif;outline:0}
-.ask .add{border:0;background:none;font-size:28px;color:#777;cursor:pointer;width:40px}
+.ask .add{border:0;background:none;font-size:28px;color:#777;cursor:pointer;width:40px}.ask .pic{border:0;background:none;font-size:22px;cursor:pointer;width:38px;padding:0;opacity:.8}.ask .pic:hover{opacity:1}#picChip{display:none;position:relative;flex:none}#picChip.on{display:block}#picChip img{height:44px;width:44px;object-fit:cover;border-radius:12px;display:block}#picChip button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:#1f2937;color:#fff;font-size:12px;line-height:20px;padding:0;cursor:pointer}.msg.u img.upic{display:block;max-width:240px;max-height:240px;border-radius:14px;margin-top:8px}.ask.drop{outline:2px dashed #8b5cf6}
 .ask .send{background:linear-gradient(135deg,#7c3aed,#ec4899)!important;width:74px;height:52px;border-radius:999px;border:0;background:#1d1d1f;color:#fff;font-size:24px;cursor:pointer}
 .ask .send:disabled{opacity:.4}
 .foot{position:fixed;left:20px;bottom:18px;max-width:240px;z-index:3;font-size:13px;color:rgba(30,40,60,.8);padding:10px 14px;border-radius:14px}.footX{display:none;position:absolute;top:4px;right:6px;width:26px;height:26px;border:0;border-radius:50%;background:rgba(0,0,0,.08);color:inherit;font:600 16px/26px sans-serif;cursor:pointer;padding:0}@media(max-width:900px){.foot{padding-right:36px;z-index:20}.footX{display:block}}
@@ -319,7 +319,9 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
 <main id="wrap">
   <div id="chat"></div>
   <div class="ask glass">
+    <div id="picChip"><img alt="Your picture"><button type="button" aria-label="Remove picture">✕</button></div>
     <textarea id="q" placeholder="Message Yathin AI" aria-label="Message Yathin AI"></textarea>
+    <button class="pic" id="picBtn" type="button" title="Add a picture (or paste / drop one)" aria-label="Add a picture">📷</button><input type="file" id="picFile" accept="image/*" hidden>
     <button class="add" id="addBtn" title="New chat">+</button>
     <button class="send" id="send" title="Send">↑</button>
   </div>
@@ -402,7 +404,7 @@ document.querySelectorAll(".modes button").forEach(b=>b.onclick=()=>setMode(b.da
 function render(){const c=$("#chat");c.innerHTML="";
  if(!cur||!cur.msgs.length){c.innerHTML=`<div class="hello"><img src="yathinai_icon_256.webp" width="256" height="256" alt=""><h1>${{chat:"What's on your mind?",code:"What should we build?",model:localStorage.getItem("yai-plus")==="1"?"What should we build? 🏗️":"What should we 3D print?",physics:"Ask me any physics question",shop:"Smart shopping helper",image:"Describe your image"}[mode]}</h1><p>${cloudOn()?"Free. No key, no download.":"Free and private. Runs right in your browser."}</p><div class="ex"></div></div>`;
   (mode==="model"&&localStorage.getItem("yai-plus")==="1"?["🏠 A two-story house with a garage","🏰 A castle with 4 towers","🏛️ A Greek temple with columns","🌉 A stone arch bridge"]:EX[mode]).forEach(t=>{const b=document.createElement("button");b.className="glass";b.textContent=t;b.onclick=()=>{$("#q").value=t;send()};c.querySelector(".ex").append(b)})}
- else cur.msgs.forEach(x=>{const d=bubble(x.role==="user"?"u":"a",x.show||x.content,x);if(x.role!=="user"){if(x.gen)imgBox(d,x,x.img);else after(d,x.content,false)}});
+ else cur.msgs.forEach(x=>{const d=bubble(x.role==="user"?"u":"a",x.show||x.content,x);if(x.pic)picTo(d,x.pic);if(x.role!=="user"){if(x.gen)imgBox(d,x,x.img);else after(d,x.content,false)}});
  drawSide();
  if(cur&&cur.msgs.length&&!busy&&cur.msgs[cur.msgs.length-1].role==="user"){const d=bubble("a","The page was refreshed before I could answer. ");const b=document.createElement("button");b.className="glass";b.textContent="↻ Answer now";b.style.cssText="margin-left:6px;padding:6px 14px;border-radius:999px;border:0;cursor:pointer;font:inherit";b.onclick=()=>{const u=cur.msgs.pop();saveP();render();if(!cur.msgs.length)$("#chat").innerHTML="";else d.remove();$("#q").value=u.content;send()};d.append(b)}
 }
@@ -463,15 +465,22 @@ async function* stream(msgs){
  for await(const c of it)yield c.choices[0]?.delta?.content||"";
 }
 async function send(){
- const q=$("#q").value.trim();if(!q||busy)return;
+ let q=$("#q").value.trim();if(busy||(!q&&!pImg))return;if(!q)q="What's in this picture?";const pic=pImg;
  if(over()){if(!cur)render();const ml=monthLock();if(ml){const d=new Date(ml);bubble("a",`You've used your 50 free hours this month. Take a 4-day break: you're back on ${d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})} at ${d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}.`)}else bubble("a",`You've used today's ${bucket(mode)} time. It resets at midnight. Yathin AI+ is coming soon.`);return}
  if(!cur){cur={id:Date.now(),title:topic(q),mode,msgs:[]};P.unshift(cur);$("#chat").innerHTML="";aiTitle(cur,q)}
  busy=true;$("#send").disabled=true;$("#q").value="";
- {const um={role:"user",content:q};bubble("u",q,um);cur.msgs.push(um)}saveP();drawSide();
+ {const um={role:"user",content:q};if(pic)um.pic=pic.small;const ub=bubble("u",q,um);if(pic)picTo(ub,pic.small);cur.msgs.push(um)}if(pic)clearPic();saveP();drawSide();
  think(true);let box=null,out="";
  try{await ensure();
   if(isKid()&&KIDBAD.test(q)){think(false);const b=bubble("a","That's not a kids topic, so let's pick something else! 🌟 How about animals, space, dinosaurs or a fun science fact?");cur.msgs.push({role:"assistant",content:b.textContent});saveP();busy=false;$("#send").disabled=false;return}
   if(isKid()&&KIDBAD.test(q)){think(false);const b=bubble("a","That's not a kids topic, so let's pick something else! 🌟 How about animals, space, dinosaurs or a fun science fact?");cur.msgs.push({role:"assistant",content:b.textContent});saveP();busy=false;$("#send").disabled=false;return}
+  if(pic){const M=[{role:"system",content:(SYS.chat||"")+(isKid()?KID:"")},...cur.msgs.slice(-7).map(m=>({role:m.role,content:m.content}))];
+   const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({mode:"vision",image:pic.big,messages:M,kid:isKid(),plus:localStorage.getItem("yai-plus")==="1",auth:yaiSess()})}).catch(()=>null);
+   if(!r||!r.ok)throw new Error(r&&r.status===429?"You've hit today's limit. Try again later.":"Yathin AI is very busy right now. Please try again in a few minutes.");
+   const x=await r.text(),mm=x.match(/^data: (.*)$/m);let o="";try{o=JSON.parse(mm[1]).choices[0].delta.content||""}catch(e){}
+   if(!o)throw new Error("Yathin AI is very busy right now. Please try again in a few minutes.");
+   if(isKid()&&window.KZ&&!KZ.safe(o))o="Let's talk about something else! 🌟 Want a fun fact about space or animals instead?";
+   think(false);box=bubble("a",o);cur.msgs.push({role:"assistant",content:o});saveP();after(box,o,true);throw "done"}
   if(mode==="image"){await makeImg();throw "done"}
   if(mode==="code"&&isSite(q)){const r=await makeSite(q);think(false);box=bubble("a",r.text);cur.msgs.push({role:"assistant",content:r.store});saveP();after(box,r.store,true);throw "done"}
   const M=[{role:"system",content:SYS[mode]+(mode==="model"?(localStorage.getItem("yai-plus")==="1"?ARCH+MASTER:ARCH):"")+(isKid()?KID:"")},...cur.msgs.slice(-8)];if(mode==="model")M.json=true;
@@ -522,6 +531,13 @@ async function makeImg(){
  const d=bubble("a",t);imgBox(d,x,j.image);cur.msgs.push(x);if(t&&t!=="Your image"&&!cur.renamed){cur.title=t.slice(0,60);drawSide()}
  let n=0;P.forEach(p=>p.msgs.slice().reverse().forEach(m=>{if(m.img&&++n>10)delete m.img}));try{saveP()}catch(e){P.forEach(p=>p.msgs.forEach(m=>{if(m.img&&m!==x)delete m.img}));try{saveP()}catch(z){}}
  if(typeof j.left==="number"&&j.left<=2)bubble("a",j.left?`${j.left} image${j.left>1?"s":""} left today.`:"That was your last image for today.")}
+let pImg=null;
+function picTo(d,src){const im=document.createElement("img");im.className="upic";im.src=src;im.alt="Your picture";d.append(im)}
+function clearPic(){pImg=null;$("#picChip").classList.remove("on");$("#picFile").value=""}
+async function takePic(f){if(!f||!/^image\//.test(f.type))return;const raw=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r("");fr.readAsDataURL(f)});if(!raw)return;const big=await shrinkImg(raw,1280),small=await shrinkImg(raw,480);if(!big)return;pImg={big,small};$("#picChip img").src=small;$("#picChip").classList.add("on");$("#q").focus()}
+$("#picBtn").onclick=()=>$("#picFile").click();$("#picFile").onchange=e=>takePic(e.target.files[0]);$("#picChip button").onclick=clearPic;
+$("#q").addEventListener("paste",e=>{const it=[...(e.clipboardData&&e.clipboardData.items||[])].find(i=>i.type.startsWith("image/"));if(it){e.preventDefault();takePic(it.getAsFile())}});
+{const A=$(".ask");A.addEventListener("dragover",e=>{e.preventDefault();A.classList.add("drop")});A.addEventListener("dragleave",()=>A.classList.remove("drop"));A.addEventListener("drop",e=>{e.preventDefault();A.classList.remove("drop");const f=[...(e.dataTransfer.files||[])].find(f=>f.type.startsWith("image/"));if(f)takePic(f)})}
 function shrinkImg(src,w){return new Promise(res=>{const i=new Image();i.onload=()=>{const c=document.createElement("canvas"),k=Math.min(1,w/i.width);c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext("2d").drawImage(i,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.85))};i.onerror=()=>res("");i.src=src})}
 function imgBox(d,x,src){d.innerHTML="<b>"+esc(x.show||"Your image")+"</b>";if(!src){d.insertAdjacentHTML("beforeend","<br><span style='color:#6b7280;font-size:13px'>(older image, not kept on this device)</span>");return}const im=document.createElement("img");im.className="gen";im.src=src;im.alt=x.show||"AI image";d.append(im);const b=document.createElement("button");b.className="btn";b.textContent="⬇ Download";b.onclick=()=>{const a=document.createElement("a");a.href=src;a.download=(x.show||"yathin-ai-image").replace(/[^a-z0-9]+/gi,"-").toLowerCase()+".jpg";a.click()};const v=document.createElement("button");v.className="btn";v.style.marginLeft="8px";v.textContent="🔁 Another version";v.onclick=()=>{$("#q").value="Make another version of that";send()};d.append(document.createElement("br"),b,v)}
 function after(box,out,open){

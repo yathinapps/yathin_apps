@@ -765,6 +765,6 @@ function apply(){const c=P()&&localStorage.getItem("yai-ring")||D;document.docum
 function lock(e){if(P())return false;e.preventDefault();e.stopPropagation();const m=document.getElementById("genMsg");if(m)m.textContent="Ring colors are for AI+ ✨";alert("Ring colors are part of Yathin AI+ ✨");return true}
 document.querySelectorAll("#rings [data-r]").forEach(b=>b.onclick=e=>{if(b.classList.contains("po")&&lock(e))return;localStorage.setItem("yai-ring",b.dataset.r);apply()});
 const ri=document.getElementById("ringIn");ri.addEventListener("click",e=>{lock(e)});ri.addEventListener("input",()=>{if(!P())return;localStorage.setItem("yai-ring",ri.value);apply()});
-apply();new MutationObserver(apply).observe(document.body,{attributes:true,attributeFilter:["class"]})})()</script><script>(function(){const c=document.getElementById("introAlways");c.checked=localStorage.getItem("yai-introalways")==="1";c.onchange=()=>{if(c.checked)localStorage.setItem("yai-introalways","1");else localStorage.removeItem("yai-introalways")}})()</script><script src="coach.js?v=1"></script>
+apply();new MutationObserver(apply).observe(document.body,{attributes:true,attributeFilter:["class"]})})()</script><script>(function(){const c=document.getElementById("introAlways");c.checked=localStorage.getItem("yai-introalways")==="1";c.onchange=()=>{if(c.checked)localStorage.setItem("yai-introalways","1");else localStorage.removeItem("yai-introalways")}})()</script><script src="coach.js?v=2"></script>
 </body>
 </html>

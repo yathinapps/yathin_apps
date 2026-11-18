@@ -71,4 +71,9 @@
     <image:image><image:loc>https://yathinlooops.pages.dev/promo/quizlooop-free-app.jpg</image:loc></image:image>
     <image:image><image:loc>https://yathinlooops.pages.dev/promo/quizlooop-free-app-2.jpg</image:loc></image:image>
   </url>
+  <url><loc>https://yathinlooops.pages.dev/dinorun/</loc><lastmod>2026-11-17</lastmod>
+    <image:image><image:loc>https://yathinlooops.pages.dev/dinorun/dinorun_icon.png</image:loc></image:image>
+    <image:image><image:loc>https://yathinlooops.pages.dev/promo/dino-run-free-app.jpg</image:loc></image:image>
+    <image:image><image:loc>https://yathinlooops.pages.dev/promo/dino-run-free-app-2.jpg</image:loc></image:image>
+  </url>
 </urlset>

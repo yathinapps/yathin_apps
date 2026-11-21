@@ -2,10 +2,10 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Dino Run · Yathin Looops</title>
-<meta name="description" content="The no-internet dino game in full color. Survive 9 hours to win. Free, by Yathin Pedamallu.">
+<meta name="description" content="The no-internet dino game in full color. Pick Easy, Normal or Hard and survive 2 hours to win. Free, by Yathin Pedamallu.">
 <meta property="og:title" content="Dino Run">
-<meta property="og:description" content="The no-internet dino game in full color. Can you survive 9 hours?">
-<meta property="og:image" content="https://yathinlooops.pages.dev/promo/dino-run-free-app-2.jpg">
+<meta property="og:description" content="The no-internet dino game in full color. Three levels. Can you survive 2 hours?">
+<meta property="og:image" content="https://yathinlooops.pages.dev/promo/dino-run-free-app-2.jpg?v=3">
 <link rel="icon" href="dinorun_icon.png">
 <style>
 *{box-sizing:border-box}
@@ -23,18 +23,29 @@ body{min-height:100vh;display:flex;flex-direction:column;align-items:center;just
 #boost.on{background:rgba(255,190,0,.6)}
 .touch #boost{display:block}
 #again{position:absolute;left:50%;transform:translateX(-50%);bottom:8%;display:none;padding:8px 18px;font:700 14px/1 monospace;letter-spacing:2px;background:#9cff3a;color:#14210a;border:3px solid #14210a;box-shadow:3px 3px 0 #14210a;cursor:pointer;z-index:4}
+#levels{display:flex;gap:10px;justify-content:center;width:100%;margin-top:12px;visibility:visible}
+#levels button{flex:1;max-width:170px;min-height:48px;padding:10px 6px;font:700 16px/1 monospace;letter-spacing:2px;background:#fff;color:#14210a;border:3px solid #14210a;box-shadow:3px 3px 0 #14210a,inset 0 -6px 0 var(--lc);cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+#levels button[aria-pressed="true"]{background:var(--lc);transform:translate(2px,2px);box-shadow:1px 1px 0 #14210a}
+#levels button:focus-visible{outline:3px solid #5ec8ff;outline-offset:2px}
 .keys{margin-top:12px;color:#6b6b6b;font-size:13px;text-align:center;line-height:1.5}
 footer{margin-top:16px;color:#6b6b6b;font-size:12px;text-align:center}
 </style></head><body>
 <button id="mute" aria-label="Mute sound">🔊</button>
-<div class="hint" id="hint"><div class="row"><canvas id="icon" width="22" height="19"></canvas><b>No internet</b></div><p>Click or tap the game, then press Space (or tap) to play</p></div>
-<div id="wrap" tabindex="0"><canvas id="c" tabindex="0"></canvas><button id="boost" aria-label="Speed boost">⚡</button><button id="again">PLAY AGAIN</button></div>
-<div class="keys">Space / ↑ jump · ↓ duck · Shift speed boost · tap to jump, hold ⚡ to boost on phones</div>
+<div class="hint" id="hint"><div class="row"><canvas id="icon" width="22" height="19"></canvas><b>No internet</b></div><p>Pick a level, then press Space (or tap) to play.</p></div>
+<div id="wrap" tabindex="0"><canvas id="c" tabindex="0"></canvas><button id="boost" aria-label="Super speed">⚡</button><button id="again">PLAY AGAIN</button></div>
+<div id="levels" role="group" aria-label="Difficulty level"><button type="button" data-l="0" style="--lc:#9cff3a" aria-pressed="false">EASY</button><button type="button" data-l="1" style="--lc:#ffd23f" aria-pressed="true">NORMAL</button><button type="button" data-l="2" style="--lc:#ff3b5c" aria-pressed="false">HARD</button></div>
+<div class="keys">Space / ↑ jump · ↓ duck · Shift super speed · tap to jump, hold ⚡ for super speed on phones</div>
 <footer><a href="../" style="color:inherit">← Yathin Looops</a> · A fan recreation of the Chrome offline game. Not affiliated with Google.</footer>
 <script>
 (()=>{
 'use strict';
-const W=600,H=180,GY=150,WIN_T=9*3600;
+const W=600,H=180,GY=150,WIN_T=2*3600;
+/* difficulty levels: start speed, acceleration, speed caps per stage, stage times (s), birds from (s), gravity, jump velocity */
+const LV=[
+  {n:'EASY',c:'#9cff3a',s0:3.3,acc:0,caps:[3.3,3.3,3.3],st:[Infinity,Infinity],bird:Infinity,g:.45,jv:-9},
+  {n:'NORMAL',c:'#ffd23f',s0:6,acc:.001,caps:[13,16,19],st:[40*60,67*60],bird:20,g:.6,jv:-10},
+  {n:'HARD',c:'#ff3b5c',s0:7.8,acc:.002,caps:[15,18,21],st:[20*60,45*60],bird:5,g:.6,jv:-10}];
+let lvl=1;
 const cv=document.getElementById('c'),ctx=cv.getContext('2d'),wrap=document.getElementById('wrap');
 const boostBtn=document.getElementById('boost'),againBtn=document.getElementById('again'),muteBtn=document.getElementById('mute');
 let S=1;
@@ -45,6 +56,7 @@ function resize(){
   cv.width=Math.round(cw*dpr);cv.height=Math.round(cw*H/W*dpr);
   S=cv.width/W;
   document.getElementById('hint').style.maxWidth=cw+'px';
+  document.getElementById('levels').style.maxWidth=cw+'px';
 }
 addEventListener('resize',resize);resize();
 if('ontouchstart' in window||matchMedia('(pointer:coarse)').matches)document.body.classList.add('touch');
@@ -212,6 +224,7 @@ const SMALL=[],LARGE=[],SQUAT=[];
 for(let i=0;i<8;i++){SMALL.push(makeCactus(ri(13,16),4,ri(0,2)));LARGE.push(makeCactus(ri(20,24),6,ri(1,2)));}
 for(let i=0;i<3;i++)SQUAT.push(makeCactus(ri(8,9),7,0,true));
 const SMALL_MONO=null;
+const TINY=[];for(let i=0;i<6;i++)TINY.push(makeCactus(ri(10,12),4,ri(0,1)));
 
 const CLOUD=spr(["....wwww......","..wwwwwwww....",".wwwwwwwwwww..","wwwwwwwwwwwwww","llllllllllllll"],{w:'#ffffff',l:'#dfe6f5'});
 const WIFI_ROWS=["...ooooo...",".oo.....oo.","o.........o","...ooooo...","..o.....o..","...........","....ooo....","...........",".....o....."];
@@ -331,6 +344,7 @@ function noise(d,v,f1,f2,ft){if(muted||!AC)return;try{if(!NB){NB=AC.createBuffer
 const sfx={jump:()=>tone(520,.09,'square',.05,800),point:()=>{tone(880,.07,'square',.05);tone(1320,.1,'square',.05,0,.09);},crash:()=>{tone(180,.28,'square',.07,55);noise(.25,.15,1200,200);},
   whoosh:()=>noise(.8,.25,2600,300),boom:()=>{noise(1.5,.7,900,50,'lowpass');tone(90,1.1,'sine',.45,28);},thunder:()=>noise(1.2,.25,500,60,'lowpass'),win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.18,'square',.05,0,i*.13)),
   look:()=>tone(330,.12,'square',.035,250),
+  boing:()=>{tone(260,.16,'sine',.09,560);tone(560,.22,'sine',.07,330,.14);},
   roar:()=>{tone(190,1.0,'sawtooth',.14,48);tone(96,1.1,'sawtooth',.12,36);noise(.9,.3,900,120,'lowpass');},
   vanish:()=>{tone(1100,.3,'square',.04,180);noise(.35,.12,3200,700);},
   xboom:()=>{if(muted||!AC)return;try{if(!NB){NB=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const a=NB.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;}
@@ -366,9 +380,14 @@ function ambMute(){if(!ambN)return;try{const t=AC.currentTime,g=ambN.m.gain;g.ca
 muteBtn.addEventListener('click',e=>{e.stopPropagation();try{window.focus();}catch(_){}muted=!muted;muteBtn.textContent=muted?'🔇':'🔊';muteBtn.blur();ambMute();});
 
 /* ---------- state ---------- */
-let state='start',paused=false,hi=0,score=0,playTime=0,cycleT=0,tier=0,speed=6,eff=6,boostKey=false,boostTouch=false,duckKey=false,duckTouch=false,jumpHeld=false;
+let inv=0;const hi=[0,0,0];
+/* EASY lives, drawn as pixel hearts in the HUD */
+const LIVES=10;let lives=LIVES;
+const HEART_ROWS=[".kk.kk.","kwrkrrk","krrrrrk",".krrrk.","..krk..","...k..."];
+const HEART=spr(HEART_ROWS,{k:'#14210a',r:'#ff3b3b',w:'#ffb3b3'}),HEART_E=spr(HEART_ROWS,{k:'#14210a',r:'#8f8f8f',w:'#8f8f8f'});
+let state='start',paused=false,score=0,playTime=0,cycleT=0,tier=0,speed=6,eff=6,boostKey=false,boostTouch=false,duckKey=false,duckTouch=false,jumpHeld=false;
 let obstacles=[],parts=[],clouds=[],meteors=[],nextIn=90,gOff=0,bOff=0,hOff=0,T=0,wipe=1,banner=null,blinkT=0,lastMile=0,overAt=0,winAt=0;
-let flash=0,shake=0,lightT=5,bolt=null,ct=0,nightForce=0,csFired={},connA=0,speedLines=[],rings=[];
+let flash=0,shake=0,lightT=5,bolt=null,ct=0,nightForce=0,csFired={},connA=0,speedLines=[],rings=[],superOn=false;
 /* dino explosion: xb holds its clock; XB is how much later every beat after it runs */
 let xb=null;const XB=.4;
 function hn(i,j,k){const s=Math.sin(i*127.1+j*311.7+k*74.7)*43758.5453;return s-Math.floor(s);}
@@ -380,15 +399,23 @@ function doomBegin(){if(doomOn)return;doomOn=true;ash=[];smoke=[];
   for(let i=0;i<60;i++)ash.push({x:rnd(0,W),y:rnd(0,GY+20),vx:rnd(-.5,-.1),vy:rnd(.2,.6),e:Math.random()<.45,l:rnd(0,3),m:rnd(5,8),ph:rnd(0,6)});
   ac();ambStart();}
 
-function resetRun(){score=0;playTime=0;cycleT=0;tier=0;speed=6;obstacles=[];parts=[];meteors=[];rings=[];nextIn=90;banner=null;blinkT=0;lastMile=0;flash=0;shake=0;lightT=5;bolt=null;nightForce=0;connA=0;csFired={};stopRumble();xb=null;
+function resetRun(){score=0;playTime=0;cycleT=0;tier=0;speed=LV[lvl].s0;eff=speed;inv=0;lives=LIVES;obstacles=[];parts=[];meteors=[];rings=[];nextIn=lvl===0?150:90;banner=null;blinkT=0;lastMile=0;flash=0;shake=0;lightT=5;bolt=null;nightForce=0;connA=0;csFired={};stopRumble();xb=null;
   doom=0;doomOn=false;ash=[];smoke=[];ambStop();
   Object.assign(d,{y:0,vy:0,air:false,released:true,anim:0,sq:0,look:0,gone:false});againBtn.style.display='none';}
 function startRun(){resetRun();state='run';wipe=0;}
 function restart(){resetRun();state='run';}
-function doJump(){if(d.air)return;d.air=true;d.vy=-10;d.released=false;jumpHeld=true;d.sq=1;sfx.jump();}
-function crash(){state='over';overAt=performance.now();hi=Math.max(hi,score);sfx.crash();shake=.4;}
-function startCutscene(){state='cutscene';ct=0;csFired={};obstacles.forEach(o=>{for(let i=0;i<8;i++)puff(o.x+o.w/2+rnd(-10,10),GY-10-rnd(0,20),'#d9b98c');});obstacles=[];hi=Math.max(hi,score);}
-function toWin(){state='win';winAt=performance.now();d.gone=true;meteors=[];stopRumble();score=Math.floor(WIN_T*300);hi=Math.max(hi,score);nightForce=1;againBtn.style.display='block';sfx.win();doomBegin();}
+function doJump(){if(d.air)return;d.air=true;d.vy=LV[lvl].jv;d.released=false;jumpHeld=true;d.sq=1;sfx.jump();}
+function crash(){state='over';overAt=performance.now();hi[lvl]=Math.max(hi[lvl],score);sfx.crash();shake=.4;}
+/* EASY: a hit costs a life; the cactus pops away in teal pixels, the dino blinks and the run goes on. The last life ends the run */
+function popCactus(o){
+  lives=Math.max(0,lives-1);
+  if(lives<=0){crash();return;}
+  for(const p of o.ps){const s=p.s,x=o.x+p.dx,y=p.y,w=s.width*2,h=s.height*2;
+    for(let i=0;i<28;i++)parts.push({x:x+rnd(0,w),y:y+rnd(0,h),vx:rnd(-1,2.6),vy:rnd(-3.6,-1),l:0,m:rnd(.5,1),s:pick([2,2,3]),c:pick(['#0f9d8a','#6ff0d6','#0a6b5e','#1fb5a8']),g:.15});}
+  obstacles=obstacles.filter(q=>q!==o);inv=1;sfx.boing();
+}
+function startCutscene(){state='cutscene';ct=0;csFired={};obstacles.forEach(o=>{for(let i=0;i<8;i++)puff(o.x+o.w/2+rnd(-10,10),GY-10-rnd(0,20),'#d9b98c');});obstacles=[];inv=0;hi[lvl]=Math.max(hi[lvl],score);}
+function toWin(){state='win';winAt=performance.now();d.gone=true;meteors=[];stopRumble();score=Math.floor(WIN_T*300);hi[lvl]=Math.max(hi[lvl],score);nightForce=1;againBtn.style.display='block';sfx.win();doomBegin();}
 
 function puff(x,y,c,vx,vy,life,sz){parts.push({x,y,vx:vx!==undefined?vx:rnd(-.6,.6),vy:vy!==undefined?vy:rnd(-.8,-.2),l:0,m:life||rnd(.3,.6),s:sz||rnd(2,4),c,g:0});}
 
@@ -403,7 +430,25 @@ function press(){
   else if(state==='win'){if(now-winAt>800)restart();}
 }
 function release(){jumpHeld=false;}
+/* level picker */
+const levelsEl=document.getElementById('levels'),lvBtns=[...levelsEl.querySelectorAll('button')];
+const pickable=()=>state==='start'||state==='over'||state==='win';
+function setLevel(i){lvl=i;lives=LIVES;lvBtns.forEach((b,j)=>b.setAttribute('aria-pressed',j===i?'true':'false'));document.body.classList.toggle('easy',i===0);}
+lvBtns.forEach(b=>{
+  b.addEventListener('pointerdown',e=>{e.stopPropagation();});
+  ['touchstart','touchend'].forEach(t=>b.addEventListener(t,e=>e.stopPropagation(),{passive:true}));
+  b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();ac();if(pickable())setLevel(+b.dataset.l);grabFocus();});
+});
+let lvUI=null;
+function syncUI(){const v=pickable();if(v!==lvUI){lvUI=v;levelsEl.style.visibility=v?'visible':'hidden';}}
+const LVK={Digit1:0,Digit2:1,Digit3:2,Numpad1:0,Numpad2:1,Numpad3:2};
+const NOJ=['Tab','ShiftLeft','ShiftRight','ControlLeft','ControlRight','AltLeft','AltRight','MetaLeft','MetaRight','CapsLock'];
 document.addEventListener('keydown',e=>{const k=e.code;
+  if(e.target&&e.target.closest&&e.target.closest('#levels')&&(k==='Space'||k==='Enter'||k==='NumpadEnter'))return;
+  if(k in LVK&&pickable()){e.preventDefault();if(!e.repeat)setLevel(LVK[k]);return;}
+  if(lvl===0&&(state==='run'||state==='start')&&!NOJ.includes(k)&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+    if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyS','Enter'].includes(k))e.preventDefault();
+    if(!e.repeat)press();return;}
   if(['Space','ArrowUp','ArrowDown','KeyW','KeyS'].includes(k))e.preventDefault();
   if(k==='Space'||k==='ArrowUp'||k==='KeyW'){if(!e.repeat)press();}
   else if(k==='Enter'){if(state==='over'||state==='win'||paused)press();}
@@ -411,6 +456,7 @@ document.addEventListener('keydown',e=>{const k=e.code;
   else if(k==='ShiftLeft'||k==='ShiftRight')boostKey=true;
 },{capture:true});
 document.addEventListener('keyup',e=>{const k=e.code;
+  if(lvl===0&&!NOJ.includes(k))release();
   if(k==='Space'||k==='ArrowUp'||k==='KeyW')release();
   else if(k==='ArrowDown'||k==='KeyS')duckKey=false;
   else if(k==='ShiftLeft'||k==='ShiftRight')boostKey=false;
@@ -419,7 +465,7 @@ function grabFocus(){try{window.focus();}catch(_){}try{cv.focus({preventScroll:t
 addEventListener('blur',()=>{boostKey=duckKey=duckTouch=boostTouch=false;jumpHeld=false;boostBtn.classList.remove('on');});
 let ptr=null;
 cv.addEventListener('pointerdown',e=>{e.preventDefault();ptr={id:e.pointerId,y:e.clientY,ducked:false};grabFocus();press();});
-document.body.addEventListener('pointerdown',e=>{const t=e.target;if(t===cv||(t.closest&&t.closest('button')))return;grabFocus();if(state==='start'||state==='over')press();});
+document.body.addEventListener('pointerdown',e=>{const t=e.target;if(t===cv||(t.closest&&t.closest('button')))return;grabFocus();if(state==='start'||state==='over'||(state==='run'&&lvl===0))press();});
 addEventListener('pointermove',e=>{if(ptr&&e.pointerId===ptr.id&&!ptr.ducked&&e.clientY-ptr.y>24){ptr.ducked=true;duckTouch=true;jumpHeld=false;}});
 const pend=e=>{if(ptr&&e.pointerId===ptr.id){release();duckTouch=false;ptr=null;}};
 addEventListener('pointerup',pend);addEventListener('pointercancel',pend);
@@ -450,8 +496,10 @@ function makeCluster(){
   return {k:'c',x:W+10,w:x+6,ps,boxes};
 }
 function makeBird(){const lv=pick([GY-26,GY-50,GY-80]);return {k:'b',x:W+10,y:lv,w:52,fl:rnd(0,1)};}
+function makeTiny(){const s=pick(TINY),y=GY+2-s.height*2;return {k:'c',x:W+10,w:s.width*2,ps:[{s,dx:0,y}],boxes:s.boxes.map(b=>({x:b.x,y:y+b.y,w:b.w,h:b.h}))};}
 function spawn(){
-  const pB=playTime>=20?[.22,.38,.45][tier]:0;
+  if(lvl===0){obstacles.push(makeTiny());nextIn=rnd(155,240);return;}
+  const pB=playTime>=LV[lvl].bird?[.22,.38,.45][tier]:0;
   const o=Math.random()<pB?makeBird():makeCluster();obstacles.push(o);
   const gf=[1,.9,.82][tier];
   let base=(o.w+24)/eff+32*gf;
@@ -463,7 +511,7 @@ function spawn(){
 function dinoPhys(f){
   if(d.air){
     const fast=(duckKey||duckTouch)&&state==='run';
-    d.vy+=.6*(fast?3:1)*f;d.y+=d.vy*f;
+    d.vy+=LV[lvl].g*(fast?3:1)*f;d.y+=d.vy*f;
     if(!jumpHeld&&!d.released){if(d.y<-30){d.released=true;if(d.vy<-5)d.vy=-5;}}
     if(d.y>=0){d.y=0;d.vy=0;d.air=false;d.sq=-1;for(let i=0;i<6;i++)puff(50+rnd(4,36),GY,'#e3c79a',rnd(-1.2,1.2),rnd(-.9,-.2));}
   }
@@ -490,10 +538,11 @@ function update(f,sec){
   if(wipe<1)wipe=Math.min(1,wipe+sec/.55);
   if(state==='run'){
     playTime+=sec;cycleT+=sec*(tier===2?2:1);
-    const nt=playTime>=5*3600?2:playTime>=3*3600?1:0;
-    if(nt!==tier){tier=nt;banner={t:nt===1?'HARD MODE':'INSANE MODE',a:2};sfx.point();}
-    const cap=[13,16,19][tier];if(speed<cap)speed=Math.min(cap,speed+.001*f);
-    const boost=boostKey||boostTouch;eff=speed*(boost?1.8:1);
+    const L=LV[lvl],nt=playTime>=L.st[1]?2:playTime>=L.st[0]?1:0;
+    if(nt!==tier){tier=nt;banner={t:nt===1?'SPEED UP!':'MAX SPEED!',a:2};sfx.point();}
+    const cap=L.caps[tier];if(speed<cap)speed=Math.min(cap,speed+L.acc*f);
+    const boost=boostKey||boostTouch;superOn=boost;eff=speed*(boost?2:1);
+    if(inv>0)inv=Math.max(0,inv-sec);
     score=Math.floor(playTime*300);
     const mile=Math.floor(score/30000);if(mile>lastMile){lastMile=mile;blinkT=1;sfx.point();}
     if(playTime>=WIN_T){playTime=WIN_T;score=WIN_T*300;startCutscene();return;}
@@ -503,8 +552,8 @@ function update(f,sec){
     obstacles=obstacles.filter(o=>o.x+o.w>-20);
     dinoPhys(f);
     if(!d.air){d.anim+=f*Math.min(1.8,.55+eff/14);d.dustT-=f;if(d.dustT<=0){d.dustT=7;puff(54,GY,'#e3c79a',-rnd(.6,1.4),rnd(-.5,-.1),.35,2);}}
-    if(boost&&Math.random()<.6*f)speedLines.push({x:rnd(0,46),y:GY-rnd(4,36)+d.y,l:rnd(14,34),a:1});
-    for(const o of obstacles){if(o.x<110&&o.x+o.w>40&&hit(o)){crash();break;}}
+    if(boost&&Math.random()<.85*f)speedLines.push({x:rnd(0,46),y:GY-rnd(4,36)+d.y,l:rnd(16,40),a:1,c:Math.random()<.45?'255,225,77':'255,255,255'});
+    for(const o of obstacles){if(o.x<110&&o.x+o.w>40&&hit(o)){if(lvl===0){if(inv<=0)popCactus(o);}else crash();break;}}
     if(tier===2){lightT-=sec;if(lightT<=0){lightT=rnd(3,9);flash=.7;bolt={x:rnd(60,540),a:.25,seed:Math.random()};sfx.thunder();}}
     if(blinkT>0)blinkT=Math.max(0,blinkT-sec);
     if(banner){banner.a-=sec;if(banner.a<=0)banner=null;}
@@ -668,6 +717,7 @@ function drawDino(){
   ctx.fillStyle=`rgba(20,10,30,${Math.max(.08,.28-ht/400)})`;ctx.beginPath();ctx.ellipse(x+w*.45,GY+2,sw,3,0,0,7);ctx.fill();
   const sq=d.sq,sx=1-sq*.12,sy=1+sq*.16;
   ctx.save();ctx.translate(x+w/2,y+h);
+  if(inv>0&&state==='run'&&Math.floor(inv*10)%2===0)ctx.globalAlpha=.3;
   if(rot)ctx.rotate(rot);
   ctx.scale(sx,sy);ctx.drawImage(img,-w/2,-h,w,h);ctx.restore();
 }
@@ -720,10 +770,14 @@ function hud(){
   const col=state==='start'?'#535353':'#9cff3a',out='#14210a';
   if(!(blinkT>0&&Math.floor(blinkT*8)%2===0)){txt(fmtScore(score),592,6,2,col,2,out);}
   const sw=fmtScore(score).length*8-2;
-  if(hi>0){ctx.globalAlpha=.8;txt('HI '+fmtScore(hi),592-sw-14,6,2,col,2,out);ctx.globalAlpha=1;}
+  if(hi[lvl]>0){ctx.globalAlpha=.8;txt('HI '+fmtScore(hi[lvl]),592-sw-14,6,2,col,2,out);ctx.globalAlpha=1;}
   const tw=txt(fmtTime(playTime),592,22,2,'#ffffff',2,out);
-  const tc=['#9cff3a','#ffb02e','#ff3b5c'][tier];
-  txt(['NORMAL','HARD','INSANE'][tier],592-tw-12,22,2,tc,2,out);
+  txt(LV[lvl].n,592-tw-12,22,2,LV[lvl].c,2,out);
+  if(lvl===0){const hw=HEART.width*3,hh=HEART.height*3,gap=2,x0=592-(LIVES*(hw+gap)-gap);
+    for(let i=0;i<LIVES;i++)ctx.drawImage(i<lives?HEART:HEART_E,x0+i*(hw+gap),38,hw,hh);}
+  /* SUPER SPEED label, just above the ⚡ button (bottom right) while boosting */
+  if(state==='run'&&!paused&&superOn&&(boostKey||boostTouch)){const ly=Math.round(H-(76/S)-12);
+    txt('SUPER SPEED!',W-8,Math.max(56,ly),2,Math.floor(performance.now()/120)%2?'#ffe14d':'#ffffff',2,'#14210a');}
 }
 function render(){
   ctx.setTransform(S,0,0,S,0,0);ctx.imageSmoothingEnabled=false;
@@ -739,7 +793,7 @@ function render(){
   if(shake>0)ctx.translate(Math.round(rnd(-1,1)*shake*6),Math.round(rnd(-1,1)*shake*6));
   if(xb&&state==='cutscene'&&xb.t<.6){const k=Math.pow(1-xb.t/.6,1.5)*12;ctx.translate(Math.round(rnd(-1,1)*k),Math.round(rnd(-1,1)*k));}
   drawWorld();drawObstacles();
-  for(const s of speedLines){ctx.fillStyle=`rgba(255,255,255,${s.a*.7})`;ctx.fillRect(Math.round(s.x-s.l),Math.round(s.y),Math.round(s.l),2);}
+  for(const s of speedLines){ctx.fillStyle=`rgba(${s.c||'255,255,255'},${s.a*.75})`;ctx.fillRect(Math.round(s.x-s.l),Math.round(s.y),Math.round(s.l),2);}
   drawDino();drawBlast();drawParts();drawMeteors();
   for(const r of rings){if(r.r<=0)continue;const a=Math.min(1,r.a);ctx.lineWidth=r.w;
     ctx.strokeStyle=`rgba(255,236,190,${a})`;ctx.beginPath();ctx.ellipse(r.x,GY,r.r,r.r*.22,0,0,7);ctx.stroke();
@@ -755,13 +809,13 @@ function render(){
   if(flash>0){ctx.fillStyle=`rgba(255,255,255,${flash})`;ctx.fillRect(0,0,W,H);}
   if(state==='run'||state==='over')hud();
   if(state==='cutscene'){hud();if(ct>2)txt('SPACE / TAP TO SKIP',592,166,1.5,'#ffffff',2,'#14210a');}
-  if(banner&&Math.floor(banner.a*6)%2===0){txt(banner.t,W/2,58,5,banner.t[0]==='H'?'#ffb02e':'#ff3b5c',1,'#1a0710');}
+  if(banner&&Math.floor(banner.a*6)%2===0){txt(banner.t,W/2,58,5,banner.t[0]==='S'?'#ffb02e':'#ff3b5c',1,'#1a0710');}
   if(state==='over'){txt('GAME OVER',W/2,46,3,'#9cff3a',1,'#14210a');ctx.drawImage(RESTART,W/2-14,72,28,24);}
   if(state==='win'){
     ctx.fillStyle=doom>0?`rgba(${10+6*doom|0},${8-4*doom|0},${30-26*doom|0},${.55-.27*doom})`:'rgba(10,8,30,.55)';ctx.fillRect(0,0,W,H);drawParts();
     txt('YOU WIN!',W/2,20,6,'#ffd23f',1,'#3a1a00');
     txt('SCORE '+fmtScore(score),W/2,62,2,'#9cff3a',1,'#14210a');
-    txt('TIME 9:00:00',W/2,80,2,'#ffffff',1,'#14210a');
+    txt('TIME '+fmtTime(WIN_T),W/2,80,2,'#ffffff',1,'#14210a');
   }
   if(paused){ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(0,0,W,H);txt('PAUSED',W/2,62,4,'#ffffff',1,'#000');txt('TAP OR PRESS A KEY',W/2,92,2,'#ffffff',1,'#000');}
   if(wipe<1){
@@ -774,7 +828,7 @@ let last=performance.now();
 function loop(now){
   let ms=now-last;last=now;if(ms>50)ms=50;if(ms<0)ms=0;
   if(!paused)update(ms/16.667,ms/1000);
-  render();
+  render();syncUI();
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);

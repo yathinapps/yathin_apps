@@ -335,7 +335,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
 function syncPlus(){try{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-plusfor")||"{}");if(localStorage.getItem("yai-plus")==="1"&&u&&!(u in m)&&!localStorage.getItem("yai-plusmig")){m[u]=1;localStorage.setItem("yai-plusfor",JSON.stringify(m))}localStorage.setItem("yai-plusmig","1");const off=JSON.parse(localStorage.getItem("yai-plusoff")||"{}");if(u&&m[u]&&!off[u])localStorage.setItem("yai-plus","1");else localStorage.removeItem("yai-plus")}catch(e){}}
 function plusSwap(){const u=localStorage.getItem("yai-user"),off=JSON.parse(localStorage.getItem("yai-plusoff")||"{}");if(off[u])delete off[u];else off[u]=1;localStorage.setItem("yai-plusoff",JSON.stringify(off));syncPlus();location.reload()}syncPlus()</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script src="fixes.js?v=1"></script>
+<script src="fixes.js?v=1"></script><script src="plus.js?v=1"></script>
 <script src="sitegen.js?v=2"></script>
 <script src="build3d.js?v=2"></script>
 <script type="module">

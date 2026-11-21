@@ -23,12 +23,13 @@
     return of(u, o);
   };
 
-  async function go(op, plan, btn) {
+  async function go(op, plan, btn, trial) {
+    trial = trial !== false;
     if (!sess()) { if (window.YAI2) window.YAI2.openLogin("Sign in with Google to start your AI+ free trial."); return }
     if (op === "checkout" && !(await adultOk())) return;
-    if (op === "checkout" && PK) { embed(plan); return }
+    if (op === "checkout" && PK) { embed(plan, trial); return }
     const t = btn && btn.textContent; if (btn) { btn.disabled = true; btn.textContent = "Opening Stripe…" }
-    const { j } = await call({ op, plan, ret: location.pathname }).catch(() => ({ j: {} }));
+    const { j } = await call({ op, plan, trial, ret: location.pathname }).catch(() => ({ j: {} }));
     if (j.url) { location.href = j.url; return }
     if (btn) { btn.disabled = false; btn.textContent = t }
     if (j.error === "already_plus") { refresh(true); return }
@@ -57,7 +58,7 @@
   let SJ, EC;
   const loadStripe = () => SJ || (SJ = new Promise((ok, no) => { if (window.Stripe) return ok(window.Stripe(PK)); const sc = document.createElement("script"); sc.src = "https://js.stripe.com/v3/"; sc.onload = () => ok(window.Stripe(PK)); sc.onerror = no; document.head.appendChild(sc) }));
   function closeEmbed() { try { EC && EC.destroy() } catch (e) { } EC = null; const m = document.getElementById("yaiPay"); if (m) m.remove() }
-  async function embed(plan) {   // Stripe's checkout inside a Yathin AI popup; card details stay inside Stripe's own frame
+  async function embed(plan, trial) {   // Stripe's checkout inside a Yathin AI popup; card details stay inside Stripe's own frame
     closeEmbed();
     const m = document.createElement("div"); m.id = "yaiPay";
     m.style.cssText = "position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px";
@@ -66,7 +67,7 @@
     document.body.appendChild(m);
     try {
       const stripe = await loadStripe();
-      const fetchClientSecret = async () => { const { j } = await call({ op: "checkout", plan, ret: location.pathname, embed: true }); if (!j.clientSecret) throw new Error(j.error || "no_secret"); return j.clientSecret };
+      const fetchClientSecret = async () => { const { j } = await call({ op: "checkout", plan, trial, ret: location.pathname, embed: true }); if (!j.clientSecret) throw new Error(j.error || "no_secret"); return j.clientSecret };
       const init = stripe.createEmbeddedCheckoutPage || stripe.initEmbeddedCheckout;
       EC = await init.call(stripe, { fetchClientSecret });
       const box = document.getElementById("yaiPayBox"); if (!box) { closeEmbed(); return } box.innerHTML = ""; EC.mount(box);
@@ -77,6 +78,15 @@
       alert(String(e.message) === "login_required" ? "Sign in with Google first (email-only accounts can't buy AI+)." : "Couldn't open checkout right now. Please try again in a minute.");
     }
   }
+  let PLAN = "month";
+  const PR = { month: "$15.99/month", year: "$55.99/year" };
+  function picker(box, rerender) {   // Monthly / Yearly switch
+    const w = document.createElement("div"); w.style.cssText = "display:flex;gap:6px;margin-top:10px;background:rgba(0,0,0,.06);border-radius:999px;padding:4px";
+    [["month", "Monthly · $15.99"], ["year", "Yearly · $55.99"]].forEach(([k, t]) => { const x = document.createElement("button"); x.type = "button"; x.textContent = t; const on = PLAN === k;
+      x.style.cssText = "flex:1;border:0;border-radius:999px;padding:7px 6px;cursor:pointer;font:600 12.5px Geist,system-ui,sans-serif;" + (on ? "background:#fff;color:#111;box-shadow:0 1px 4px rgba(0,0,0,.12)" : "background:transparent;color:#555");
+      x.onclick = e => { e.stopPropagation(); if (PLAN !== k) { PLAN = k; rerender() } }; w.appendChild(x) });
+    box.appendChild(w);
+  }
   const fmt = ms => new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
   function renderProf() {        // the old page's profile menu box
     const card = document.querySelector("#prof .plus"); if (!card || OFF) return;
@@ -85,7 +95,7 @@
     const tag = card.querySelector("span"); let box = card.querySelector(".yai-plus-cta");
     if (!box) { box = document.createElement("div"); box.className = "yai-plus-cta"; card.appendChild(box) }
     box.innerHTML = "";
-    const b = (txt, fn, gold) => { const x = document.createElement("button"); x.type = "button"; x.textContent = txt; x.style.cssText = "display:block;width:100%;box-sizing:border-box;margin-top:8px;padding:8px;border-radius:999px;cursor:pointer;font:600 12.5px Geist,sans-serif;" + (gold ? "border:0;background:linear-gradient(135deg,#f5b301,#e08a00);color:#fff" : "border:1px solid #ddd;background:#fff;color:#111"); x.onclick = e => { e.stopPropagation(); go(fn[0], fn[1], x) }; box.appendChild(x) };
+    const b = (txt, fn, gold) => { const x = document.createElement("button"); x.type = "button"; x.textContent = txt; x.style.cssText = "display:block;width:100%;box-sizing:border-box;margin-top:8px;padding:8px;border-radius:999px;cursor:pointer;font:600 12.5px Geist,sans-serif;" + (gold ? "border:0;background:linear-gradient(135deg,#f5b301,#e08a00);color:#fff" : "border:1px solid #ddd;background:#fff;color:#111"); x.onclick = e => { e.stopPropagation(); go(fn[0], fn[1], x, fn[2]) }; box.appendChild(x) };
     if (ST && ST.plus) {
       if (tag) tag.textContent = ST.status === "trialing" ? "FREE TRIAL" : "YOUR PLAN";
       const pt = document.getElementById("planTxt"); if (pt) pt.textContent = "Yathin AI+ ✨";
@@ -95,9 +105,10 @@
     } else {
       const trial = !(ST && ST.hadTrial);
       if (tag) tag.textContent = trial ? "7-DAY FREE TRIAL" : "AVAILABLE NOW";
-      b(trial ? "Try free · then $15.99/month" : "Get AI+ · $15.99/month", ["checkout", "month"], true);
-      b(trial ? "Try free · then $55.99/year" : "Get AI+ · $55.99/year", ["checkout", "year"]);
-      const n = document.createElement("div"); n.style.cssText = "margin-top:6px;font-size:11.5px;opacity:.7"; n.textContent = (trial ? "Free for 7 days, then billed automatically. " : "") + "Cancel anytime. Payments by Stripe."; box.appendChild(n);
+      picker(box, () => { card.dataset.k = ""; renderProf() });
+      if (trial) b("Start 7-day free trial", ["checkout", PLAN, true], true);
+      b("Buy now · " + PR[PLAN], ["checkout", PLAN, false], !trial);
+      const n = document.createElement("div"); n.style.cssText = "margin-top:6px;font-size:11.5px;opacity:.7"; n.textContent = (trial ? "Free trial: $0 today, then " + PR[PLAN] + " after 7 days. " : "") + "Cancel anytime. Payments by Stripe."; box.appendChild(n);
     }
   }
   function render() {
@@ -119,9 +130,10 @@
       } else {
         const trial = !(ST && ST.hadTrial);
         if (tag) tag.textContent = trial ? "7-day free trial" : "Available now";
-        b(trial ? "Start free trial · $15.99/month after" : "Get AI+ · $15.99/month", x => go("checkout", "month", x));
-        b(trial ? "Start free trial · $55.99/year after" : "Get AI+ · $55.99/year", x => go("checkout", "year", x), true);
-        const n = document.createElement("p"); n.style.cssText = "margin:8px 0 0;font-size:13px;opacity:.75"; n.textContent = (trial ? "Free for 7 days, then billed automatically. " : "") + "Cancel anytime in Manage plan. Payments by Stripe."; box.appendChild(n);
+        picker(box, () => { box.dataset.k = ""; render() });
+        if (trial) b("Start 7-day free trial", x => go("checkout", PLAN, x, true));
+        b("Buy now · " + PR[PLAN], x => go("checkout", PLAN, x, false), trial);
+        const n = document.createElement("p"); n.style.cssText = "margin:8px 0 0;font-size:13px;opacity:.75"; n.textContent = (trial ? "Free trial: $0 today, then " + PR[PLAN] + " after 7 days. " : "") + "Cancel anytime in Manage plan. Payments by Stripe."; box.appendChild(n);
       }
     });
   }

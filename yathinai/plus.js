@@ -40,6 +40,7 @@
     const { j } = await call({ op: "age18" }).catch(() => ({ j: {} }));
     if (j.ok) return true;
     if (j.error === "under_18") { no18(); return false }
+    if (j.error === "need_bday") return true;   // no extra question: the account's age answer or Stripe's 18+ note covers it
     if (j.error !== "need_bday") { alert("Couldn't check right now. Please try again in a minute."); return false }
     return new Promise(done => {
       const mx = new Date().toISOString().slice(0, 10);

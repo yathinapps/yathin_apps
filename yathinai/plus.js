@@ -2,6 +2,7 @@
    Card details never touch this page: Stripe's own pages take them, and the brain asks Stripe who has paid. */
 (function () {
   const BRAIN = "https://yathin-ai.yathinlooops.workers.dev";
+  const PK = "pk_test_51Ue9J90p9AJnAeB3wNXiCsYHnWXdn04ekDVHrGnOcfhOQiKpwKew4yeuF6AuPUMwDb30uangOQKCWmdqiixQGSG100Ege29QiI";   // Stripe publishable key (pk_..., public by design). Empty = open Stripe's own page instead.
   const sess = () => { try { const s = JSON.parse(localStorage.getItem("yai2-sess") || "null"); return s && s.u === localStorage.getItem("yai-user") && s.x > Date.now() ? s.t : undefined } catch (e) { } };
   const call = body => fetch(BRAIN, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ v: 2, mode: "billing", auth: sess(), ...body }) }).then(async r => ({ ok: r.ok, j: await r.json().catch(() => ({})) }));
   let ST = null, OFF = false;   // ST = last status from the brain; OFF = billing not switched on yet
@@ -24,12 +25,35 @@
 
   async function go(op, plan, btn) {
     if (!sess()) { if (window.YAI2) window.YAI2.openLogin("Sign in with Google to start your AI+ free trial."); return }
+    if (op === "checkout" && PK) { embed(plan); return }
     const t = btn && btn.textContent; if (btn) { btn.disabled = true; btn.textContent = "Opening Stripe…" }
     const { j } = await call({ op, plan, ret: location.pathname }).catch(() => ({ j: {} }));
     if (j.url) { location.href = j.url; return }
     if (btn) { btn.disabled = false; btn.textContent = t }
     if (j.error === "already_plus") { refresh(true); return }
     alert(j.error === "login_required" ? "Sign in with Google first (email-only accounts can't buy AI+)." : "Couldn't open checkout right now. Please try again in a minute.");
+  }
+  let SJ, EC;
+  const loadStripe = () => SJ || (SJ = new Promise((ok, no) => { if (window.Stripe) return ok(window.Stripe(PK)); const sc = document.createElement("script"); sc.src = "https://js.stripe.com/v3/"; sc.onload = () => ok(window.Stripe(PK)); sc.onerror = no; document.head.appendChild(sc) }));
+  function closeEmbed() { try { EC && EC.destroy() } catch (e) { } EC = null; const m = document.getElementById("yaiPay"); if (m) m.remove() }
+  async function embed(plan) {   // Stripe's checkout inside a Yathin AI popup; card details stay inside Stripe's own frame
+    closeEmbed();
+    const m = document.createElement("div"); m.id = "yaiPay";
+    m.style.cssText = "position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px";
+    m.innerHTML = '<div style="position:relative;background:#fff;border-radius:20px;width:min(1000px,100%);max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)"><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #eee;font:700 16px Geist,system-ui,sans-serif;color:#111">Yathin AI+<button type="button" aria-label="Close" style="border:0;background:#f2f2f2;border-radius:999px;width:32px;height:32px;cursor:pointer;font-size:18px">×</button></div><div id="yaiPayBox" style="min-height:420px;padding:8px"><p style="text-align:center;margin-top:160px;font:500 14px system-ui;color:#666">Loading secure checkout…</p></div></div>';
+    m.querySelector("button").onclick = closeEmbed; m.onclick = e => { if (e.target === m) closeEmbed() };
+    document.body.appendChild(m);
+    try {
+      const stripe = await loadStripe();
+      const fetchClientSecret = async () => { const { j } = await call({ op: "checkout", plan, ret: location.pathname, embed: true }); if (!j.clientSecret) throw new Error(j.error || "no_secret"); return j.clientSecret };
+      const init = stripe.createEmbeddedCheckoutPage || stripe.initEmbeddedCheckout;
+      EC = await init.call(stripe, { fetchClientSecret });
+      const box = document.getElementById("yaiPayBox"); if (!box) { closeEmbed(); return } box.innerHTML = ""; EC.mount(box);
+    } catch (e) {
+      closeEmbed();
+      if (String(e.message) === "already_plus") { refresh(true); return }
+      alert(String(e.message) === "login_required" ? "Sign in with Google first (email-only accounts can't buy AI+)." : "Couldn't open checkout right now. Please try again in a minute.");
+    }
   }
   const fmt = ms => new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
   function renderProf() {        // the old page's profile menu box

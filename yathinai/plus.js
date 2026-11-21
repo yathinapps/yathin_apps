@@ -25,6 +25,7 @@
 
   async function go(op, plan, btn) {
     if (!sess()) { if (window.YAI2) window.YAI2.openLogin("Sign in with Google to start your AI+ free trial."); return }
+    if (op === "checkout" && !(await adultOk())) return;
     if (op === "checkout" && PK) { embed(plan); return }
     const t = btn && btn.textContent; if (btn) { btn.disabled = true; btn.textContent = "Opening Stripe…" }
     const { j } = await call({ op, plan, ret: location.pathname }).catch(() => ({ j: {} }));
@@ -32,6 +33,25 @@
     if (btn) { btn.disabled = false; btn.textContent = t }
     if (j.error === "already_plus") { refresh(true); return }
     alert(j.error === "login_required" ? "Sign in with Google first (email-only accounts can't buy AI+)." : "Couldn't open checkout right now. Please try again in a minute.");
+  }
+  const box18 = html => { const m = document.createElement("div"); m.id = "yai18"; m.style.cssText = "position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px"; m.innerHTML = '<div style="background:#fff;border-radius:20px;width:min(380px,100%);padding:22px;font:15px Geist,system-ui,sans-serif;color:#111;box-shadow:0 20px 60px rgba(0,0,0,.3)">' + html + '</div>'; document.body.appendChild(m); return m };
+  const no18 = () => { const m = box18('<b style="font-size:18px">AI+ is for adults</b><p style="margin:10px 0 16px;line-height:1.45">You need to be 18 or older to buy Yathin AI+. Ask a parent or guardian to get it for you.</p><button type="button" style="width:100%;padding:10px;border-radius:999px;border:0;background:#111;color:#fff;font:600 14px Geist,system-ui,sans-serif;cursor:pointer">OK</button>'); m.querySelector("button").onclick = () => m.remove() };
+  async function adultOk() {   // the brain checks the birthday; the first one an account gives is kept
+    const { j } = await call({ op: "age18" }).catch(() => ({ j: {} }));
+    if (j.ok) return true;
+    if (j.error === "under_18") { no18(); return false }
+    if (j.error !== "need_bday") { alert("Couldn't check right now. Please try again in a minute."); return false }
+    return new Promise(done => {
+      const mx = new Date().toISOString().slice(0, 10);
+      const m = box18('<b style="font-size:18px">What\'s your birthday?</b><p style="margin:8px 0 12px;line-height:1.45;color:#555">Yathin AI+ is for people 18 and older. You can only enter this once.</p><input type="date" max="' + mx + '" min="1900-01-01" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #ddd;border-radius:12px;font:15px inherit"><div class="e" style="color:#c0392b;font-size:13px;min-height:18px;margin-top:6px"></div><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="c" style="flex:1;padding:10px;border-radius:999px;border:1px solid #ddd;background:#fff;font:600 14px Geist,system-ui,sans-serif;cursor:pointer">Cancel</button><button type="button" class="k" style="flex:1;padding:10px;border-radius:999px;border:0;background:#111;color:#fff;font:600 14px Geist,system-ui,sans-serif;cursor:pointer">Continue</button></div>');
+      const inp = m.querySelector("input"), er = m.querySelector(".e");
+      m.querySelector(".c").onclick = () => { m.remove(); done(false) };
+      m.querySelector(".k").onclick = async () => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(inp.value)) { er.textContent = "Pick your birthday."; return }
+        const { j } = await call({ op: "age18", bday: inp.value }).catch(() => ({ j: {} })); m.remove();
+        if (j.ok) done(true); else { if (j.error === "under_18") no18(); else alert("Couldn't check right now. Please try again in a minute."); done(false) }
+      };
+    });
   }
   let SJ, EC;
   const loadStripe = () => SJ || (SJ = new Promise((ok, no) => { if (window.Stripe) return ok(window.Stripe(PK)); const sc = document.createElement("script"); sc.src = "https://js.stripe.com/v3/"; sc.onload = () => ok(window.Stripe(PK)); sc.onerror = no; document.head.appendChild(sc) }));
@@ -52,6 +72,7 @@
     } catch (e) {
       closeEmbed();
       if (String(e.message) === "already_plus") { refresh(true); return }
+      if (String(e.message) === "under_18") { no18(); return }
       alert(String(e.message) === "login_required" ? "Sign in with Google first (email-only accounts can't buy AI+)." : "Couldn't open checkout right now. Please try again in a minute.");
     }
   }

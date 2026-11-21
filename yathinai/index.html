@@ -335,7 +335,7 @@ body.kz-on #kz{display:block}body.kz-on #wrap,body.kz-on .side,body.kz-on .foot,
 function syncPlus(){try{const u=localStorage.getItem("yai-user"),m=JSON.parse(localStorage.getItem("yai-plusfor")||"{}");if(localStorage.getItem("yai-plus")==="1"&&u&&!(u in m)&&!localStorage.getItem("yai-plusmig")){m[u]=1;localStorage.setItem("yai-plusfor",JSON.stringify(m))}localStorage.setItem("yai-plusmig","1");const off=JSON.parse(localStorage.getItem("yai-plusoff")||"{}");if(u&&m[u]&&!off[u])localStorage.setItem("yai-plus","1");else localStorage.removeItem("yai-plus")}catch(e){}}
 function plusSwap(){const u=localStorage.getItem("yai-user"),off=JSON.parse(localStorage.getItem("yai-plusoff")||"{}");if(off[u])delete off[u];else off[u]=1;localStorage.setItem("yai-plusoff",JSON.stringify(off));syncPlus();location.reload()}syncPlus()</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script src="fixes.js?v=1"></script><script src="plus.js?v=1"></script>
+<script src="fixes.js?v=1"></script><script src="plus.js?v=2"></script>
 <script src="sitegen.js?v=2"></script>
 <script src="build3d.js?v=2"></script>
 <script type="module">
@@ -467,7 +467,7 @@ async function* stream(msgs){
 }
 async function send(){
  let q=$("#q").value.trim();if(busy||(!q&&!pImg))return;if(!q)q="What's in this picture?";const pic=pImg;
- if(over()){if(!cur)render();const ml=monthLock();if(ml){const d=new Date(ml);bubble("a",`You've used your 50 free hours this month. Take a 4-day break: you're back on ${d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})} at ${d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}.`)}else bubble("a",`You've used today's ${bucket(mode)} time. It resets at midnight. Yathin AI+ is coming soon.`);return}
+ if(over()){if(!cur)render();const ml=monthLock();if(ml){const d=new Date(ml);bubble("a",`You've used your 50 free hours this month. Take a 4-day break: you're back on ${d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})} at ${d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}.`)}else bubble("a",`You've used today's ${bucket(mode)} time. It resets at midnight. Want more? Try Yathin AI+ free for 7 days from your profile.`);return}
  if(!cur){cur={id:Date.now(),title:topic(q),mode,msgs:[]};P.unshift(cur);$("#chat").innerHTML="";aiTitle(cur,q)}
  busy=true;$("#send").disabled=true;$("#q").value="";
  {const um={role:"user",content:q};if(pic)um.pic=pic.small;const ub=bubble("u",q,um);if(pic)picTo(ub,pic.small);cur.msgs.push(um)}if(pic)clearPic();saveP();drawSide();

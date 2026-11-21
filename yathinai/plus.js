@@ -18,7 +18,7 @@
   // the brain decides AI+ itself; this only asks it to check
   const of = window.fetch.bind(window);
   window.fetch = function (u, o) {
-    try { if (u === BRAIN && o && typeof o.body === "string" && ST && ST.plus) { const b = JSON.parse(o.body); if (b.v === 2 && b.mode !== "billing" && !b.plus) { b.plus = true; o = { ...o, body: JSON.stringify(b) } } } } catch (e) { }
+    try { if (u === BRAIN && o && typeof o.body === "string" && ST && ST.plus) { const b = JSON.parse(o.body); if (b.mode !== "billing" && !b.plus) { b.plus = true; o = { ...o, body: JSON.stringify(b) } } } } catch (e) { }
     return of(u, o);
   };
 
@@ -32,7 +32,30 @@
     alert(j.error === "login_required" ? "Sign in with Google first (email-only accounts can't buy AI+)." : "Couldn't open checkout right now. Please try again in a minute.");
   }
   const fmt = ms => new Date(ms).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+  function renderProf() {        // the old page's profile menu box
+    const card = document.querySelector("#prof .plus"); if (!card || OFF) return;
+    const key = ST && ST.plus ? "on:" + ST.status + ST.periodEnd : "off:" + (ST && ST.hadTrial ? 1 : 0) + (sess() ? 1 : 0);
+    if (card.dataset.k === key) return; card.dataset.k = key;
+    const tag = card.querySelector("span"); let box = card.querySelector(".yai-plus-cta");
+    if (!box) { box = document.createElement("div"); box.className = "yai-plus-cta"; card.appendChild(box) }
+    box.innerHTML = "";
+    const b = (txt, fn, gold) => { const x = document.createElement("button"); x.type = "button"; x.textContent = txt; x.style.cssText = "display:block;width:100%;box-sizing:border-box;margin-top:8px;padding:8px;border-radius:999px;cursor:pointer;font:600 12.5px Geist,sans-serif;" + (gold ? "border:0;background:linear-gradient(135deg,#f5b301,#e08a00);color:#fff" : "border:1px solid #ddd;background:#fff;color:#111"); x.onclick = e => { e.stopPropagation(); go(fn[0], fn[1], x) }; box.appendChild(x) };
+    if (ST && ST.plus) {
+      if (tag) tag.textContent = ST.status === "trialing" ? "FREE TRIAL" : "YOUR PLAN";
+      const pt = document.getElementById("planTxt"); if (pt) pt.textContent = "Yathin AI+ ✨";
+      const p = document.createElement("div"); p.style.cssText = "margin-top:8px;font-weight:600";
+      p.textContent = ST.status === "trialing" && ST.trialEnd ? "Free trial until " + fmt(ST.trialEnd) + "." : ST.status === "past_due" ? "Last payment didn't go through. Update your card." : ST.periodEnd ? (ST.renews ? "Renews " : "Ends ") + fmt(ST.periodEnd) + "." : "";
+      box.appendChild(p); b("Manage plan", ["portal", ""]);
+    } else {
+      const trial = !(ST && ST.hadTrial);
+      if (tag) tag.textContent = trial ? "7-DAY FREE TRIAL" : "AVAILABLE NOW";
+      b(trial ? "Try free · then $15.99/month" : "Get AI+ · $15.99/month", ["checkout", "month"], true);
+      b(trial ? "Try free · then $55.99/year" : "Get AI+ · $55.99/year", ["checkout", "year"]);
+      const n = document.createElement("div"); n.style.cssText = "margin-top:6px;font-size:11.5px;opacity:.7"; n.textContent = (trial ? "Free for 7 days, then billed automatically. " : "") + "Cancel anytime. Payments by Stripe."; box.appendChild(n);
+    }
+  }
   function render() {
+    renderProf();
     document.querySelectorAll(".plan.plus").forEach(card => {
       if (OFF) return;   // keep "Coming Soon" until Stripe is switched on
       let box = card.querySelector(".yai-plus-cta");
@@ -56,7 +79,7 @@
       }
     });
   }
-  new MutationObserver(() => { if (document.querySelector(".plan.plus")) render() }).observe(document.body, { childList: true, subtree: true });
+  new MutationObserver(() => { if (document.querySelector(".plan.plus,#prof .plus")) render() }).observe(document.body, { childList: true, subtree: true });
   const q = new URLSearchParams(location.search).get("plus");
   if (q) { history.replaceState(null, "", location.pathname + location.hash); }
   if (q === "done") { refresh(true).then(() => { if (ST && ST.plus) alert(ST.status === "trialing" ? "Welcome to Yathin AI+! Your 7-day free trial has started." : "Welcome to Yathin AI+!"); }) } else refresh(false);

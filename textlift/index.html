@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>if(location.hostname==="yathinapps.github.io"){location.replace("https://yathinlooops.pages.dev"+location.pathname.replace(/^\/yathin_apps/,"")+location.search+location.hash)}</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TextLift · Pull the text out of any video</title>
+<meta name="description" content="Free app: import a video, TextLift finds the text (even animated), removes the background, and lets you drop in a new image or video. Download as image or video." />
+<meta property="og:title" content="TextLift · Free app" />
+<meta property="og:description" content="Pull the text out of any video and put it on a new background." />
+<meta property="og:image" content="https://yathinlooops.pages.dev/textlift/textlift_icon.png" />
+<link rel="icon" type="image/png" href="textlift_icon.png" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Anton&family=Bebas+Neue&family=Pacifico&family=Permanent+Marker&family=Lobster&family=Poppins:wght@800&display=swap" />
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--ink:#111;--mute:#666;--line:#e4e4ea;--a:#7c3aed;--b:#ec4899;--c:#fb923c;--grad:linear-gradient(90deg,var(--a),var(--b),var(--c));--r:22px}
+@media (prefers-color-scheme:dark){:root{--bg:#0d0d10;--card:#17171c;--ink:#f3f3f5;--mute:#9a9aa6;--line:#2a2a33}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Geist,system-ui,sans-serif;line-height:1.5}
+a{color:var(--b)}
+.nav{position:sticky;top:12px;z-index:50;margin:12px auto 0;max-width:1100px;width:calc(100% - 24px);display:flex;align-items:center;gap:10px;padding:8px;background:#111;color:#fff;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.back{display:flex;align-items:center;gap:8px;color:#fff;text-decoration:none;padding:4px 12px 4px 6px;border-radius:999px;background:#222;font-weight:500;font-size:14px;white-space:nowrap}
+.back img{width:26px;height:26px;border-radius:8px}
+.nav .sp{flex:1}
+.pill{border:0;border-radius:999px;padding:8px 14px;font:600 14px Geist,sans-serif;cursor:pointer;background:#262630;color:#fff;text-decoration:none;white-space:nowrap}
+.pill.plus{background:var(--grad)}
+@media (max-width:520px){.back span{display:none}}
+main{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+.hero{display:flex;align-items:center;gap:18px;margin:18px 0 26px}
+.hero img{width:72px;height:72px;border-radius:18px;box-shadow:0 8px 24px rgba(124,58,237,.3)}
+h1{margin:0;font-size:clamp(34px,6vw,54px);line-height:1.05;letter-spacing:-.02em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin:6px 0 0;color:var(--mute);font-size:17px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:18px}
+.card h2{margin:0 0 4px;font-size:20px}
+.card .sub{margin:0 0 14px;color:var(--mute);font-size:14px}
+.step{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--grad);color:#fff;font-weight:700;font-size:14px;align-items:center;justify-content:center;margin-right:8px;vertical-align:2px}
+.drop{border:2px dashed var(--line);border-radius:18px;padding:34px 16px;text-align:center;cursor:pointer;transition:.2s}
+.drop:hover,.drop.on{border-color:var(--b);background:rgba(236,72,153,.05)}
+.drop b{display:block;font-size:18px;margin-bottom:4px}
+.btn{border:0;border-radius:999px;padding:12px 20px;font:600 15px Geist,sans-serif;cursor:pointer;background:var(--ink);color:var(--bg)}
+.btn.g{background:var(--grad);color:#fff}
+.btn.l{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:inline-flex;background:var(--bg);border-radius:999px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--ink);padding:8px 14px;border-radius:999px;font:500 14px Geist,sans-serif;cursor:pointer}
+.seg button.on{background:var(--card);box-shadow:0 1px 4px rgba(0,0,0,.15);font-weight:600}
+.note{font-size:13px;color:var(--mute)}
+.bar{height:8px;background:var(--bg);border-radius:9px;overflow:hidden;margin:12px 0 4px}
+.bar i{display:block;height:100%;width:0;background:var(--grad);transition:width .2s}
+.grid{display:grid;grid-template-columns:1.6fr 1fr;gap:18px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.stage{position:relative;border-radius:16px;overflow:hidden;background-color:#ddd;background-image:linear-gradient(45deg,#bbb 25%,transparent 25%,transparent 75%,#bbb 75%),linear-gradient(45deg,#bbb 25%,transparent 25%,transparent 75%,#bbb 75%);background-size:22px 22px;background-position:0 0,11px 11px}
+.stage canvas{display:block;width:100%;height:auto}
+.ctrl{display:flex;align-items:center;gap:10px;margin-top:10px}
+.ctrl input[type=range]{flex:1}
+.ctrl .t{font-variant-numeric:tabular-nums;font-size:13px;color:var(--mute);min-width:86px;text-align:right}
+label.f{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+input[type=range]{accent-color:var(--b);width:100%}
+input[type=text],input[type=url]{width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:15px Geist,sans-serif}
+.list{max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.it{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:12px;background:var(--bg);font-size:14px}
+.it input{margin-top:4px;accent-color:var(--b)}
+.it .tm{color:var(--mute);font-size:12px;white-space:nowrap}
+.it .tx{flex:1;word-break:break-word}
+.sw{width:38px;height:38px;border-radius:10px;border:2px solid var(--line);cursor:pointer;padding:0}
+.hide{display:none!important}
+.msg{margin-top:10px;font-size:14px;min-height:20px}
+.msg.err{color:#dc2626}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.how div{background:var(--bg);border-radius:16px;padding:16px;font-size:14px;color:var(--mute)}
+.how b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
+select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:15px Geist,sans-serif}
+.it.sel{box-shadow:inset 0 0 0 2px var(--b)}
+.it .ed{border:0;background:transparent;color:var(--b);font:600 13px Geist,sans-serif;cursor:pointer;padding:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lock{font-size:13px;font-weight:600;color:var(--b)}
+.lim{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--bg);font-size:13px;font-weight:600;margin-top:10px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="back" href="https://yathinlooops.pages.dev/" aria-label="Back to Yathin Looops"><span aria-hidden="true">←</span><img src="textlift_icon.png" alt="" /><span>Yathin Looops</span></a>
+  <div class="sp"></div>
+  <a class="pill" id="planChip" href="../yathinai/">Free · 6 min</a>
+  <button class="pill" id="ya-key-btn">API key</button>
+</nav>
+<main>
+  <div class="hero">
+    <img src="textlift_icon.png" alt="TextLift icon" />
+    <div><h1>TextLift</h1><p>Pull the text out of any video, even animated, and drop it on a new background.</p></div>
+  </div>
+
+  <section class="card">
+    <h2><span class="step">1</span>Import a video</h2>
+    <p class="sub">MP4, MOV or WebM. Stays on your device.</p>
+    <div class="drop" id="drop" tabindex="0"><b>Drop a video here or click to choose</b><span class="note" id="limitNote">Up to 6 minutes free · up to 15 minutes with Yathin AI+</span></div>
+    <input type="file" id="file" accept="video/*" class="hide" />
+    <div class="msg" id="m1"></div>
+  </section>
+
+  <section class="card hide" id="sec2">
+    <h2><span class="step">2</span>Find the text</h2>
+    <p class="sub">Pick who reads the video.</p>
+    <div class="seg" id="engine">
+      <button data-v="yai" class="on">Yathin AI scan · free, no key</button>
+      <button data-v="gem">Gemini · best for animated text</button>
+    </div>
+    <p class="note" id="engNote">Runs right in your browser. Works best on clear, readable text.</p>
+    <div class="row"><button class="btn g" id="go">Find text</button><button class="btn l hide" id="stop">Stop</button></div>
+    <div class="bar hide" id="bar"><i></i></div>
+    <div class="msg" id="m2"></div>
+  </section>
+
+  <section class="hide" id="sec3">
+    <div class="grid">
+      <div class="card">
+        <h2><span class="step">3</span>Preview</h2>
+        <div class="stage" id="stage"><canvas id="out"></canvas></div>
+        <div class="ctrl">
+          <button class="btn l" id="play" style="padding:8px 16px">Play</button>
+          <input type="range" id="seek" min="0" max="1000" value="0" />
+          <span class="t" id="time">0:00 / 0:00</span>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn l" id="cmp">Hold to see original</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Text found</h2>
+        <p class="sub">Uncheck anything you don't want.</p>
+        <div class="list" id="list"></div>
+        <div class="row" style="margin-top:10px"><button class="btn l" id="copyText" style="padding:8px 14px">Copy all text</button></div>
+        <label class="f">Remove background</label>
+        <div class="seg" id="mode">
+          <button data-v="auto" class="on">Text only</button>
+          <button data-v="color">Match text color</button>
+          <button data-v="box">Keep text box</button>
+        </div>
+        <label class="f">Cleanup strength <span class="note" id="thrV"></span></label>
+        <input type="range" id="thr" min="20" max="220" value="85" />
+        <label class="f">Edge padding</label>
+        <input type="range" id="pad" min="0" max="40" value="12" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">4</span>Trim, speed and text</h2>
+      <div class="two">
+        <div><label class="f">Start <span class="note" id="tsV">0:00</span></label><input type="range" id="ts" min="0" max="1000" value="0" /></div>
+        <div><label class="f">End <span class="note" id="teV">0:00</span></label><input type="range" id="te" min="0" max="1000" value="1000" /></div>
+      </div>
+      <label class="f">Speed <span class="note" id="spV">1×</span></label>
+      <input type="range" id="speed" min="0.5" max="2" step="0.05" value="1" />
+      <p class="note" id="spNote">Free: 0.5× to 2×. Yathin AI+: 0.1× to 7×.</p>
+      <label class="f">Text</label>
+      <div class="row"><button class="btn l" id="addTxt">+ Add text</button><span class="note">Or tap Edit on any text found to change its words or style.</span></div>
+      <div id="editor" class="hide" style="margin-top:12px;padding:14px;border-radius:16px;background:var(--bg)">
+        <div class="row" style="justify-content:space-between"><b id="edTitle">Edit text</b><button class="ed" id="edDel" style="color:#dc2626">Delete</button></div>
+        <label class="f">Words</label><input type="text" id="edText" />
+        <div id="edLookRow"><label class="f">Look</label><div class="seg" id="edLook"><button data-v="orig" class="on">Original</button><button data-v="new">New style</button></div></div>
+        <div id="edStyle">
+          <div class="two">
+            <div><label class="f">Font</label><select id="edFont"><option value="Poppins">Bold</option><option value="Anton">Tall</option><option value="Bebas Neue">Bebas</option><option value="Permanent Marker">Marker</option><option value="Pacifico">Script</option><option value="Lobster">Lobster</option><option value="Geist">Clean</option></select></div>
+            <div><label class="f">Size</label><input type="range" id="edSize" min="30" max="250" value="100" /></div>
+          </div>
+          <div class="row" style="margin-top:10px"><label class="note">Color <input type="color" id="edColor" value="#ffffff" class="sw" style="vertical-align:middle" /></label><label class="note">Outline <input type="color" id="edStroke" value="#000000" class="sw" style="vertical-align:middle" /></label><label class="note"><input type="checkbox" id="edStrokeOn" checked /> Outline on</label></div>
+        </div>
+        <label class="f">Animation</label>
+        <select id="edAnim"><option value="none">None</option><option value="fade">Fade</option><option value="pop">Pop</option><option value="slide">Slide up</option><option value="type">Typewriter · AI+</option><option value="bounce">Bounce · AI+</option><option value="shake">Shake · AI+</option><option value="glow">Glow · AI+</option><option value="zoom">Pulse · AI+</option><option value="spin">Spin in · AI+</option><option value="wave">Wave · AI+</option><option value="rainbow">Rainbow · AI+</option></select>
+        <p class="note" id="edMsg"></p>
+        <div id="edPos">
+          <div class="two"><div><label class="f">Left / right</label><input type="range" id="edX" min="0" max="1000" value="500" /></div><div><label class="f">Up / down</label><input type="range" id="edY" min="0" max="1000" value="500" /></div></div>
+          <div class="two"><div><label class="f">Shows from <span class="note" id="edSV"></span></label><input type="range" id="edS" min="0" max="1000" value="0" /></div><div><label class="f">Until <span class="note" id="edEV"></span></label><input type="range" id="edE" min="0" max="1000" value="1000" /></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">5</span>Backgrounds</h2>
+      <p class="sub">Add one or more. They play in order, and you set how long each one shows.</p>
+      <div class="row">
+        <button class="btn l" id="addCol">+ Color</button>
+        <button class="btn l" id="imgUp">+ Image</button>
+        <button class="btn l" id="imgPaste">+ Paste image</button>
+        <button class="btn l" id="vidUp">+ Video</button>
+        <span class="note">Ctrl+V pastes an image too</span>
+      </div>
+      <div class="row" style="flex-wrap:nowrap;margin-top:10px"><input type="url" id="imgUrl" placeholder="Or paste an image link: https://…/picture.jpg" /><button class="btn l" id="imgGo">Add</button></div>
+      <div style="margin-top:12px;padding:14px;border-radius:16px;background:var(--bg)">
+        <b>Make an image with AI</b> <span class="lim" style="margin:0 0 0 6px">AI+</span>
+        <div class="row" style="flex-wrap:nowrap;margin-top:8px"><input type="text" id="genP" placeholder="A neon city at night, rain, purple glow" /></div>
+        <div class="row" style="margin-top:8px"><button class="btn g" id="genY">Make with Yathin AI+</button><button class="btn l" id="genG">Make with Gemini</button></div>
+      </div>
+      <div class="list" id="bgList" style="margin-top:12px;max-height:none"></div>
+      <input type="file" id="imgFile" accept="image/*" class="hide" multiple />
+      <input type="file" id="vidFile" accept="video/*" class="hide" />
+      <div class="msg" id="m4"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">6</span>Download</h2>
+      <p class="lock" id="lockNote">Pick a background in step 5 to unlock downloads.</p>
+      <div class="row">
+        <button class="btn g" id="dlVid">Download MP4</button>
+        <button class="btn" id="dlMp3">Download MP3</button>
+        <button class="btn l" id="dlPng">Image of this frame</button>
+        <button class="btn l" id="cpPng">Copy image</button>
+        <label class="note"><input type="checkbox" id="snd" checked /> Sound in MP4</label>
+      </div>
+      <p class="note" id="qNote">Free exports up to 720p. Yathin AI+ exports up to 1080p.</p>
+      <div class="bar hide" id="vbar"><i></i></div>
+      <div class="msg" id="m5"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>How it works</h2>
+    <div class="how">
+      <div><b>Finds the text</b>TextLift checks your video frame by frame and tracks every caption, title and moving word.</div>
+      <div><b>Removes the background</b>Everything around the letters goes see-through, so only the text is left.</div>
+      <div><b>Your new look</b>Drop in a color, an image, a pasted picture or another video, then download.</div>
+    </div>
+  </section>
+</main>
+<footer>TextLift · Part of Yathin Looops · Created by Yathin Pedamallu</footer>
+<video id="v" playsinline preload="auto" class="hide" crossorigin="anonymous"></video>
+<script src="../ya-key.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const BRAIN="https://yathin-ai.yathinlooops.workers.dev";
+const v=$("v"),out=$("out"),octx=out.getContext("2d");
+const work=document.createElement("canvas"),wctx=work.getContext("2d",{willReadFrequently:true});
+const layer=document.createElement("canvas"),lctx=layer.getContext("2d");
+let PLUS=false,LIMIT=360,MAXW=1280;
+let tS=0,tE=0,rate=1,sel=null;
+let tracks=[],engine="yai",mode="auto",bgs=[],stopFlag=false,showOrig=false,busy=false,exporting=false;
+const fmt=s=>{s=Math.max(0,s||0);const m=Math.floor(s/60),x=Math.floor(s%60);return m+":"+String(x).padStart(2,"0")};
+const msg=(id,t,err)=>{const e=$(id);e.textContent=t||"";e.classList.toggle("err",!!err)};
+
+/* ---------- Yathin AI+ (same account as Yathin AI) ---------- */
+function sess(){try{const s=JSON.parse(localStorage.getItem("yai2-sess")||"null");return s&&s.u===localStorage.getItem("yai-user")&&s.x>Date.now()?s.t:undefined}catch(e){}}
+function applyPlan(){
+  LIMIT=PLUS?900:360;MAXW=PLUS?1920:1280;
+  const sp=$("speed");sp.min=PLUS?0.1:0.5;sp.max=PLUS?7:2;if(rate<+sp.min||rate>+sp.max){rate=Math.min(+sp.max,Math.max(+sp.min,rate));sp.value=rate;$("spV").textContent=rate+"×"}
+  $("spNote").textContent=PLUS?"Yathin AI+: 0.1× to 7×.":"Free: 0.5× to 2×. Yathin AI+ unlocks 0.1× to 7×.";
+  const c=$("planChip");
+  if(PLUS){c.textContent="Yathin AI+ · 15 min";c.classList.add("plus");c.removeAttribute("href");}
+  else{c.textContent=sess()?"Free · 6 min · Get AI+":"Free · 6 min · Sign in for AI+";c.href="../yathinai/";}
+  $("limitNote").textContent=PLUS?"Yathin AI+ is on: videos up to 15 minutes, 1080p export":"Up to 6 minutes free · up to 15 minutes with Yathin AI+";
+  $("qNote").textContent=PLUS?"Yathin AI+: exports up to 1080p.":"Free exports up to 720p. Yathin AI+ exports up to 1080p.";
+}
+(async function(){
+  try{const c=JSON.parse(localStorage.getItem("yai-plus-st")||"null");if(c&&c.u===localStorage.getItem("yai-user")&&c.s&&c.s.plus)PLUS=true}catch(e){}
+  applyPlan();
+  const auth=sess();if(!auth)return;
+  try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({v:2,mode:"billing",auth,op:"status"})});const j=await r.json();if(r.ok){PLUS=!!j.plus;localStorage.setItem("yai-plus-st",JSON.stringify({u:localStorage.getItem("yai-user"),at:Date.now(),s:j}));applyPlan();if(v.src)checkLen();}}catch(e){}
+})();
+
+/* ---------- 1. import ---------- */
+const drop=$("drop");
+drop.onclick=()=>$("file").click();
+drop.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")$("file").click()};
+drop.ondragover=e=>{e.preventDefault();drop.classList.add("on")};
+drop.ondragleave=()=>drop.classList.remove("on");
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove("on");const f=[...e.dataTransfer.files].find(f=>f.type.startsWith("video/"));if(f)load(f)};
+$("file").onchange=e=>{const f=e.target.files[0];if(f)load(f)};
+let fileName="video";
+function load(f){
+  fileName=(f.name||"video").replace(/\.[^.]+$/,"");
+  tracks=[];$("sec3").classList.add("hide");
+  if(v.src)URL.revokeObjectURL(v.src);
+  v.src=URL.createObjectURL(f);msg("m1","Loading…");
+  v.onloadedmetadata=()=>checkLen();
+  v.onerror=()=>msg("m1","That video won't open in this browser. Try an MP4.",true);
+}
+function checkLen(){
+  const d=v.duration;if(!d||!isFinite(d))return;
+  if(d>LIMIT){
+    $("sec2").classList.add("hide");
+    msg("m1",PLUS?"That video is "+fmt(d)+". The limit is 15 minutes.":"That video is "+fmt(d)+". Free videos can be up to 6 minutes. Get Yathin AI+ with the same account for up to 15 minutes.",true);return;
+  }
+  const W=Math.round(Math.min(v.videoWidth,v.videoWidth>=v.videoHeight?MAXW:MAXW*v.videoWidth/v.videoHeight)/2)*2;
+  const H=Math.round(W*v.videoHeight/v.videoWidth/2)*2;
+  for(const c of [out,work,layer]){c.width=W;c.height=H}
+  tS=0;tE=d;$("ts").value=0;$("te").value=1000;trimLabels();
+  msg("m1","Ready: "+fmt(d)+" · "+v.videoWidth+"×"+v.videoHeight);
+  $("sec2").classList.remove("hide");$("sec2").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ---------- segmented buttons ---------- */
+function seg(id,cb){const el=$(id);el.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));cb(b.dataset.v)})}
+seg("engine",x=>{engine=x;$("engNote").textContent=x==="gem"?(window.yaKey&&yaKey.get()?"Uses your saved Gemini key. Great with moving, stylish or tiny text.":"Needs a free Gemini key. Tap API key at the top to add one."):"Runs right in your browser. Works best on clear, readable text."});
+seg("mode",x=>{mode=x;draw()});
+
+/* ---------- frame grabbing ---------- */
+function seekTo(t){return new Promise(r=>{const done=()=>{v.removeEventListener("seeked",done);r()};v.addEventListener("seeked",done);v.currentTime=Math.min(t,v.duration-0.05)})}
+function snap(w){const c=document.createElement("canvas");const s=w/v.videoWidth;c.width=w;c.height=Math.round(v.videoHeight*s);c.getContext("2d").drawImage(v,0,0,c.width,c.height);return c}
+
+/* ---------- 2. find text ---------- */
+$("go").onclick=findText;
+$("stop").onclick=()=>{stopFlag=true};
+function setBar(id,p){$(id).classList.remove("hide");$(id).firstElementChild.style.width=(p*100).toFixed(1)+"%"}
+async function findText(){
+  if(busy)return;
+  const key=window.yaKey?yaKey.get():"";
+  if(engine==="gem"&&!key){msg("m2","Add your free Gemini key first (API key button at the top).",true);const b=$("ya-key-btn");if(b)b.click();return}
+  busy=true;stopFlag=false;$("go").disabled=true;$("stop").classList.remove("hide");msg("m2","");
+  v.pause();
+    const span=tE-tS,step=Math.max(0.5,Math.min(3,span/200));
+  const times=[];for(let t=tS+Math.min(0.1,span/2);t<tE;t+=step)times.push(t);
+  const frames=[];
+  try{
+    if(engine==="yai"){
+      msg("m2","Starting Yathin AI scan…");
+      if(!window.Tesseract)await new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";s.onload=ok;s.onerror=()=>no(new Error("Couldn't load the scanner. Check your internet."));document.head.appendChild(s)});
+      const wk=await Tesseract.createWorker("eng");
+      for(let i=0;i<times.length&&!stopFlag;i++){
+        await seekTo(times[i]);const c=snap(Math.min(960,v.videoWidth));
+        const {data}=await wk.recognize(c);
+        const items=(data.lines||[]).filter(l=>l.confidence>55&&/[A-Za-z0-9]{2}/.test(l.text)).map(l=>({text:l.text.trim(),box:[l.bbox.y0/c.height*1000,l.bbox.x0/c.width*1000,l.bbox.y1/c.height*1000,l.bbox.x1/c.width*1000]}));
+        frames.push({t:times[i],items});
+        setBar("bar",(i+1)/times.length);msg("m2","Reading frame "+(i+1)+" of "+times.length+"…");
+      }
+      await wk.terminate();
+    }else{
+      const B=24;
+      for(let i=0;i<times.length&&!stopFlag;i+=B){
+        const parts=[{text:'Each image is one frame of a video, labelled with its time in seconds. For every frame, list each piece of visible on-screen text: captions, titles, labels, stickers and animated or moving words (one item per line of text). Return JSON only: {"frames":[{"t":seconds,"items":[{"text":"…","box":[ymin,xmin,ymax,xmax],"color":"#rrggbb"}]}]}. box is a tight box around that text scaled 0-1000. color is the main fill color of the letters. Include frames with no text as empty items.'}];
+        const batch=times.slice(i,i+B);
+        for(const t of batch){await seekTo(t);const c=snap(640);parts.push({text:"Frame at t="+t.toFixed(2)});parts.push({inline_data:{mime_type:"image/jpeg",data:c.toDataURL("image/jpeg",.72).split(",")[1]}})}
+        msg("m2","Gemini is reading "+fmt(batch[0])+" to "+fmt(batch[batch.length-1])+"…");
+        let j=null;
+        for(let a=0;a<3&&!j;a++){
+          const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key="+encodeURIComponent(key),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts}],generationConfig:{responseMimeType:"application/json",thinkingConfig:{thinkingLevel:"minimal"}}})});
+          if(r.status===429||r.status>=500){msg("m2","Gemini is busy, trying again…");await new Promise(z=>setTimeout(z,6000*(a+1)));continue}
+          const x=await r.json();if(!r.ok)throw new Error((x.error&&x.error.message)||"Gemini error");
+          const txt=(x.candidates&&x.candidates[0]&&x.candidates[0].content.parts.map(p=>p.text||"").join(""))||"{}";
+          try{j=JSON.parse(txt.replace(/^```json|```$/g,""))}catch(e){j={frames:[]}}
+        }
+        if(!j)throw new Error("Gemini is too busy right now. Try again in a minute.");
+        (j.frames||[]).forEach((f,k)=>{const t=typeof f.t==="number"?f.t:batch[k];frames.push({t,items:(f.items||[]).filter(it=>it&&it.text&&Array.isArray(it.box)&&it.box.length===4)})});
+        setBar("bar",Math.min(1,(i+B)/times.length));
+      }
+    }
+  }catch(e){msg("m2",e.message||String(e),true)}
+  busy=false;$("go").disabled=false;$("stop").classList.add("hide");
+  if(!frames.length)return;
+  tracks=tracks.filter(x=>x.kind==="add").concat(buildTracks(frames.sort((a,b)=>a.t-b.t),step));sel=null;$("editor").classList.add("hide");
+  if(!tracks.some(x=>x.kind==="found")){msg("m2","No text found. Try Gemini for stylish or moving text.",true);return}
+  const nf=tracks.filter(x=>x.kind==="found").length;msg("m2","Found "+nf+" piece"+(nf>1?"s":"")+" of text"+(stopFlag?" (stopped early)":"")+".");
+  showList();$("sec3").classList.remove("hide");await seekTo(Math.max(tS,(tracks.find(x=>x.kind==="found")||{s:tS}).s+0.05));draw();$("sec3").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ---------- tracking ---------- */
+const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,"");
+function dice(a,b){if(a===b)return 1;if(a.length<2||b.length<2)return 0;const m=new Map();for(let i=0;i<a.length-1;i++){const g=a.substr(i,2);m.set(g,(m.get(g)||0)+1)}let n=0;for(let i=0;i<b.length-1;i++){const g=b.substr(i,2),c=m.get(g);if(c){n++;m.set(g,c-1)}}return 2*n/(a.length+b.length-2)}
+function iou(p,q){const y0=Math.max(p[0],q[0]),x0=Math.max(p[1],q[1]),y1=Math.min(p[2],q[2]),x1=Math.min(p[3],q[3]);const I=Math.max(0,y1-y0)*Math.max(0,x1-x0);const U=(p[2]-p[0])*(p[3]-p[1])+(q[2]-q[0])*(q[3]-q[1])-I;return U>0?I/U:0}
+function buildTracks(frames,step){
+  const live=[],all=[];
+  for(const f of frames){
+    const used=new Set();
+    for(const it of f.items){
+      const n=norm(it.text);if(n.length<1)continue;
+      let best=null,bs=0;
+      for(const tr of live){if(used.has(tr)||f.t-tr.keys[tr.keys.length-1].t>Math.max(step*4,2))continue;
+        const last=tr.keys[tr.keys.length-1];const s=Math.max(dice(n,norm(last.text)),(n.includes(norm(last.text))||norm(last.text).includes(n))?.8:0)*.7+iou(it.box,last.box)*.6;
+        if(s>bs){bs=s;best=tr}}
+      const key={t:f.t,box:it.box.map(Number),text:it.text,color:it.color};
+      if(best&&bs>.45){best.keys.push(key);used.add(best);if(it.text.length>best.text.length)best.text=it.text}
+      else{const tr={kind:"found",look:"orig",anim:"none",font:"Poppins",size:100,fill:"#ffffff",stroke:"#000000",strokeOn:true,text:it.text,keys:[key],on:true};live.push(tr);all.push(tr);used.add(tr)}
+    }
+  }
+  all.forEach(tr=>{tr.s=Math.max(0,tr.keys[0].t-step/2);tr.e=tr.keys[tr.keys.length-1].t+step/2;tr.color=(tr.keys.find(k=>k.color)||{}).color});
+  return all.filter(tr=>tr.keys.length>1||norm(tr.text).length>2).sort((a,b)=>a.s-b.s);
+}
+function boxAt(tr,t){const k=tr.keys;if(t<=k[0].t)return k[0].box;if(t>=k[k.length-1].t)return k[k.length-1].box;for(let i=0;i<k.length-1;i++){if(t>=k[i].t&&t<=k[i+1].t){const u=(t-k[i].t)/(k[i+1].t-k[i].t||1);return k[i].box.map((x,j)=>x+(k[i+1].box[j]-x)*u)}}return k[0].box}
+function showList(){
+  const L=$("list");L.innerHTML="";
+  tracks.forEach(tr=>{const d=document.createElement("label");d.className="it"+(tr===sel?" sel":"");const c=document.createElement("input");c.type="checkbox";c.checked=tr.on;c.onchange=()=>{tr.on=c.checked;draw()};const tx=document.createElement("span");tx.className="tx";tx.textContent=tr.text;const tm=document.createElement("span");tm.className="tm";tm.textContent=fmt(tr.s)+"–"+fmt(tr.e);tm.style.cursor="pointer";tm.onclick=e=>{e.preventDefault();seekTo(tr.s+0.05).then(draw)};const ed=document.createElement("button");ed.className="ed";ed.textContent="Edit";ed.onclick=e=>{e.preventDefault();openEd(tr)};tx.textContent=(tr.kind==="add"?"✚ ":"")+tr.text;d.append(c,tx,tm,ed);L.append(d)});
+}
+$("copyText").onclick=async()=>{const t=tracks.filter(x=>x.on).map(x=>x.text).join("\n");try{await navigator.clipboard.writeText(t);msg("m2","Text copied.")}catch(e){msg("m2","Couldn't copy here.",true)}};
+
+/* ---------- background removal + compositing ---------- */
+const hex=h=>{h=(h||"").replace("#","");if(h.length===3)h=h.split("").map(c=>c+c).join("");const n=parseInt(h,16);return isNaN(n)||h.length!==6?null:[n>>16&255,n>>8&255,n&255]};
+function med(a){a.sort((x,y)=>x-y);return a[a.length>>1]||0}
+function draw(t){
+  if(!out.width)return;
+  const W=out.width,H=out.height;t=t==null?v.currentTime:t;
+  wctx.drawImage(v,0,0,W,H);
+  lctx.clearRect(0,0,W,H);
+  const thr=+$("thr").value,padP=+$("pad").value/1000,soft=28;
+  $("thrV").textContent="("+thr+")";
+  for(const tr of tracks){
+    if(!tr.on||t<tr.s||t>tr.e||tr.kind==="add"||tr.look==="new")continue;
+    const b=boxAt(tr,t),bh=(b[2]-b[0])/1000,pp=padP+bh*.15;
+    const x0=Math.max(0,Math.floor((b[1]/1000-pp)*W)),y0=Math.max(0,Math.floor((b[0]/1000-pp)*H)),x1=Math.min(W,Math.ceil((b[3]/1000+pp)*W)),y1=Math.min(H,Math.ceil((b[2]/1000+pp)*H));
+    const w=x1-x0,h=y1-y0;if(w<2||h<2)continue;
+    const src=wctx.getImageData(x0,y0,w,h),d=src.data;
+    if(mode!=="box"){
+      const R=[],G=[],Bc=[];const pushPx=(x,y)=>{const i=(y*w+x)*4;R.push(d[i]);G.push(d[i+1]);Bc.push(d[i+2])};
+      const sx=Math.max(1,w>>6),sy=Math.max(1,h>>5);
+      for(let x=0;x<w;x+=sx){pushPx(x,0);pushPx(x,h-1)}for(let y=0;y<h;y+=sy){pushPx(0,y);pushPx(w-1,y)}
+      const bg=[med(R),med(G),med(Bc)];
+      let tc=mode==="color"?hex(tr.color):null;
+      if(mode==="color"&&!tc){let r=0,g=0,bb=0,n=0;for(let i=0;i<d.length;i+=16){const dd=Math.hypot(d[i]-bg[0],d[i+1]-bg[1],d[i+2]-bg[2]);if(dd>thr){r+=d[i];g+=d[i+1];bb+=d[i+2];n++}}tc=n?[r/n,g/n,bb/n]:[255,255,255]}
+      for(let i=0;i<d.length;i+=4){
+        let a;
+        if(mode==="color"){const dd=Math.hypot(d[i]-tc[0],d[i+1]-tc[1],d[i+2]-tc[2]);a=(thr-dd)/soft}
+        else{const dd=Math.hypot(d[i]-bg[0],d[i+1]-bg[1],d[i+2]-bg[2]);a=(dd-thr*.6)/soft}
+        d[i+3]=a>=1?255:a<=0?0:Math.round(a*255);
+      }
+    }
+    const tmp=document.createElement("canvas");tmp.width=w;tmp.height=h;tmp.getContext("2d").putImageData(src,0,0);
+    const A=anim(tr,t);lctx.save();lctx.globalAlpha=A.a;lctx.translate(x0+w/2+A.dx*W,y0+h/2+A.dy*H);lctx.rotate(A.rot);lctx.scale(A.sc,A.sc);
+    if(A.glow){lctx.shadowColor="#fff";lctx.shadowBlur=h*.5*A.glow}
+    if(A.hue!=null)lctx.filter="hue-rotate("+A.hue+"deg) saturate(2)";
+    if(A.n!=null){const fr=Math.min(1,A.n/Math.max(1,tr.text.length));if(fr>0)lctx.drawImage(tmp,0,0,w*fr,h,-w/2,-h/2,w*fr,h)}
+    else if(A.wave){const sl=Math.max(4,Math.round(w/24));for(let x=0;x<w;x+=sl)lctx.drawImage(tmp,x,0,sl,h,x-w/2,-h/2+Math.sin(A.p*6+x/w*8)*h*.12,sl,h)}
+    else lctx.drawImage(tmp,-w/2,-h/2);
+    lctx.restore();
+  }
+  for(const tr of tracks){
+    if(!tr.on||t<tr.s||t>tr.e)continue;
+    if(tr.kind==="add")styled(tr,tr.x*W,tr.y*H,tr.size/100*H*.09,W*.95,t);
+    else if(tr.look==="new"){const b=boxAt(tr,t);styled(tr,(b[1]+b[3])/2000*W,(b[0]+b[2])/2000*H,(b[2]-b[0])/1000*H*.85*tr.size/100,Math.max((b[3]-b[1])/1000*W*1.4,W*.3),t)}
+  }
+  octx.clearRect(0,0,W,H);
+  if(showOrig){octx.drawImage(work,0,0);return}
+  const cur=bgAt((t-tS)/rate);
+  if(cur){const g=cur.bg;if(g.type==="color"){octx.fillStyle=g.color;octx.fillRect(0,0,W,H)}else if(g.type==="image")cover(g.img,g.img.naturalWidth||g.img.width,g.img.naturalHeight||g.img.height);else if(g.vid.readyState>=2)cover(g.vid,g.vid.videoWidth,g.vid.videoHeight)}
+  octx.drawImage(layer,0,0);
+  lockDl();
+  $("seek").value=v.duration?Math.round(t/v.duration*1000):0;$("time").textContent=fmt(t)+" / "+fmt(v.duration);
+}
+const PLUSANIM=["type","bounce","shake","glow","zoom","spin","wave","rainbow"];
+function anim(tr,t){const p=t-tr.s,q=tr.e-t,r={a:1,sc:1,dx:0,dy:0,rot:0,n:null,glow:0,wave:0,hue:null,p};const e=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3),bo=x=>1+2.70158*Math.pow(x-1,3)+1.70158*Math.pow(x-1,2);
+  switch(tr.anim){case"fade":r.a=Math.min(1,p/.5,q/.5);break;case"pop":r.sc=p<.4?Math.max(.01,bo(p/.4)):1;r.a=Math.min(1,p/.12);break;case"slide":r.dy=(1-e(p/.5))*.08;r.a=Math.min(1,p/.4,q/.3);break;case"type":r.n=Math.floor(p*16);break;case"bounce":r.dy=-Math.abs(Math.sin(p*5))*.035;break;case"shake":r.dx=Math.sin(p*55)*.006;r.rot=Math.sin(p*40)*.03;break;case"glow":r.glow=.5+.5*Math.sin(p*4);break;case"zoom":r.sc=1+.08*Math.sin(p*3.5);break;case"spin":{const u=Math.min(1,p/.7);r.rot=(1-e(u))*Math.PI*2;r.sc=Math.max(.01,e(u));break}case"wave":r.wave=1;break;case"rainbow":r.hue=(p*140)%360;break}
+  r.a=Math.max(0,Math.min(1,r.a));return r}
+function styled(tr,cx,cy,px,maxW,t){
+  const A=anim(tr,t),W=layer.width,H=layer.height;
+  px=Math.max(8,px);lctx.save();lctx.textAlign="center";lctx.textBaseline="middle";
+  const f=n=>(tr.font==="Poppins"?"800 ":"")+n+'px "'+tr.font+'", sans-serif';
+  lctx.font=f(px);const fw=lctx.measureText(tr.text).width;if(fw>maxW){px*=maxW/fw;lctx.font=f(px)}
+  lctx.globalAlpha=A.a;lctx.translate(cx+A.dx*W,cy+A.dy*H);lctx.rotate(A.rot);lctx.scale(A.sc,A.sc);
+  const txt=A.n==null?tr.text:tr.text.slice(0,A.n),col=A.hue==null?(tr.fill||"#ffffff"):"hsl("+A.hue+",95%,60%)";
+  if(A.glow){lctx.shadowColor=col;lctx.shadowBlur=px*.7*A.glow}
+  lctx.lineJoin="round";lctx.lineWidth=Math.max(2,px*.12);lctx.strokeStyle=tr.stroke;lctx.fillStyle=col;
+  const put=(c,x,y)=>{if(tr.strokeOn)lctx.strokeText(c,x,y);lctx.fillText(c,x,y)};
+  if(A.wave||A.n!=null){const full=lctx.measureText(tr.text).width;let x=-full/2;lctx.textAlign="left";[...txt].forEach((c,i)=>{const y=A.wave?Math.sin(A.p*6+i*.6)*px*.15:0;put(c,x,y);x+=lctx.measureText(c).width})}
+  else put(txt,0,0);
+  lctx.restore();
+}
+function cover(el,iw,ih){const W=out.width,H=out.height,s=Math.max(W/iw,H/ih),w=iw*s,h=ih*s;octx.drawImage(el,(W-w)/2,(H-h)/2,w,h)}
+["thr","pad"].forEach(id=>$(id).addEventListener("input",()=>draw()));
+
+function canDl(){return bgs.length>0}
+function lockDl(){const ok=canDl();["dlPng","cpPng","dlVid","dlMp3"].forEach(id=>{if(!((id==="dlVid"||id==="dlMp3")&&exporting))$(id).disabled=!ok});$("lockNote").classList.toggle("hide",ok)}
+
+/* ---------- trim, speed, text editor ---------- */
+function trimLabels(){$("tsV").textContent=fmt(tS);$("teV").textContent=fmt(tE)}
+$("ts").addEventListener("input",e=>{tS=Math.min(e.target.value/1000*v.duration,tE-0.5);e.target.value=Math.round(tS/v.duration*1000);trimLabels();seekTo(tS).then(()=>draw())});
+$("te").addEventListener("input",e=>{tE=Math.max(e.target.value/1000*v.duration,tS+0.5);e.target.value=Math.round(tE/v.duration*1000);trimLabels();seekTo(Math.max(tS,tE-0.05)).then(()=>draw())});
+$("speed").addEventListener("input",e=>{rate=+e.target.value;$("spV").textContent=(+rate.toFixed(2))+"×";try{v.playbackRate=rate}catch(err){}});
+seg("edLook",x=>{if(sel){sel.look=x;$("edStyle").classList.toggle("hide",x!=="new");draw()}});
+function openEd(tr){
+  sel=tr;showList();const E=$("editor");E.classList.remove("hide");
+  $("edTitle").textContent=tr.kind==="add"?"Your text":"Edit found text";
+  $("edText").value=tr.text;$("edAnim").value=tr.anim;$("edMsg").textContent="";$("edFont").value=tr.font;$("edSize").value=tr.size;$("edColor").value=tr.fill||"#ffffff";$("edStroke").value=tr.stroke;$("edStrokeOn").checked=tr.strokeOn;
+  $("edLookRow").classList.toggle("hide",tr.kind==="add");
+  $("edLook").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v===tr.look));
+  $("edStyle").classList.toggle("hide",tr.kind!=="add"&&tr.look!=="new");
+  $("edPos").classList.toggle("hide",tr.kind!=="add");
+  $("edDel").classList.toggle("hide",tr.kind!=="add");
+  if(tr.kind==="add"){$("edX").value=tr.x*1000;$("edY").value=tr.y*1000;$("edS").value=tr.s/v.duration*1000;$("edE").value=tr.e/v.duration*1000;$("edSV").textContent=fmt(tr.s);$("edEV").textContent=fmt(tr.e)}
+  if(v.currentTime<tr.s||v.currentTime>tr.e)seekTo(Math.max(tr.s,tS)+0.05).then(()=>draw());else draw();
+  E.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+const edBind=(id,fn)=>$(id).addEventListener("input",()=>{if(!sel)return;fn($(id));if(id==="edText")showList();draw()});
+edBind("edText",e=>sel.text=e.value);edBind("edFont",e=>sel.font=e.value);edBind("edSize",e=>sel.size=+e.value);edBind("edColor",e=>sel.fill=e.value);edBind("edStroke",e=>sel.stroke=e.value);edBind("edStrokeOn",e=>sel.strokeOn=e.checked);
+$("edFont").addEventListener("change",()=>{if(sel)document.fonts.load('40px "'+sel.font+'"').then(()=>draw())});
+$("edAnim").addEventListener("change",()=>{if(!sel)return;const x=$("edAnim").value;if(PLUSANIM.includes(x)&&!PLUS){$("edAnim").value=sel.anim;$("edMsg").textContent="That animation is part of Yathin AI+. Sign in on Yathin AI with your AI+ account to use it.";return}$("edMsg").textContent="";sel.anim=x;if(v.paused&&tr0(sel))draw()});
+const tr0=x=>!!x;
+edBind("edX",e=>sel.x=e.value/1000);edBind("edY",e=>sel.y=e.value/1000);
+edBind("edS",e=>{sel.s=Math.min(e.value/1000*v.duration,sel.e-0.2);$("edSV").textContent=fmt(sel.s)});
+edBind("edE",e=>{sel.e=Math.max(e.value/1000*v.duration,sel.s+0.2);$("edEV").textContent=fmt(sel.e)});
+$("addTxt").onclick=()=>{const t=Math.max(tS,Math.min(v.currentTime,tE-0.5));const tr={kind:"add",anim:"pop",text:"Your text",font:"Poppins",size:100,fill:"#ffffff",stroke:"#000000",strokeOn:true,x:.5,y:.82,s:t,e:Math.min(tE,t+4),on:true,keys:[]};tracks.push(tr);document.fonts.load('40px "Poppins"').then(()=>{openEd(tr);$("edText").select()})};
+$("edDel").onclick=()=>{if(!sel)return;tracks=tracks.filter(x=>x!==sel);sel=null;$("editor").classList.add("hide");showList();draw()};
+document.fonts&&document.fonts.ready.then(()=>draw());
+
+/* ---------- playback ---------- */
+let raf=0;
+function bgAt(rel){if(!bgs.length)return null;const tot=bgs.reduce((a,g)=>a+g.dur,0);let r=tot>0?((rel%tot)+tot)%tot:0;for(const g of bgs){if(r<g.dur)return{bg:g,local:r};r-=g.dur}return{bg:bgs[bgs.length-1],local:0}}
+function syncBg(playing){const cur=bgAt((v.currentTime-tS)/rate);bgs.forEach(g=>{if(g.type!=="video")return;if(cur&&cur.bg===g){const want=cur.local%(g.vid.duration||1);if(Math.abs(g.vid.currentTime-want)>.35)g.vid.currentTime=want;if(playing&&g.vid.paused)g.vid.play().catch(()=>{});if(!playing&&!g.vid.paused)g.vid.pause()}else if(!g.vid.paused)g.vid.pause()})}
+function pauseBgs(){bgs.forEach(g=>g.vid&&g.vid.pause())}
+function loop(){if(v.currentTime>=tE&&!exporting){v.pause();pauseBgs();$("play").textContent="Play"}draw();syncBg(!v.paused);if(!v.paused&&!v.ended)raf=requestAnimationFrame(loop)}
+$("play").onclick=()=>{if(exporting)return;if(v.paused){v.playbackRate=rate;if(v.currentTime<tS||v.currentTime>=tE-0.05)v.currentTime=tS;v.play();$("play").textContent="Pause";loop()}else{v.pause();pauseBgs();$("play").textContent="Play"}};
+v.addEventListener("ended",()=>{$("play").textContent="Play";pauseBgs()});
+$("seek").addEventListener("input",e=>{if(exporting)return;v.pause();$("play").textContent="Play";seekTo(e.target.value/1000*v.duration).then(()=>{syncBg(false);setTimeout(draw,120);draw()})});
+const cmp=$("cmp");const on=()=>{showOrig=true;draw()},off=()=>{showOrig=false;draw()};
+cmp.addEventListener("pointerdown",on);["pointerup","pointerleave","pointercancel"].forEach(e=>cmp.addEventListener(e,off));
+
+/* ---------- backgrounds ---------- */
+function addBg(g){bgs.push(g);renderBgs();draw();msg("m4","")}
+function addImg(src,name){const im=new Image();im.crossOrigin="anonymous";im.onload=()=>addBg({type:"image",img:im,dur:5,name:name||"Image"});im.onerror=()=>msg("m4","That image link is blocked by its site. Download it and add it with + Image instead.",true);im.src=src}
+function renderBgs(){
+  const L=$("bgList");L.innerHTML="";
+  bgs.forEach((g,i)=>{const d=document.createElement("div");d.className="it";d.style.alignItems="center";
+    let th;if(g.type==="color"){th=document.createElement("input");th.type="color";th.value=g.color;th.className="sw";th.oninput=()=>{g.color=th.value;draw()}}
+    else if(g.type==="image"){th=document.createElement("img");th.src=g.img.src;th.style.cssText="width:56px;height:38px;object-fit:cover;border-radius:8px"}
+    else{th=document.createElement("span");th.textContent="🎬";th.style.cssText="font-size:26px;width:56px;text-align:center"}
+    const nm=document.createElement("span");nm.className="tx";nm.textContent=(i+1)+". "+g.name;
+    const du=document.createElement("label");du.className="note";du.innerHTML="Shows for ";const n=document.createElement("input");n.type="number";n.min=.5;n.step=.5;n.value=+g.dur.toFixed(1);n.style.cssText="width:70px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)";n.oninput=()=>{const x=parseFloat(n.value);if(x>0){g.dur=x;draw()}};du.append(n," s");
+    const up=document.createElement("button");up.className="ed";up.textContent="↑";up.title="Move up";up.onclick=()=>{if(i>0){[bgs[i-1],bgs[i]]=[bgs[i],bgs[i-1]];renderBgs();draw()}};
+    const x=document.createElement("button");x.className="ed";x.textContent="✕";x.style.color="#dc2626";x.title="Remove";x.onclick=()=>{if(g.vid){g.vid.pause();URL.revokeObjectURL(g.vid.src)}bgs.splice(i,1);renderBgs();draw()};
+    d.append(th,nm,du,up,x);L.append(d)});
+}
+$("addCol").onclick=()=>addBg({type:"color",color:["#111111","#7c3aed","#00b140","#ffffff","#ec4899"][bgs.length%5],dur:5,name:"Color"});
+$("imgUp").onclick=()=>$("imgFile").click();
+$("imgFile").onchange=e=>{[...e.target.files].forEach(f=>addImg(URL.createObjectURL(f),f.name.replace(/\.[^.]+$/,"").slice(0,30)));e.target.value=""};
+$("imgGo").onclick=()=>{const u=$("imgUrl").value.trim();if(/^https?:\/\//.test(u)){addImg(u,"Image link");$("imgUrl").value=""}else msg("m4","Paste a full link that starts with https://",true)};
+$("imgPaste").onclick=async()=>{try{const items=await navigator.clipboard.read();for(const it of items){const ty=it.types.find(t=>t.startsWith("image/"));if(ty){addImg(URL.createObjectURL(await it.getType(ty)),"Pasted image");return}}msg("m4","No image on your clipboard. Copy one first.",true)}catch(e){msg("m4","Press Ctrl+V to paste your image.",true)}};
+document.addEventListener("paste",e=>{const t=e.target;if(t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"))return;const f=[...(e.clipboardData&&e.clipboardData.files||[])].find(f=>f.type.startsWith("image/"));if(f&&!$("sec3").classList.contains("hide")){e.preventDefault();addImg(URL.createObjectURL(f),"Pasted image")}});
+$("vidUp").onclick=()=>$("vidFile").click();
+$("vidFile").onchange=e=>{const f=e.target.files[0];if(!f)return;const vid=document.createElement("video");vid.muted=true;vid.playsInline=true;vid.loop=true;vid.preload="auto";vid.src=URL.createObjectURL(f);vid.onloadedmetadata=()=>{addBg({type:"video",vid,dur:Math.max(.5,Math.round(vid.duration*10)/10),name:f.name.replace(/\.[^.]+$/,"").slice(0,30)||"Video"});setTimeout(draw,200)};e.target.value=""};
+async function needPlus(){if(PLUS)return true;msg("m4",sess()?"Making images is part of Yathin AI+. Get it on Yathin AI with this same account.":"Making images is part of Yathin AI+. Sign in on Yathin AI with your AI+ account first.",true);return false}
+$("genY").onclick=async()=>{
+  const pr=$("genP").value.trim();if(!pr){msg("m4","Say what the image should show.",true);return}
+  if(!await needPlus())return;
+  const b=$("genY");b.disabled=true;msg("m4","Yathin AI+ is painting…");
+  try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({v:2,mode:"image",auth:sess(),plus:true,messages:[{role:"user",content:"Make a background image with no words or letters in it: "+pr}]})});
+    if(r.status===403){msg("m4","Sign in on Yathin AI with your AI+ account first.",true)}
+    else if(r.status===429){msg("m4","You've used today's image makes. Try again tomorrow.",true)}
+    else if(!r.ok){msg("m4","Yathin AI is busy. Try again in a minute.",true)}
+    else{const tx=await r.text();let j=null;tx.split("\n").forEach(l=>{if(l.startsWith("data: ")&&l.indexOf("[DONE]")<0){try{j=JSON.parse(l.slice(6))}catch(e){}}});
+      if(j&&j.image){addImg(j.image,pr.slice(0,30));msg("m4","Image added.")}else if(j&&j.ask){msg("m4",(j.choices&&j.choices[0].delta.content)||"Add a bit more detail.",true)}else msg("m4","No image came back. Try different words.",true)}
+  }catch(e){msg("m4","Couldn't reach Yathin AI.",true)}
+  b.disabled=false;
+};
+$("genG").onclick=async()=>{
+  const pr=$("genP").value.trim();if(!pr){msg("m4","Say what the image should show.",true);return}
+  if(!await needPlus())return;
+  const key=window.yaKey?yaKey.get():"";if(!key){msg("m4","Add your Gemini key first (API key at the top).",true);return}
+  const b=$("genG");b.disabled=true;msg("m4","Gemini is painting…");
+  try{const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key="+encodeURIComponent(key),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:"Wide 16:9 background image with no words or letters: "+pr}]}],generationConfig:{responseModalities:["IMAGE"]}})});
+    const j=await r.json();if(!r.ok)throw new Error((j.error&&j.error.message)||"Gemini error");
+    const part=(j.candidates&&j.candidates[0].content.parts||[]).find(p=>p.inlineData||p.inline_data);
+    if(!part)throw new Error("Gemini didn't send an image. Try different words.");
+    const d=part.inlineData||part.inline_data;addImg("data:"+(d.mimeType||d.mime_type||"image/png")+";base64,"+d.data,pr.slice(0,30));msg("m4","Image added.");
+  }catch(e){msg("m4",/quota|billing|limit/i.test(e.message)?"Your Gemini key can't make images on the free tier. Use Make with Yathin AI+ instead.":e.message,true)}
+  b.disabled=false;
+};
+
+/* ---------- 5. export ---------- */
+function frameBlob(){return new Promise(r=>out.toBlob(r,"image/png"))}
+function save(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+$("dlPng").onclick=async()=>{if(!canDl())return;showOrig=false;draw();save(await frameBlob(),fileName+"-textlift.png")};
+$("cpPng").onclick=async()=>{if(!canDl())return;showOrig=false;draw();try{await navigator.clipboard.write([new ClipboardItem({"image/png":frameBlob()})]);msg("m5","Image copied. Paste it anywhere.")}catch(e){msg("m5","Your browser blocked copying. Use Download image.",true)}};
+let actx=null,adest=null;
+$("dlMp3").onclick=async()=>{
+  if(!canDl()||exporting)return;const b=$("dlMp3");b.disabled=true;msg("m5","Making your MP3…");
+  try{
+    if(!window.lamejs)await new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js";sc.onload=ok;sc.onerror=()=>no(new Error("Couldn't load the MP3 maker. Check your internet."));document.head.appendChild(sc)});
+    const buf=await (await fetch(v.src)).arrayBuffer();
+    let ab;try{ab=await new (window.AudioContext||window.webkitAudioContext)().decodeAudioData(buf)}catch(e){throw new Error("This video has no sound to save.")}
+    const sr=ab.sampleRate,ch=Math.min(2,ab.numberOfChannels),len=Math.ceil((tE-tS)/rate*sr);
+    const oc=new OfflineAudioContext(ch,len,sr),src=oc.createBufferSource();src.buffer=ab;src.playbackRate.value=rate;src.connect(oc.destination);src.start(0,tS,tE-tS);
+    const r=await oc.startRendering();
+    const enc=new lamejs.Mp3Encoder(ch,sr,160),parts=[],toI=a=>{const o=new Int16Array(a.length);for(let i=0;i<a.length;i++){const x=Math.max(-1,Math.min(1,a[i]));o[i]=x<0?x*32768:x*32767}return o};
+    const L=toI(r.getChannelData(0)),R=ch>1?toI(r.getChannelData(1)):null;
+    for(let i=0;i<L.length;i+=1152){const m=ch>1?enc.encodeBuffer(L.subarray(i,i+1152),R.subarray(i,i+1152)):enc.encodeBuffer(L.subarray(i,i+1152));if(m.length)parts.push(new Uint8Array(m))}
+    const e=enc.flush();if(e.length)parts.push(new Uint8Array(e));
+    save(new Blob(parts,{type:"audio/mpeg"}),fileName+"-textlift.mp3");msg("m5","MP3 saved.");
+  }catch(e){msg("m5",e.message||String(e),true)}
+  b.disabled=false;
+};
+$("dlVid").onclick=async()=>{
+  if(exporting)return;if(!window.MediaRecorder){msg("m5","This browser can't make videos. Try Chrome or Edge.",true);return}
+  if(!canDl()){msg("m5","Pick a background first.",true);return}
+  exporting=true;showOrig=false;$("dlVid").disabled=true;v.pause();
+  const types=["video/mp4;codecs=avc1","video/mp4","video/webm;codecs=vp9","video/webm"];
+  const mt=types.find(t=>MediaRecorder.isTypeSupported(t))||"";
+  const stream=out.captureStream(30);
+  if($("snd").checked){try{if(!actx){actx=new AudioContext();const s=actx.createMediaElementSource(v);adest=actx.createMediaStreamDestination();s.connect(adest);s.connect(actx.destination)}await actx.resume();adest.stream.getAudioTracks().forEach(t=>stream.addTrack(t))}catch(e){}}
+  const rec=new MediaRecorder(stream,{mimeType:mt||undefined,videoBitsPerSecond:PLUS?8e6:4e6});const chunks=[];
+  rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  rec.onstop=()=>{const ty=(mt||"video/webm").split(";")[0];save(new Blob(chunks,{type:ty}),fileName+"-textlift."+(ty.includes("mp4")?"mp4":"webm"));exporting=false;v.onended=null;$("dlVid").disabled=false;$("play").textContent="Play";$("vbar").classList.add("hide");msg("m5",ty.includes("mp4")?"MP4 saved.":"Saved as WebM. This browser can't make MP4, so open TextLift in Chrome or Edge for MP4.");v.playbackRate=rate};
+  await seekTo(tS);v.playbackRate=rate;syncBg(true);
+  draw(tS);rec.start(250);
+  const finish=()=>{if(rec.state!=="inactive"){v.pause();pauseBgs();draw();setTimeout(()=>rec.state!=="inactive"&&rec.stop(),150)}};
+  msg("m5","Making your video ("+fmt((tE-tS)/rate)+" long). It plays through once, so keep this tab open.");
+  const tick=()=>{if(v.currentTime>=tE){finish();return}draw();setBar("vbar",(v.currentTime-tS)/(tE-tS));syncBg(true);if(!v.ended&&exporting)requestAnimationFrame(tick)};
+  v.onended=finish;
+  await v.play();tick();
+};
+})();
+</script>
+<script>(function(){try{var b="https://abacus.jasoncameron.dev/hit/praveenp-textlift/";fetch(b+"visits",{mode:"cors"}).catch(function(){});if(!localStorage.getItem("tl_seen")){localStorage.setItem("tl_seen","1");fetch(b+"visitors",{mode:"cors"}).catch(function(){});}}catch(e){}})();</script>
+</body>
+</html>

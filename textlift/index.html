@@ -634,7 +634,9 @@ let raf=0;
 function bgAt(rel){if(!bgs.length)return null;const tot=bgs.reduce((a,g)=>a+g.dur,0);let r=tot>0?((rel%tot)+tot)%tot:0;for(const g of bgs){if(r<g.dur)return{bg:g,local:r};r-=g.dur}return{bg:bgs[bgs.length-1],local:0}}
 function syncBg(playing){const cur=bgAt((v.currentTime-tS)/rate);bgs.forEach(g=>{if(g.type!=="video")return;if(cur&&cur.bg===g){const want=cur.local%(g.vid.duration||1);if(Math.abs(g.vid.currentTime-want)>.35)g.vid.currentTime=want;if(playing&&g.vid.paused)g.vid.play().catch(()=>{});if(!playing&&!g.vid.paused)g.vid.pause()}else if(!g.vid.paused)g.vid.pause()})}
 function pauseBgs(){bgs.forEach(g=>g.vid&&g.vid.pause())}
-function loop(){if(v.currentTime>=tE&&!exporting){v.pause();pauseBgs();$("play").textContent="Play"}draw();syncBg(!v.paused);if(!v.paused&&!v.ended)raf=requestAnimationFrame(loop)}
+function loop(){cancelAnimationFrame(raf);if(v.currentTime>=tE-0.03&&!exporting){v.pause();pauseBgs();$("play").textContent="Play"}try{draw()}catch(e){console.warn(e)}try{syncBg(!v.paused)}catch(e){}if(!v.paused&&!v.ended)raf=requestAnimationFrame(loop)}
+v.addEventListener("playing",()=>{if(!exporting)loop()});v.addEventListener("ended",()=>{if(!exporting){pauseBgs();$("play").textContent="Play";try{draw()}catch(e){}}});
+v.addEventListener("waiting",()=>{if(!exporting&&!v.paused)setTimeout(()=>{if(!v.paused)loop()},200)});
 $("play").onclick=()=>{if(exporting)return;if(v.paused){v.playbackRate=rate;if(v.currentTime<tS||v.currentTime>=tE-0.05)v.currentTime=tS;v.play();$("play").textContent="Pause";loop()}else{v.pause();pauseBgs();$("play").textContent="Play"}};
 v.addEventListener("ended",()=>{$("play").textContent="Play";pauseBgs()});
 $("seek").addEventListener("input",e=>{if(exporting)return;v.pause();$("play").textContent="Play";seekTo(e.target.value/1000*v.duration).then(()=>{syncBg(false);setTimeout(draw,120);draw()})});

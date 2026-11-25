@@ -144,12 +144,14 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
         <div class="list" id="list"></div>
         <div class="row" style="margin-top:10px"><button class="btn l" id="copyText" style="padding:8px 14px">Copy all text</button></div>
         <label class="f">Remove background</label>
-        <p class="note" style="margin:0 0 6px">Text only cuts around the letters. Match text color keeps one color. Keep text box keeps the whole box. If bits of the old video show, raise Cleanup strength.</p>
+        <p class="note" style="margin:0 0 6px">Text only cuts around the letters. Match text color keeps one color. Keep text box keeps the whole box. AI cutout asks Gemini to trace the exact letters, best for 3D, chrome or busy art. If bits of the old video show, raise Cleanup strength.</p>
         <div class="seg" id="mode">
           <button data-v="auto" class="on">Text only</button>
           <button data-v="color">Match text color</button>
           <button data-v="box">Keep text box</button>
+          <button data-v="ai">AI cutout · Gemini</button>
         </div>
+        <div class="msg" id="mMask"></div>
         <label class="f">Cleanup strength <span class="note" id="thrV"></span></label>
         <input type="range" id="thr" min="20" max="220" value="85" />
         <label class="f">Edge padding</label>
@@ -308,7 +310,45 @@ function checkLen(){
 /* ---------- segmented buttons ---------- */
 function seg(id,cb){const el=$(id);el.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;el.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));cb(b.dataset.v)})}
 seg("engine",x=>{engine=x;$("engNote").textContent=x==="gem"?(window.yaKey&&yaKey.get()?"Uses your saved Gemini key. Great with moving, stylish or tiny text.":"Needs a free Gemini key. Tap API key at the top to add one."):"Runs right in your browser. Works best on clear, readable text."});
-seg("mode",x=>{mode=x;draw()});
+seg("mode",x=>{mode=x;draw();if(x==="ai"&&!maskFrames.length)aiMasks()});
+let maskFrames=[],maskBusy=false;
+async function aiMasks(){
+  if(maskBusy)return;const key=window.yaKey?yaKey.get():"";
+  if(!key){msg("mMask","AI cutout needs your free Gemini key. Tap API key at the top.",true);const b=$("ya-key-btn");if(b)b.click();return}
+  maskBusy=true;maskFrames=[];v.pause();
+  const span=tE-tS,n=Math.max(2,Math.min(40,Math.ceil(span))),times=[];for(let i=0;i<n;i++)times.push(tS+span*(i+.5)/n);
+  const W=out.width,H=out.height;let fails=0,mi=0;const MODELS=["gemini-flash-latest","gemini-3.5-flash-lite","gemini-flash-lite-latest"];
+  for(let i=0;i<times.length&&mode==="ai";i++){
+    msg("mMask","Gemini is tracing the letters: frame "+(i+1)+" of "+times.length+"…");
+    await seekTo(times[i]);const c=snap(768);
+    const body={contents:[{parts:[{text:'Give the segmentation masks for all lettering / written words in this image (only the letters themselves, including their outline, shine and 3D edges; NOT people, animals, objects, sky or background). Output a JSON list where each entry contains the 2D bounding box in the key "box_2d" as [ymin,xmin,ymax,xmax] scaled 0-1000, the segmentation mask in key "mask" as a base64 PNG probability map, and the text in key "label".'},{inline_data:{mime_type:"image/jpeg",data:c.toDataURL("image/jpeg",.8).split(",")[1]}}]}],generationConfig:{responseMimeType:"application/json",thinkingConfig:{thinkingLevel:"low"}}};
+    let list=null;
+    for(let a=0;a<4&&!list&&mode==="ai";a++){
+      let r;try{r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+MODELS[mi]+":generateContent?key="+encodeURIComponent(key),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})}catch(e){break}
+      if(r.status===429){msg("mMask","Gemini's free limit is full for a moment, waiting…");await nap(8000*(a+1));continue}
+      if(!r.ok){mi=(mi+1)%MODELS.length;await nap(1500);continue}
+      const x=await r.json().catch(()=>({}));const txt=((x.candidates&&x.candidates[0]&&x.candidates[0].content&&x.candidates[0].content.parts)||[]).map(p=>p.text||"").join("");
+      try{let j=JSON.parse(txt.replace(/^\s*```(json)?|```\s*$/g,""));if(!Array.isArray(j))j=j.masks||j.items||[];list=j}catch(e){list=[]}
+    }
+    const mk=document.createElement("canvas");mk.width=W;mk.height=H;const g=mk.getContext("2d");let any=0;
+    for(const m of list||[]){
+      const b=m.box_2d||m.box;if(!Array.isArray(b)||!m.mask)continue;
+      const y0=b[0]/1000*H,x0=b[1]/1000*W,bw=(b[3]-b[1])/1000*W,bh=(b[2]-b[0])/1000*H;if(bw<2||bh<2)continue;
+      const src=String(m.mask).startsWith("data:")?m.mask:"data:image/png;base64,"+m.mask;
+      const im=await new Promise(z=>{const q=new Image();q.onload=()=>z(q);q.onerror=()=>z(null);q.src=src});if(!im)continue;
+      const t2=document.createElement("canvas");t2.width=Math.round(bw);t2.height=Math.round(bh);const g2=t2.getContext("2d");g2.drawImage(im,0,0,t2.width,t2.height);
+      const id=g2.getImageData(0,0,t2.width,t2.height),dd=id.data;for(let k=0;k<dd.length;k+=4){const L=dd[k];const a=Math.max(0,Math.min(255,(L-90)*3));dd[k]=dd[k+1]=dd[k+2]=255;dd[k+3]=a}g2.putImageData(id,0,0);
+      g.drawImage(t2,x0,y0);any++;
+    }
+    if(any)maskFrames.push({t:times[i],c:mk});else fails++;
+  }
+  maskBusy=false;
+  if(mode!=="ai"){msg("mMask","");return}
+  if(!maskFrames.length)msg("mMask","Gemini couldn't trace the letters in this video. Try Text only and raise Cleanup strength.",true);
+  else msg("mMask","AI cutout ready ("+maskFrames.length+" frames traced). Press Play to check it.");
+  draw();
+}
+function maskAt(t){let b=null,bd=1e9;for(const m of maskFrames){const d=Math.abs(m.t-t);if(d<bd){bd=d;b=m}}return b}
 
 /* ---------- frame grabbing ---------- */
 function seekTo(t){return new Promise(r=>{const done=()=>{v.removeEventListener("seeked",done);r()};v.addEventListener("seeked",done);v.currentTime=Math.min(t,v.duration-0.05)})}
@@ -438,7 +478,8 @@ function draw(t){
     const x0=Math.max(0,Math.floor((b[1]/1000-pp)*W)),y0=Math.max(0,Math.floor((b[0]/1000-pp)*H)),x1=Math.min(W,Math.ceil((b[3]/1000+pp)*W)),y1=Math.min(H,Math.ceil((b[2]/1000+pp)*H));
     const w=x1-x0,h=y1-y0;if(w<2||h<2)continue;
     const src=wctx.getImageData(x0,y0,w,h),d=src.data;
-    if(mode!=="box"){
+    if(mode==="ai"){const M=maskAt(t);if(M){const md=M.c.getContext("2d").getImageData(x0,y0,w,h).data;for(let i=3;i<d.length;i+=4)d[i]=md[i]}}
+    else if(mode!=="box"){
       const R=[],G=[],Bc=[];const pushPx=(x,y)=>{const i=(y*w+x)*4;R.push(d[i]);G.push(d[i+1]);Bc.push(d[i+2])};
       const sx=Math.max(1,w>>6),sy=Math.max(1,h>>5);
       for(let x=0;x<w;x+=sx){pushPx(x,0);pushPx(x,h-1)}for(let y=0;y<h;y+=sy){pushPx(0,y);pushPx(w-1,y)}

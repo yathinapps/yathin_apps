@@ -136,8 +136,9 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
       <button data-v="gem">Gemini · best for animated text</button>
     </div>
     <p class="note" id="engNote">Yathin AI scan is free and runs in your browser, best for clear, flat text. For stylish, 3D or animated text, Gemini is much better (free key from Google, tap API key).</p>
-    <div class="row"><button class="btn g" id="go">Find text</button><button class="btn l hide" id="stop">Stop</button></div>
+    <div class="row"><button class="btn g" id="go">Find text</button><button class="btn l" id="skipFind">Just change speed</button><button class="btn l hide" id="stop">Stop</button></div>
     <div class="bar hide" id="bar"><i></i></div>
+    <p class="note">Only want it slower or faster? Tap Just change speed to keep the whole video, set the speed, and download right away.</p>
     <div class="msg" id="m2"></div>
   </section>
 
@@ -235,7 +236,7 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
     <div class="card">
       <h2><span class="step">6</span>Download</h2>
       <p class="sub">Save your new video as MP4, just the sound as MP3, or one frame as a picture. Keep this tab open while the MP4 saves, since it records in real time.</p>
-      <p class="lock" id="lockNote">Pick a background in step 5 to unlock downloads.</p>
+      <p class="lock" id="lockNote">No background picked, so you get the whole video at your speed and trim.</p>
       <div class="row">
         <button class="btn g" id="dlVid">Download MP4</button>
         <button class="btn" id="dlMp3">Download MP3</button>
@@ -566,6 +567,7 @@ function draw(t){
   octx.clearRect(0,0,W,H);
   if(showOrig){octx.drawImage(work,0,0);return}
   const cur=bgAt((t-tS)/rate);
+  if(!cur)octx.drawImage(work,0,0);
   if(cur){const g=cur.bg;if(g.type==="color"){octx.fillStyle=g.color;octx.fillRect(0,0,W,H)}else if(g.type==="image")cover(g.img,g.img.naturalWidth||g.img.width,g.img.naturalHeight||g.img.height);else if(g.vid.readyState>=2)cover(g.vid,g.vid.videoWidth,g.vid.videoHeight)}
   octx.drawImage(layer,0,0);
   lockDl();
@@ -592,9 +594,10 @@ function styled(tr,cx,cy,px,maxW,t){
 function cover(el,iw,ih){const W=out.width,H=out.height,s=Math.max(W/iw,H/ih),w=iw*s,h=ih*s;octx.drawImage(el,(W-w)/2,(H-h)/2,w,h)}
 ["thr","pad"].forEach(id=>$(id).addEventListener("input",()=>draw()));
 
-function canDl(){return bgs.length>0}
-function lockDl(){const ok=canDl();["dlPng","cpPng","dlVid","dlMp3"].forEach(id=>{if(!((id==="dlVid"||id==="dlMp3")&&exporting))$(id).disabled=!ok});$("lockNote").classList.toggle("hide",ok)}
+function canDl(){return !!(v&&v.duration)}
+function lockDl(){const ok=canDl();["dlPng","cpPng","dlVid","dlMp3"].forEach(id=>{if(!((id==="dlVid"||id==="dlMp3")&&exporting))$(id).disabled=!ok});$("lockNote").classList.toggle("hide",bgs.length>0)}
 
+$("skipFind").onclick=async()=>{if(busy)return;tracks=tracks.filter(x=>x.kind==="add");sel=null;$("editor").classList.add("hide");showList();$("sec3").classList.remove("hide");await seekTo(tS);draw();msg("m2","Whole video kept. Set the speed, then download.");$("speed").scrollIntoView({behavior:"smooth",block:"center"})};
 /* ---------- trim, speed, text editor ---------- */
 function trimLabels(){$("tsV").textContent=fmt(tS);$("teV").textContent=fmt(tE)}
 $("ts").addEventListener("input",e=>{tS=Math.min(e.target.value/1000*v.duration,tE-0.5);e.target.value=Math.round(tS/v.duration*1000);trimLabels();seekTo(tS).then(()=>draw())});
@@ -714,7 +717,7 @@ $("dlMp3").onclick=async()=>{
 };
 $("dlVid").onclick=async()=>{
   if(exporting)return;if(!window.MediaRecorder){msg("m5","This browser can't make videos. Try Chrome or Edge.",true);return}
-  if(!canDl()){msg("m5","Pick a background first.",true);return}
+  if(!canDl()){msg("m5","Add a video first.",true);return}
   exporting=true;showOrig=false;$("dlVid").disabled=true;v.pause();
   const types=["video/mp4;codecs=avc1","video/mp4","video/webm;codecs=vp9","video/webm"];
   const mt=types.find(t=>MediaRecorder.isTypeSupported(t))||"";

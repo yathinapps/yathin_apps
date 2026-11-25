@@ -336,7 +336,7 @@ async function findText(){
     };
     if(engine==="yai")await yaiScan(0);
     else{
-      const B=12,MODELS=["gemini-flash-latest","gemini-flash-lite-latest","gemini-2.5-flash-lite"];let mi=0,gaveUp=-1;
+      const B=12,MODELS=["gemini-flash-latest","gemini-3.5-flash-lite","gemini-flash-lite-latest"];let mi=0,gaveUp=-1;
       for(let i=0;i<times.length&&!stopFlag;i+=B){
         const parts=[{text:'Each image is one frame of a video, labelled with its time in seconds. For every frame, list each piece of visible on-screen text: captions, titles, labels, stickers and animated or moving words (one item per line of text). Return JSON only: {"frames":[{"t":seconds,"items":[{"text":"…","box":[ymin,xmin,ymax,xmax],"color":"#rrggbb"}]}]}. box is a tight box around that text scaled 0-1000. color is the main fill color of the letters. Include frames with no text as empty items.'}];
         const batch=times.slice(i,i+B);
@@ -352,8 +352,8 @@ async function findText(){
             if(r.status>=500){mi=(mi+1)%MODELS.length;wait=2000}
             for(let w=Math.ceil(wait/1000);w>0&&!stopFlag;w--){msg("m2",(r.status===429?"Gemini's free limit is full for a moment":"Gemini is busy, switching to another Gemini model")+", trying again in "+w+"s… (Stop to cancel)");await nap(1000)}
             continue}
-          if(r.status===404&&mi<MODELS.length-1){mi++;continue}
-          const x=await r.json();if(!r.ok)throw new Error((x.error&&x.error.message)||"Gemini error");
+          const x=await r.json().catch(()=>({}));
+          if(!r.ok){const em=(x.error&&x.error.message)||"Gemini error";if(/api key|API_KEY|permission|unauthori/i.test(em))throw new Error("Your Gemini key didn't work. Check it with the API key button.");if(mi<MODELS.length-1){mi++;continue}break}
           const txt=(x.candidates&&x.candidates[0]&&x.candidates[0].content.parts.map(p=>p.text||"").join(""))||"{}";
           try{j=JSON.parse(txt.replace(/^```json|```$/g,""))}catch(e){j={frames:[]}}
         }

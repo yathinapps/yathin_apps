@@ -308,7 +308,8 @@ function snap(w){const c=document.createElement("canvas");const s=w/v.videoWidth
 
 /* ---------- 2. find text ---------- */
 $("go").onclick=findText;
-$("stop").onclick=()=>{stopFlag=true};
+let stopCtl=null;const nap=ms=>new Promise(z=>{const t0=Date.now();const iv=setInterval(()=>{if(stopFlag||Date.now()-t0>=ms){clearInterval(iv);z()}},100)});
+$("stop").onclick=()=>{stopFlag=true;if(stopCtl)try{stopCtl.abort()}catch(e){};msg("m2","Stopped.")};
 function setBar(id,p){$(id).classList.remove("hide");$(id).firstElementChild.style.width=(p*100).toFixed(1)+"%"}
 async function findText(){
   if(busy)return;
@@ -333,27 +334,32 @@ async function findText(){
       }
       await wk.terminate();
     }else{
-      const B=24;
+      const B=12;
       for(let i=0;i<times.length&&!stopFlag;i+=B){
         const parts=[{text:'Each image is one frame of a video, labelled with its time in seconds. For every frame, list each piece of visible on-screen text: captions, titles, labels, stickers and animated or moving words (one item per line of text). Return JSON only: {"frames":[{"t":seconds,"items":[{"text":"…","box":[ymin,xmin,ymax,xmax],"color":"#rrggbb"}]}]}. box is a tight box around that text scaled 0-1000. color is the main fill color of the letters. Include frames with no text as empty items.'}];
         const batch=times.slice(i,i+B);
-        for(const t of batch){await seekTo(t);const c=snap(640);parts.push({text:"Frame at t="+t.toFixed(2)});parts.push({inline_data:{mime_type:"image/jpeg",data:c.toDataURL("image/jpeg",.72).split(",")[1]}})}
+        for(const t of batch){await seekTo(t);if(stopFlag)break;const c=snap(512);parts.push({text:"Frame at t="+t.toFixed(2)});parts.push({inline_data:{mime_type:"image/jpeg",data:c.toDataURL("image/jpeg",.72).split(",")[1]}})}
         msg("m2","Gemini is reading "+fmt(batch[0])+" to "+fmt(batch[batch.length-1])+"…");
         let j=null;
-        for(let a=0;a<3&&!j;a++){
-          const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key="+encodeURIComponent(key),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts}],generationConfig:{responseMimeType:"application/json",thinkingConfig:{thinkingLevel:"minimal"}}})});
-          if(r.status===429||r.status>=500){msg("m2","Gemini is busy, trying again…");await new Promise(z=>setTimeout(z,6000*(a+1)));continue}
+        for(let a=0;a<4&&!j&&!stopFlag;a++){
+          stopCtl=new AbortController();let r;
+          try{r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key="+encodeURIComponent(key),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts}],generationConfig:{responseMimeType:"application/json",thinkingConfig:{thinkingLevel:"low"}}}),signal:stopCtl.signal})}catch(e){if(stopFlag)break;throw new Error("Couldn't reach Gemini. Check your internet.")}
+          if(r.status===429||r.status>=500){let em="",wait=8000*(a+1);try{const x=await r.json();em=(x.error&&x.error.message)||"";const d=((x.error&&x.error.details)||[]).find(q=>q.retryDelay);if(d)wait=Math.min(60000,(parseFloat(d.retryDelay)||8)*1000+500)}catch(e){}
+            if(r.status===429&&/per ?day|daily|limit: 0|billing/i.test(em))throw new Error("Your Gemini key has used up its free limit for today. Switch to Yathin AI scan (free, no key) or try again tomorrow.");
+            if(a===3)break;
+            for(let w=Math.ceil(wait/1000);w>0&&!stopFlag;w--){msg("m2",(r.status===429?"Gemini's free limit is full for a moment":"Gemini is busy")+", trying again in "+w+"s… (Stop to cancel)");await nap(1000)}
+            continue}
           const x=await r.json();if(!r.ok)throw new Error((x.error&&x.error.message)||"Gemini error");
           const txt=(x.candidates&&x.candidates[0]&&x.candidates[0].content.parts.map(p=>p.text||"").join(""))||"{}";
           try{j=JSON.parse(txt.replace(/^```json|```$/g,""))}catch(e){j={frames:[]}}
         }
-        if(!j)throw new Error("Gemini is too busy right now. Try again in a minute.");
+        if(stopFlag)break;if(!j)throw new Error("Gemini is still busy. Try again in a minute, or switch to Yathin AI scan (free, no key).");
         (j.frames||[]).forEach((f,k)=>{const t=typeof f.t==="number"?f.t:batch[k];frames.push({t,items:(f.items||[]).filter(it=>it&&it.text&&Array.isArray(it.box)&&it.box.length===4)})});
         setBar("bar",Math.min(1,(i+B)/times.length));
       }
     }
-  }catch(e){msg("m2",e.message||String(e),true)}
-  busy=false;$("go").disabled=false;$("stop").classList.add("hide");
+  }catch(e){if(!stopFlag)msg("m2",e.message||String(e),true)}
+  stopCtl=null;busy=false;$("go").disabled=false;$("stop").classList.add("hide");
   if(!frames.length)return;
   tracks=tracks.filter(x=>x.kind==="add").concat(buildTracks(frames.sort((a,b)=>a.t-b.t),step));sel=null;$("editor").classList.add("hide");
   if(!tracks.some(x=>x.kind==="found")){msg("m2","No text found. Try Gemini for stylish or moving text.",true);return}

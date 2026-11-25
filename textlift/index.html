@@ -17,6 +17,8 @@
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--ink:#111;--mute:#666;--line:#e4e4ea;--a:#7c3aed;--b:#ec4899;--c:#fb923c;--grad:linear-gradient(90deg,var(--a),var(--b),var(--c));--r:22px}
 @media (prefers-color-scheme:dark){:root{--bg:#0d0d10;--card:#17171c;--ink:#f3f3f5;--mute:#9a9aa6;--line:#2a2a33}}
+:root[data-theme=dark]{--bg:#0d0d10;--card:#17171c;--ink:#f3f3f5;--mute:#9a9aa6;--line:#2a2a33}:root[data-theme=light]{--bg:#f5f5f7;--card:#fff;--ink:#111;--mute:#666;--line:#e4e4ea}
+#themeBtn{min-width:44px;text-align:center}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Geist,system-ui,sans-serif;line-height:1.5}
 a{color:var(--b)}
@@ -82,10 +84,12 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
 </style>
 </head>
 <body>
+<script>try{const t=localStorage.getItem("tl-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <nav class="nav">
   <a class="back" href="https://yathinlooops.pages.dev/" aria-label="Back to Yathin Looops"><span aria-hidden="true">←</span><img src="textlift_icon.png" alt="" /><span>Yathin Looops</span></a>
   <div class="sp"></div>
   <a class="pill" id="planChip" href="../yathinai/">Free · 6 min</a>
+  <button class="pill" id="themeBtn" title="Light or dark" aria-label="Switch light or dark">◐</button>
   <button class="pill" id="ya-key-btn">API key</button>
 </nav>
 <main>
@@ -600,5 +604,6 @@ $("dlVid").onclick=async()=>{
 })();
 </script>
 <script>(function(){try{var b="https://abacus.jasoncameron.dev/hit/praveenp-textlift/";fetch(b+"visits",{mode:"cors"}).catch(function(){});if(!localStorage.getItem("tl_seen")){localStorage.setItem("tl_seen","1");fetch(b+"visitors",{mode:"cors"}).catch(function(){});}}catch(e){}})();</script>
+<script>(function(){const b=document.getElementById("themeBtn"),R=document.documentElement;const cur=()=>R.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");const lab=()=>{b.textContent=cur()==="dark"?"☀ Light":"☾ Dark"};lab();b.onclick=()=>{const n=cur()==="dark"?"light":"dark";R.dataset.theme=n;try{localStorage.setItem("tl-theme",n)}catch(e){}lab()}})();</script>
 </body>
 </html>

@@ -70,6 +70,11 @@ input[type=text],input[type=url]{width:100%;padding:11px 14px;border-radius:12px
 .it .tx{flex:1;word-break:break-word}
 .sw{width:38px;height:38px;border-radius:10px;border:2px solid var(--line);cursor:pointer;padding:0}
 .hide{display:none!important}
+.lgw{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:99;padding:16px}
+.lgb{background:var(--card);color:var(--ink);border-radius:22px;padding:22px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.35);position:relative}
+.lgb h3{margin:0 0 4px;font-size:22px}.lgb .x{position:absolute;top:12px;right:14px;background:none;border:0;font-size:22px;color:var(--mute);cursor:pointer}
+.lgb input{margin-top:8px}.lgb .or{text-align:center;color:var(--mute);font-size:13px;margin:12px 0 4px}
+#lgG{display:flex;justify-content:center;min-height:44px;margin-top:12px}
 .msg{margin-top:10px;font-size:14px;min-height:20px}
 .msg.err{color:#dc2626}
 .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
@@ -93,13 +98,26 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
   <button class="pill" id="themeBtn" title="Light or dark" aria-label="Switch light or dark"></button>
   <button class="pill" id="ya-key-btn">API key</button>
 </nav>
+<div class="lgw hide" id="lgW"><div class="lgb">
+  <button class="x" id="lgX" aria-label="Close">×</button>
+  <div id="lgIn"><h3>Log in</h3><p class="note" style="margin:0">Use your Yathin AI account. AI+ is linked to Google accounts, so pick Google to unlock it.</p>
+    <div id="lgG"><span class="note">Loading Google…</span></div>
+    <div class="or">or with email</div>
+    <input type="text" id="lgE" placeholder="Email" autocomplete="email" />
+    <input type="password" id="lgP" placeholder="Password" autocomplete="current-password" />
+    <input type="password" id="lgP2" class="hide" placeholder="Type the password again" />
+    <div class="row" style="margin-top:10px"><button class="btn g" id="lgGo">Log in</button></div>
+    <div class="msg" id="lgM"></div></div>
+  <div id="lgOut" class="hide"><h3>You're logged in</h3><p class="note" id="lgWho" style="margin:4px 0 0"></p><p class="note" id="lgPlan"></p>
+    <div class="row" style="margin-top:10px"><a class="btn g hide" id="lgBuy" href="../yathinai/#plus" style="text-decoration:none">Get Yathin AI+</a><button class="btn l" id="lgOutBtn">Log out</button></div></div>
+</div></div>
 <main>
   <div class="hero">
     <img src="textlift_icon.png" alt="TextLift icon" />
     <div><h1>TextLift</h1><p>Pull the text out of any video, even animated, and drop it on a new background.</p></div>
   </div>
-  <div class="card plusCard" id="plusCard"><b>Have Yathin AI+?</b> <a class="pill" id="plusLogin" href="../yathinai/" style="margin-left:6px">Log in</a>
-    <p class="note" style="margin:6px 0 0">Log in on Yathin AI with your AI+ account and come back here. AI+ unlocks videos up to 15 minutes, 1080p downloads, speed from 0.1× to 7×, every text animation and AI-made backgrounds. TextLift has no age limit: anyone can use it free.</p>
+  <div class="card plusCard" id="plusCard"><b>Have Yathin AI+?</b> <button class="pill" id="plusLogin" style="margin-left:6px">Log in</button>
+    <p class="note" style="margin:6px 0 0">Log in with the Google account that has AI+. AI+ unlocks videos up to 15 minutes, 1080p downloads, speed from 0.1× to 7×, every text animation and AI-made backgrounds. TextLift has no age limit: anyone can use it free.</p>
   </div>
 
   <section class="card">
@@ -242,6 +260,7 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
 </main>
 <footer>TextLift · Part of Yathin Looops · Created by Yathin Pedamallu</footer>
 <video id="v" playsinline preload="auto" class="hide" crossorigin="anonymous"></video>
+<script src="../yathinai/fixes.js"></script>
 <script src="../ya-key.js"></script>
 <script>
 (function(){
@@ -264,17 +283,52 @@ function applyPlan(){
   $("spNote").textContent=PLUS?"Yathin AI+: 0.1× to 7×.":"Free: 0.5× to 2×. Yathin AI+ unlocks 0.1× to 7×.";
   const c=$("planChip");
   const pc=$("plusCard");if(pc){if(PLUS)pc.innerHTML='<b>Yathin AI+ is on.</b><p class="note" style="margin:6px 0 0">15-minute videos, 1080p downloads, 0.1× to 7× speed, every animation and AI backgrounds are unlocked.</p>';else if(sess()){pc.querySelector("b").textContent="Want more?";const l=$("plusLogin");l.textContent="Get Yathin AI+"}}
+  const lw=$("lgW");if(lw&&!lw.classList.contains("hide"))lgShow();
   if(PLUS){c.textContent="Yathin AI+ · 15 min";c.classList.add("plus");c.removeAttribute("href");}
-  else{c.textContent=sess()?"Free · 6 min · Get AI+":"Free · Have AI+? Log in";c.href="../yathinai/";}
+  else{c.textContent=localStorage.getItem("yai-user")&&localStorage.getItem("yai-user")!=="guest"?(sess()?"Free · 6 min · Get AI+":"Free · Log in with Google for AI+"):"Free · Have AI+? Log in";c.removeAttribute("href");}
   $("limitNote").textContent=PLUS?"Yathin AI+ is on: videos up to 15 minutes, 1080p export":"Up to 6 minutes free · up to 15 minutes with Yathin AI+";
   $("qNote").textContent=PLUS?"Yathin AI+: exports up to 1080p.":"Free exports up to 720p. Yathin AI+ exports up to 1080p.";
 }
 (async function(){
   try{const c=JSON.parse(localStorage.getItem("yai-plus-st")||"null");if(c&&c.u===localStorage.getItem("yai-user")&&c.s&&c.s.plus)PLUS=true}catch(e){}
-  applyPlan();
-  const auth=sess();if(!auth)return;
-  try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({v:2,mode:"billing",auth,op:"status"})});const j=await r.json();if(r.ok){PLUS=!!j.plus;localStorage.setItem("yai-plus-st",JSON.stringify({u:localStorage.getItem("yai-user"),at:Date.now(),s:j}));applyPlan();if(v.src)checkLen();}}catch(e){}
+  applyPlan();refreshPlus();
 })();
+async function refreshPlus(){
+  const auth=sess();if(!auth){PLUS=false;applyPlan();return}
+  try{const r=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({v:2,mode:"billing",auth,op:"status"})});const j=await r.json();if(r.ok){PLUS=!!j.plus;localStorage.setItem("yai-plus-st",JSON.stringify({u:localStorage.getItem("yai-user"),at:Date.now(),s:j}));applyPlan();if(v.src)checkLen();}}catch(e){}
+}
+/* ---------- login popup (same accounts as Yathin AI) ---------- */
+const GCID="148201480683-9894qd6i7mjoqmrujbvq50k0pekqtafs.apps.googleusercontent.com";
+function lgShow(){const u=localStorage.getItem("yai-user");const inn=!!u&&u!=="guest";$("lgIn").classList.toggle("hide",inn);$("lgOut").classList.toggle("hide",!inn);
+  if(inn){$("lgWho").textContent=u+(sess()?" · Google":" · email (this device)");$("lgPlan").textContent=PLUS?"Yathin AI+ is on.":sess()?"Free plan. Get Yathin AI+ for 15-minute videos and more.":"Email accounts stay on this device and can't hold AI+. Log out and pick Google to use AI+.";$("lgBuy").classList.toggle("hide",PLUS||!sess())}
+  else gLoad()}
+function lgOpen(){$("lgM").textContent="";$("lgW").classList.remove("hide");lgShow()}
+function lgClose(){$("lgW").classList.add("hide")}
+$("planChip").onclick=e=>{e.preventDefault();lgOpen()};$("plusLogin").onclick=lgOpen;$("lgX").onclick=lgClose;$("lgW").onclick=e=>{if(e.target.id==="lgW")lgClose()};
+addEventListener("keydown",e=>{if(e.key==="Escape")lgClose()});
+let gReady=0;function gLoad(){if(gReady===2)return gBtn();if(gReady)return;gReady=1;const sc=document.createElement("script");sc.src="https://accounts.google.com/gsi/client";sc.async=true;sc.onload=()=>{gReady=2;try{google.accounts.id.initialize({client_id:GCID,callback:gDone,ux_mode:"popup"})}catch(e){}gBtn()};sc.onerror=()=>{gReady=0;$("lgG").innerHTML='<span class="note">Google sign-in couldn\'t load. Check your internet.</span>'};document.head.append(sc)}
+function gBtn(){const g=$("lgG");g.innerHTML="";try{google.accounts.id.renderButton(g,{type:"standard",theme:"filled_black",size:"large",shape:"pill",text:"continue_with",width:300})}catch(e){g.innerHTML='<span class="note">Google sign-in isn\'t available here.</span>'}}
+async function gDone(r){try{const b=r.credential.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");const j=JSON.parse(decodeURIComponent(escape(atob(b))));if(!j.email)throw 0;const e=j.email.toLowerCase();
+  localStorage.setItem("yai-user",e);if(window.YFix)YFix.markGoogle(e);localStorage.setItem("yai-name",j.given_name||j.name||e.split("@")[0]);if(j.picture)localStorage.setItem("yai-pic",j.picture);
+  msg("lgM","Logging in…");const x=await fetch(BRAIN,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({v:2,mode:"auth",credential:r.credential})}).then(q=>q.json()).catch(()=>({}));
+  if(x.ok&&x.session)localStorage.setItem("yai2-sess",JSON.stringify({u:x.email||e,t:x.session,x:Date.now()+(x.days||30)*864e5-36e5}));
+  await refreshPlus();applyPlan();lgShow();msg("lgM","")}catch(e){msg("lgM","Google sign-in didn't work. Try again or use email.",true)}}
+let lgMode="";$("lgE").addEventListener("input",()=>{lgMode="";$("lgP2").classList.add("hide");$("lgGo").textContent="Log in"});
+[$("lgP"),$("lgP2")].forEach(x=>x.addEventListener("keydown",e=>{if(e.key==="Enter")$("lgGo").click()}));
+$("lgGo").onclick=async()=>{const e=$("lgE").value.trim().toLowerCase(),pw=$("lgP").value;
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e))return msg("lgM","Enter a real email.",true);
+  if(!window.YFix)return msg("lgM","Login is still loading. Try again in a second.",true);
+  const st=YFix.state(e);
+  if(st==="google")return msg("lgM","This account signs in with Google. Use the Google button.",true);
+  if(st==="pbkdf2"||st==="legacy"){if(!pw)return msg("lgM","Enter your password.",true);msg("lgM","Checking…");if(!(await YFix.check(e,pw)))return msg("lgM","Wrong password.",true)}
+  else{const want=st==="new"?"create":"set";
+    if(lgMode!==want){lgMode=want;$("lgP2").classList.remove("hide");$("lgGo").textContent=want==="create"?"Create account":"Set password";msg("lgM",want==="create"?"New here? Choose a password (8+ characters) and type it again.":"Set a password for this account (8+ characters) and type it again.");$("lgP2").focus();return}
+    if(pw.length<8)return msg("lgM","Password needs 8 or more characters.",true);
+    if(pw!==$("lgP2").value)return msg("lgM","The two passwords don't match.",true);
+    await YFix.setPw(e,pw)}
+  localStorage.setItem("yai-user",e);localStorage.removeItem("yai2-sess");if(!localStorage.getItem("yai-name"))localStorage.setItem("yai-name",e.split("@")[0]);
+  $("lgP").value=$("lgP2").value="";lgMode="";$("lgP2").classList.add("hide");$("lgGo").textContent="Log in";msg("lgM","");PLUS=false;applyPlan();lgShow()};
+$("lgOutBtn").onclick=()=>{localStorage.removeItem("yai2-sess");localStorage.removeItem("yai-user");localStorage.removeItem("yai-plus-st");try{google.accounts.id.disableAutoSelect()}catch(e){}PLUS=false;applyPlan();lgShow()};
 
 /* ---------- 1. import ---------- */
 const drop=$("drop");

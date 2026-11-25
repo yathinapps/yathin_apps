@@ -98,10 +98,13 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
     <img src="textlift_icon.png" alt="TextLift icon" />
     <div><h1>TextLift</h1><p>Pull the text out of any video, even animated, and drop it on a new background.</p></div>
   </div>
+  <div class="card plusCard" id="plusCard"><b>Have Yathin AI+?</b> <a class="pill" id="plusLogin" href="../yathinai/" style="margin-left:6px">Log in</a>
+    <p class="note" style="margin:6px 0 0">Log in on Yathin AI with your AI+ account and come back here. AI+ unlocks videos up to 15 minutes, 1080p downloads, speed from 0.1× to 7×, every text animation and AI-made backgrounds. TextLift has no age limit: anyone can use it free.</p>
+  </div>
 
   <section class="card">
     <h2><span class="step">1</span>Import a video</h2>
-    <p class="sub">MP4, MOV or WebM. Stays on your device.</p>
+    <p class="sub">Pick a video from your computer or phone (MP4, MOV or WebM). It never leaves your device. Nothing is uploaded unless you choose Gemini.</p>
     <div class="drop" id="drop" tabindex="0"><b>Drop a video here or click to choose</b><span class="note" id="limitNote">Up to 6 minutes free · up to 15 minutes with Yathin AI+</span></div>
     <input type="file" id="file" accept="video/*" class="hide" />
     <div class="msg" id="m1"></div>
@@ -109,12 +112,12 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
 
   <section class="card hide" id="sec2">
     <h2><span class="step">2</span>Find the text</h2>
-    <p class="sub">Pick who reads the video.</p>
+    <p class="sub">TextLift looks at your video frame by frame and finds every caption, title and moving word. Pick who reads it:</p>
     <div class="seg" id="engine">
       <button data-v="yai" class="on">Yathin AI scan · free, no key</button>
       <button data-v="gem">Gemini · best for animated text</button>
     </div>
-    <p class="note" id="engNote">Runs right in your browser. Works best on clear, readable text.</p>
+    <p class="note" id="engNote">Yathin AI scan is free and runs in your browser, best for clear, flat text. For stylish, 3D or animated text, Gemini is much better (free key from Google, tap API key).</p>
     <div class="row"><button class="btn g" id="go">Find text</button><button class="btn l hide" id="stop">Stop</button></div>
     <div class="bar hide" id="bar"><i></i></div>
     <div class="msg" id="m2"></div>
@@ -124,6 +127,7 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
     <div class="grid">
       <div class="card">
         <h2><span class="step">3</span>Preview</h2>
+        <p class="sub">The gray checkers are see-through spots. Add a background in step 5 to fill them. Press Play to watch, and hold "Hold to see original" to compare.</p>
         <div class="stage" id="stage"><canvas id="out"></canvas></div>
         <div class="ctrl">
           <button class="btn l" id="play" style="padding:8px 16px">Play</button>
@@ -136,10 +140,11 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
       </div>
       <div class="card">
         <h2>Text found</h2>
-        <p class="sub">Uncheck anything you don't want.</p>
+        <p class="sub">Every piece of text TextLift found, with when it shows. Uncheck what you don't want, tap the time to jump there, or tap Edit to change it.</p>
         <div class="list" id="list"></div>
         <div class="row" style="margin-top:10px"><button class="btn l" id="copyText" style="padding:8px 14px">Copy all text</button></div>
         <label class="f">Remove background</label>
+        <p class="note" style="margin:0 0 6px">Text only cuts around the letters. Match text color keeps one color. Keep text box keeps the whole box. If bits of the old video show, raise Cleanup strength.</p>
         <div class="seg" id="mode">
           <button data-v="auto" class="on">Text only</button>
           <button data-v="color">Match text color</button>
@@ -154,6 +159,7 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
 
     <div class="card">
       <h2><span class="step">4</span>Trim, speed and text</h2>
+      <p class="sub">Cut the start and end, slow it down or speed it up, and add your own words or restyle the text found.</p>
       <div class="two">
         <div><label class="f">Start <span class="note" id="tsV">0:00</span></label><input type="range" id="ts" min="0" max="1000" value="0" /></div>
         <div><label class="f">End <span class="note" id="teV">0:00</span></label><input type="range" id="te" min="0" max="1000" value="1000" /></div>
@@ -208,6 +214,7 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
 
     <div class="card">
       <h2><span class="step">6</span>Download</h2>
+      <p class="sub">Save your new video as MP4, just the sound as MP3, or one frame as a picture. Keep this tab open while the MP4 saves, since it records in real time.</p>
       <p class="lock" id="lockNote">Pick a background in step 5 to unlock downloads.</p>
       <div class="row">
         <button class="btn g" id="dlVid">Download MP4</button>
@@ -254,8 +261,9 @@ function applyPlan(){
   const sp=$("speed");sp.min=PLUS?0.1:0.5;sp.max=PLUS?7:2;if(rate<+sp.min||rate>+sp.max){rate=Math.min(+sp.max,Math.max(+sp.min,rate));sp.value=rate;$("spV").textContent=rate+"×"}
   $("spNote").textContent=PLUS?"Yathin AI+: 0.1× to 7×.":"Free: 0.5× to 2×. Yathin AI+ unlocks 0.1× to 7×.";
   const c=$("planChip");
+  const pc=$("plusCard");if(pc){if(PLUS)pc.innerHTML='<b>Yathin AI+ is on.</b><p class="note" style="margin:6px 0 0">15-minute videos, 1080p downloads, 0.1× to 7× speed, every animation and AI backgrounds are unlocked.</p>';else if(sess()){pc.querySelector("b").textContent="Want more?";const l=$("plusLogin");l.textContent="Get Yathin AI+"}}
   if(PLUS){c.textContent="Yathin AI+ · 15 min";c.classList.add("plus");c.removeAttribute("href");}
-  else{c.textContent=sess()?"Free · 6 min · Get AI+":"Free · 6 min · Sign in for AI+";c.href="../yathinai/";}
+  else{c.textContent=sess()?"Free · 6 min · Get AI+":"Free · Have AI+? Log in";c.href="../yathinai/";}
   $("limitNote").textContent=PLUS?"Yathin AI+ is on: videos up to 15 minutes, 1080p export":"Up to 6 minutes free · up to 15 minutes with Yathin AI+";
   $("qNote").textContent=PLUS?"Yathin AI+: exports up to 1080p.":"Free exports up to 720p. Yathin AI+ exports up to 1080p.";
 }
@@ -327,8 +335,10 @@ async function findText(){
       const wk=await Tesseract.createWorker("eng");
       for(let i=from;i<times.length&&!stopFlag;i++){
         await seekTo(times[i]);const c=snap(Math.min(960,v.videoWidth));
-        const {data}=await wk.recognize(c);
-        const items=(data.lines||[]).filter(l=>l.confidence>55&&/[A-Za-z0-9]{2}/.test(l.text)).map(l=>({text:l.text.trim(),box:[l.bbox.y0/c.height*1000,l.bbox.x0/c.width*1000,l.bbox.y1/c.height*1000,l.bbox.x1/c.width*1000]}));
+        let {data}=await wk.recognize(c);const good=()=>(data.lines||[]).some(l=>l.confidence>40&&/[A-Za-z0-9]{2}/.test(l.text));
+        if(!good()){const g=c.getContext("2d"),im=g.getImageData(0,0,c.width,c.height),q=im.data;for(let k=0;k<q.length;k+=4){const L=.3*q[k]+.59*q[k+1]+.11*q[k+2];const y=L>150?255:L<90?0:(L-90)*4.25;q[k]=q[k+1]=q[k+2]=y}g.putImageData(im,0,0);data=(await wk.recognize(c)).data;
+          if(!good()){for(let k=0;k<q.length;k+=4){q[k]=q[k+1]=q[k+2]=255-q[k]}g.putImageData(im,0,0);data=(await wk.recognize(c)).data}}
+        const items=(data.lines||[]).filter(l=>l.confidence>40&&/[A-Za-z0-9]{2}/.test(l.text)).map(l=>({text:l.text.trim(),box:[l.bbox.y0/c.height*1000,l.bbox.x0/c.width*1000,l.bbox.y1/c.height*1000,l.bbox.x1/c.width*1000]}));
         frames.push({t:times[i],items});
         setBar("bar",(i+1)/times.length);msg("m2","Reading frame "+(i+1)+" of "+times.length+"…");
       }
@@ -403,6 +413,17 @@ $("copyText").onclick=async()=>{const t=tracks.filter(x=>x.on).map(x=>x.text).jo
 
 /* ---------- background removal + compositing ---------- */
 const hex=h=>{h=(h||"").replace("#","");if(h.length===3)h=h.split("").map(c=>c+c).join("");const n=parseInt(h,16);return isNaN(n)||h.length!==6?null:[n>>16&255,n>>8&255,n&255]};
+function clusterKey(d,w,h){
+  const N=Math.min(2500,w*h),st=Math.max(1,Math.floor(w*h/N)),P=[],Bd=[];
+  for(let k=0;k<w*h;k+=st){const x=k%w,y=(k/w)|0,i=k*4;P.push([d[i],d[i+1],d[i+2]]);Bd.push(x<w*.06||x>w*.94||y<h*.1||y>h*.9)}
+  const KN=5;let C=[];for(let k=0;k<KN;k++)C.push(P[Math.floor((k+.5)*P.length/KN)].slice());
+  const as=new Array(P.length).fill(0);
+  for(let it=0;it<7;it++){const S=C.map(()=>[0,0,0,0]);P.forEach((p,j)=>{let b=0,bd=1e9;C.forEach((c,k)=>{const dd=(p[0]-c[0])**2+(p[1]-c[1])**2+(p[2]-c[2])**2;if(dd<bd){bd=dd;b=k}});as[j]=b;const q=S[b];q[0]+=p[0];q[1]+=p[1];q[2]+=p[2];q[3]++});C=C.map((c,k)=>S[k][3]?[S[k][0]/S[k][3],S[k][1]/S[k][3],S[k][2]/S[k][3]]:c)}
+  const tot=C.map(()=>0),bor=C.map(()=>0);let nb=0;as.forEach((k,j)=>{tot[k]++;if(Bd[j]){bor[k]++;nb++}});
+  if(!nb)return null;
+  const out=C.map((c,k)=>{const r=(bor[k]/nb)/(tot[k]/P.length||1);return[c[0],c[1],c[2],tot[k]>P.length*.02&&r<.55?1:0]});
+  return out.some(c=>c[3])&&out.some(c=>!c[3])?out:null;
+}
 function med(a){a.sort((x,y)=>x-y);return a[a.length>>1]||0}
 function draw(t){
   if(!out.width)return;
@@ -424,7 +445,9 @@ function draw(t){
       const bg=[med(R),med(G),med(Bc)];
       let tc=mode==="color"?hex(tr.color):null;
       if(mode==="color"&&!tc){let r=0,g=0,bb=0,n=0;for(let i=0;i<d.length;i+=16){const dd=Math.hypot(d[i]-bg[0],d[i+1]-bg[1],d[i+2]-bg[2]);if(dd>thr){r+=d[i];g+=d[i+1];bb+=d[i+2];n++}}tc=n?[r/n,g/n,bb/n]:[255,255,255]}
-      for(let i=0;i<d.length;i+=4){
+      const K=mode==="auto"?clusterKey(d,w,h):null;
+      if(K){const bias=(thr-85)*.4;for(let i=0;i<d.length;i+=4){let dt=1e9,db=1e9;for(const c of K){const dd=(d[i]-c[0])**2+(d[i+1]-c[1])**2+(d[i+2]-c[2])**2;if(c[3]){if(dd<dt)dt=dd}else if(dd<db)db=dd}const a=(Math.sqrt(db)-Math.sqrt(dt)-bias)/soft;d[i+3]=a>=1?255:a<=0?0:Math.round(a*255)}}
+      else for(let i=0;i<d.length;i+=4){
         let a;
         if(mode==="color"){const dd=Math.hypot(d[i]-tc[0],d[i+1]-tc[1],d[i+2]-tc[2]);a=(thr-dd)/soft}
         else{const dd=Math.hypot(d[i]-bg[0],d[i+1]-bg[1],d[i+2]-bg[2]);a=(dd-thr*.6)/soft}

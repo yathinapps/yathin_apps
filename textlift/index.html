@@ -179,11 +179,11 @@ select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);backgro
     </div>
 
     <div class="card">
-      <h2><span class="step">4</span>Trim, speed and text</h2>
-      <p class="sub">Cut the start and end, slow it down or speed it up, and add your own words or restyle the text found.</p>
-      <div class="two">
-        <div><label class="f">Start <span class="note" id="tsV">0:00</span></label><input type="range" id="ts" min="0" max="1000" value="0" /></div>
-        <div><label class="f">End <span class="note" id="teV">0:00</span></label><input type="range" id="te" min="0" max="1000" value="1000" /></div>
+      <h2><span class="step">4</span>Speed and text</h2>
+      <p class="sub">Slow down or speed up the whole video, and add your own words or restyle the text found.</p>
+      <div class="two hide">
+        <div class="hide"><label class="f">Start <span class="note" id="tsV">0:00</span></label><input type="range" id="ts" min="0" max="1000" value="0" /></div>
+        <div class="hide"><label class="f">End <span class="note" id="teV">0:00</span></label><input type="range" id="te" min="0" max="1000" value="1000" /></div>
       </div>
       <label class="f">Speed <span class="note" id="spV">1×</span></label>
       <input type="range" id="speed" min="0.5" max="2" step="0.05" value="1" />
